@@ -25,5 +25,7 @@ namespace HelpDeskApp.Infrastructure.Data.Entities
 
         [InverseProperty("Assignee")]
         public virtual ICollection<Ticket> AssignedTickets { get; set; } = new HashSet<Ticket>();
+
+        public virtual ICollection<UserProject> UsersProjects { get; set; } = new HashSet<UserProject>();
     }
 }

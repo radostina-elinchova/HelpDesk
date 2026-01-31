@@ -13,6 +13,7 @@ namespace HelpDeskApp.Infrastructure.Data.Entities
         [MaxLength(ValidationConstants.DescriptionMaxLength)]
         public string? Description { get; set; }
         public virtual ICollection<Ticket> Tickets { get; set; } = new HashSet<Ticket>();
+        public virtual ICollection<UserProject> UsersProjects { get; set; } = new HashSet<UserProject>();
 
     }
 }
