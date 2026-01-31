@@ -15,5 +15,6 @@ namespace HelpDeskApp.Infrastructure.Data
         public DbSet<Ticket> Tickets { get; set;  } = null!;
         public DbSet<TicketStatus> TicketStatus { get; set;  } = null!;
         public DbSet<Project> Projects { get; set;  } = null!;
+        public DbSet<UserProject> UsersProjects { get; set; } = null!;
     }
 }
