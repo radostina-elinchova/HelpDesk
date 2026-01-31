@@ -18,7 +18,7 @@ namespace HelpDeskApp.Infrastructure.Data.Entities
         public DateTime CreatedOn { get; set; } = DateTime.Now;
 
         [Required]
-        public string CreatorId { get; set; }= null!;
+        public string CreatorId { get; set; } = null!;
         public virtual ApplicationUser Creator { get; set; } = null!;
 
         public string? AssigneeId { get; set; }
