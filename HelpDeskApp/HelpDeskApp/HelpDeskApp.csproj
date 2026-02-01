@@ -18,6 +18,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\HelpDeskApp.Common\HelpDeskApp.Common.csproj" />
+    <ProjectReference Include="..\HelpDeskApp.Core\HelpDeskApp.Core.csproj" />
     <ProjectReference Include="..\HelpDeskApp.Infrastructure\HelpDeskApp.Infrastructure.csproj" />
   </ItemGroup>
 

@@ -1,13 +1,16 @@
+using HelpDeskApp.Core.Contracts;
+using HelpDeskApp.Core.Services;
 using HelpDeskApp.Infrastructure.Data;
+using HelpDeskApp.Infrastructure.Data.Entities;
 using HelpDeskApp.Infrastructure.Data.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace HelpDeskApp
 {
-    public class Program
+    public  class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -17,12 +20,11 @@ namespace HelpDeskApp
                 options.UseSqlServer(connectionString));
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-            builder.Services.AddDefaultIdentity<IdentityUser>(options =>
+            builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
             {
                 options.SignIn.RequireConfirmedAccount = false;
                 options.Password.RequireDigit = false;
                 options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequireLowercase = false;
                 options.Password.RequireLowercase = false;
                 options.Password.RequireUppercase = false;
                 options.Password.RequiredLength = 5;
@@ -31,9 +33,9 @@ namespace HelpDeskApp
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddControllersWithViews();
-
+            builder.Services.AddTransient<IProjectService, ProjectService>();
             var app = builder.Build();
-            app.PrepareDatabase(); 
+            await app.PrepareDatabase(); 
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

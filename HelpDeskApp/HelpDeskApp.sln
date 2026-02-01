@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelpDeskApp.Infrastructure"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelpDeskApp.Common", "HelpDeskApp.Common\HelpDeskApp.Common.csproj", "{787D42EF-9C1B-42B6-BE13-D9115804301C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelpDeskApp.Core", "HelpDeskApp.Core\HelpDeskApp.Core.csproj", "{27CF1A67-E73E-4EA6-B51B-91C6491FD93A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{787D42EF-9C1B-42B6-BE13-D9115804301C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{787D42EF-9C1B-42B6-BE13-D9115804301C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{787D42EF-9C1B-42B6-BE13-D9115804301C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{27CF1A67-E73E-4EA6-B51B-91C6491FD93A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27CF1A67-E73E-4EA6-B51B-91C6491FD93A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27CF1A67-E73E-4EA6-B51B-91C6491FD93A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27CF1A67-E73E-4EA6-B51B-91C6491FD93A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,0 +1,73 @@
+﻿@using HelpDeskApp.Models.Ticket
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model TicketDetailsVM
+
+@* <div class="container mt-4">
+    <div class="card shadow-sm border-0">
+        <!-- Header -->
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 fw-semibold">@Model.Title</h5>
+
+            <span class="badge rounded-pill
+                @(Model.Status == "Open" ? "bg-success-subtle text-success" :
+                                    Model.Status == "Closed" ? "bg-danger-subtle text-danger" :
+                                    "bg-secondary-subtle text-secondary")">
+                @Model.Status
+            </span>
+        </div>
+
+        <!-- Body -->
+        <div class="card-body">
+            <div class="row">
+                <!-- LEFT SIDE -->
+                <div class="col-md-8">
+                    <div class="mb-3">
+                        <small class="text-muted text-uppercase">Project</small>
+                        <div class="fw-medium">@Model.ProjectName</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <small class="text-muted text-uppercase">Category</small>
+                        <div>@Model.CategoryName / @Model.SubCategoryName</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <small class="text-muted text-uppercase">Description</small>
+                        <div class="p-3 bg-light rounded">
+                            @Model.Description
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT SIDE -->
+                <div class="col-md-4">
+                    <div class="p-3 bg-light rounded">
+                        <div class="mb-3">
+                            <small class="text-muted text-uppercase">Created by</small>
+                            <div>@Model.CreatorEmail</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <small class="text-muted text-uppercase">Created on</small>
+                            <div>@Model.CreatedOn.ToString("dd MMM yyyy")</div>
+                        </div>
+
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <a asp-action="Edit"
+                               asp-route-id="@Model.Id"
+                               class="btn btn-sm w-100 text-white"
+                               style="background-color:#875a7b">
+                                Edit Ticket
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> *@
