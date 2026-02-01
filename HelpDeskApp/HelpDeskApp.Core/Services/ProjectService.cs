@@ -1,6 +1,7 @@
 ﻿using HelpDeskApp.Core.Contracts;
 using HelpDeskApp.Infrastructure.Data;
 using HelpDeskApp.Infrastructure.Data.Entities;
+
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -18,25 +19,33 @@ namespace HelpDeskApp.Core.Services
         {
             _context = context;
         }
-
-        public Task AddProjectAsync(Project model)
-        {
-            throw new NotImplementedException();
-        }
-
         public Task DeleteProjectAsync(int id, string userId)
         {
             throw new NotImplementedException();
         }
 
-        public Task EditProjectAsync(Project model, string userId)
+        public async Task EditProjectAsync(int id, string name, string? description)
         {
-            throw new NotImplementedException();
+            var project = await _context.Projects.FirstOrDefaultAsync(r => r.Id == id);
+
+            if (project == null)
+            {
+                throw new UnauthorizedAccessException("You are not authorized to edit this recipe.");
+            }
+            project.ProjectName = name;
+            project.Description = description;           
+
+            await _context.SaveChangesAsync();
         }
 
-        public Task<Project> GeProjectDetailsByIdAsync(int id)
+        public async Task<Project> GetProjectByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            var project = await _context.Projects.FirstOrDefaultAsync(r => r.Id == id);
+            if (project == null)
+            {
+                throw new InvalidOperationException("Destination not found");
+            }
+            return project;
         }
 
         public async Task<IEnumerable<Project>> GetAllProjectsAsync(string? userId)
@@ -51,10 +60,7 @@ namespace HelpDeskApp.Core.Services
                 .ToListAsync();
         }
 
-        public Task<Project> GetProjectByIdAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
+
 
         public async Task<Project> ProjectCreateAsync(string name, string? description)
         {
@@ -67,23 +73,16 @@ namespace HelpDeskApp.Core.Services
             _context.Projects.Add(item);
 
             await _context.SaveChangesAsync();
-           
+
             return item;
         }
 
-        public Task<Project> GetProjectForEditAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
+
 
         public Task RemoveProjectAsync(int id, string userId)
         {
             throw new NotImplementedException();
         }
 
-        public Task SaveProjectAsync(int id, string userId)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

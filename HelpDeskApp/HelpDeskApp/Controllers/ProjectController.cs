@@ -25,6 +25,7 @@ namespace HelpDeskApp.Controllers
 
             var models = projects.Select(project => new ProjectIndexVM
             {
+                Id = project.Id,
                 ProjectName = project.ProjectName,
                 Description = project.Description ?? String.Empty,
             }).ToList();
@@ -32,25 +33,26 @@ namespace HelpDeskApp.Controllers
             return View(models);
         }
 
-        //[AllowAnonymous]
-        //public async Task<IActionResult> Details(int id)
-        //{
-        //    var recipe = await _recipeService.GetRecipesDetailsByIdAsync(id);
-        //    if (recipe == null)
-        //    {
-        //        if (User?.Identity?.IsAuthenticated == false)
-        //        {
-        //            return RedirectToAction("Index", "Home");
-        //        }
-        //        return RedirectToAction("Index");
-        //    }
+        public async Task<IActionResult> Details(int id)
+        {
+            var item = await _projectService.GetProjectByIdAsync(id);
+            if (item == null)
+            {
+                //if (User?.Identity?.IsAuthenticated == false)
+                //{
+                //    return RedirectToAction("Index", "Home");
+                //}
+                return RedirectToAction("Index");
+            }
 
-        //    string? userId = GetUserId();
-        //    recipe.IsAuthor = await _recipeService.IsRecipeAuthorAsync(recipe.Id, userId);
-        //    recipe.IsSaved = await _recipeService.IsRecipeSavedAsync(recipe.Id, userId);
-
-        //    return View(recipe);
-        //}
+            ProjectDetailsVM project = new ProjectDetailsVM()
+            {
+                Id = item.Id,
+                ProjectName = item.ProjectName,
+                Description = item.Description,               
+            };
+            return View(project);
+        }
 
         [HttpGet]
         public async Task<IActionResult> Create()
@@ -63,7 +65,7 @@ namespace HelpDeskApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                var newProject = await _projectService.GetProjectCreateAsync(model.ProjectName, model.Description);
+                var newProject = await _projectService.ProjectCreateAsync(model.ProjectName, model.Description);
 
 
                 if (newProject != null)
@@ -71,10 +73,54 @@ namespace HelpDeskApp.Controllers
                     return RedirectToAction(nameof(Index));
                 }
             }
-
-
             return View(model);
-
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var item = await _projectService.GetProjectByIdAsync(id);
+            if (item == null)
+            {
+                return NotFound();
+            }
+
+            ProjectEditVM updatedProduct = new ProjectEditVM()
+            {
+                Id = item.Id,
+                ProjectName = item.ProjectName,
+                Description = item.Description               
+            };
+           
+            return View(updatedProduct);
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(ProjectEditVM model)
+        {
+            string? userId = GetUserId();
+            //if (string.IsNullOrEmpty(userId))
+            //{
+            //    return RedirectToAction("Login", "Account");
+            //}
+
+            if (!ModelState.IsValid)
+            {               
+                return View(model);
+            }
+
+            try
+            {
+                await _projectService.EditProjectAsync(model.Id, model.ProjectName, model.Description);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized();
+            }
+
+            return RedirectToAction("Details", new { id = model.Id });
+        }
+
     }
 }

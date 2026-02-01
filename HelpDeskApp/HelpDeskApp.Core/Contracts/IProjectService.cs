@@ -14,19 +14,14 @@ namespace HelpDeskApp.Core.Contracts
 
         Task<Project> GetProjectByIdAsync(int id);
 
-        Task<Project> GeProjectDetailsByIdAsync(int id);
+        Task<Project> ProjectCreateAsync(string name, string? description);      
 
-        Task<Project> GetProjectCreateAsync(string name, string? description);
-
-        Task AddProjectAsync(Project model);
-
-        Task SaveProjectAsync(int id, string userId);
+    
 
         Task RemoveProjectAsync(int id, string userId);
+      
 
-        Task<Project> GetProjectForEditAsync(int id);
-
-        Task EditProjectAsync(Project model, string userId);
+        Task EditProjectAsync(int id, string name, string? description);
 
         Task DeleteProjectAsync(int id, string userId);
     }
