@@ -19,9 +19,17 @@ namespace HelpDeskApp.Core.Services
         {
             _context = context;
         }
-        public Task DeleteProjectAsync(int id, string userId)
+        public async Task<bool> DeleteProjectAsync(int id)
         {
-            throw new NotImplementedException();
+            var project = await GetProjectByIdAsync(id);
+
+            if (project != null)            {
+
+                _context.Remove(project);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            return false;
         }
 
         public async Task EditProjectAsync(int id, string name, string? description)
@@ -30,10 +38,10 @@ namespace HelpDeskApp.Core.Services
 
             if (project == null)
             {
-                throw new UnauthorizedAccessException("You are not authorized to edit this recipe.");
+                throw new UnauthorizedAccessException("You are not authorized to edit this project.");
             }
             project.ProjectName = name;
-            project.Description = description;           
+            project.Description = description;
 
             await _context.SaveChangesAsync();
         }
@@ -60,8 +68,6 @@ namespace HelpDeskApp.Core.Services
                 .ToListAsync();
         }
 
-
-
         public async Task<Project> ProjectCreateAsync(string name, string? description)
         {
             Project item = new Project
@@ -76,13 +82,5 @@ namespace HelpDeskApp.Core.Services
 
             return item;
         }
-
-
-
-        public Task RemoveProjectAsync(int id, string userId)
-        {
-            throw new NotImplementedException();
-        }
-
     }
 }

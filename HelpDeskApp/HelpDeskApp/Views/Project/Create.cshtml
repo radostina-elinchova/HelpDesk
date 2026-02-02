@@ -1,45 +1,54 @@
 ﻿@using HelpDeskApp.Models.Project
 @model ProjectCreateVM
+
 @{
     ViewData["Title"] = "Create Project";
 }
 
-<div class="container mt-4">
-    <div class="card shadow-sm border-0">        
-        <div class="card-header bg-white">
-            <h5 class="mb-0 fw-semibold">Create Project</h5>
+<div class="odoo-container">
+    <div class="odoo-card">
+        <div class="odoo-card-header">
+            <h3>Create Project</h3>
+            <p class="odoo-subtitle">
+                Fill in the details below to create a new project.
+            </p>
         </div>
-        <div class="card-body">
-            <form asp-action="Create" method="post">
-                <div class="mb-3">
-                    <label asp-for="ProjectName" class="form-label text-muted text-uppercase small">
+
+        <div class="odoo-card-body">
+            <form asp-action="Create" method="post" class="odoo-form">
+
+                <div class="odoo-field">
+                    <label asp-for="ProjectName" class="odoo-label">
                         Project Name
                     </label>
-                    <input asp-for="ProjectName" class="form-control" />
-                    <span asp-validation-for="ProjectName" class="text-danger small"></span>
+                    <input asp-for="ProjectName" class="odoo-input" />
+                    <span asp-validation-for="ProjectName" class="odoo-error"></span>
                 </div>
 
-                <div class="mb-3">
-                    <label asp-for="Description" class="form-label text-muted text-uppercase small">
+                <div class="odoo-field">
+                    <label asp-for="Description" class="odoo-label">
                         Description
                     </label>
                     <textarea asp-for="Description"
-                              class="form-control"
-                              rows="4"></textarea>
-                    <span asp-validation-for="Description" class="text-danger small"></span>
+                              rows="4"
+                              class="odoo-input"></textarea>
+                    <span asp-validation-for="Description" class="odoo-error"></span>
                 </div>
 
-                <div class="d-flex justify-content-end gap-2">
-                    <a asp-action="Index" class="btn btn-outline-secondary">
-                        Cancel
-                    </a>
+                <div class="odoo-card-footer">
+                    <div class="odoo-actions">
+                        <a asp-action="Index"
+                           class="btn odoo-btn-secondary">
+                            Cancel
+                        </a>
 
-                    <button type="submit"
-                            class="btn text-white"
-                            style="background-color:#875a7b">
-                        Create
-                    </button>
+                        <button type="submit"
+                                class="btn odoo-btn-primary">
+                            Create
+                        </button>
+                    </div>
                 </div>
+
             </form>
         </div>
     </div>
@@ -50,3 +59,4 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }
+

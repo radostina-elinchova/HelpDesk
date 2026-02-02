@@ -122,5 +122,44 @@ namespace HelpDeskApp.Controllers
             return RedirectToAction("Details", new { id = model.Id });
         }
 
+        public async Task<IActionResult> Delete(int id)
+        {
+            var item = await _projectService.GetProjectByIdAsync(id);
+            if (item == null)
+            {
+                return NotFound();
+            }
+            ProjectDeleteVM product = new ProjectDeleteVM()
+            {
+                Id = item.Id,
+                ProjectName = item.ProjectName,
+                Description = item.Description,
+                
+            };
+            return View(product);
+        }
+
+        // POST: ProductController/Delete/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(int id, IFormCollection collection)
+        {
+            var deleted = await _projectService.DeleteProjectAsync(id);
+
+            if (deleted)
+            {
+                return this.RedirectToAction("Success");
+            }
+            else
+            {
+                return View();
+            }
+        }
+        public IActionResult Success()
+        {
+
+            return View();
+        }
+
     }
 }

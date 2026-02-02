@@ -1,0 +1,55 @@
+﻿@using HelpDeskApp.Models.Project
+@model ProjectDeleteVM
+
+@{
+    ViewData["Title"] = "Delete Project";
+}
+
+<div class="odoo-container">
+    <div class="odoo-card odoo-card-danger">
+        <div class="odoo-card-header">
+            <h3>Delete Project</h3>
+            <p class="odoo-subtitle">
+                Are you sure you want to permanently delete this project?
+            </p>
+        </div>
+
+        <div class="odoo-card-body">
+            <dl class="row odoo-dl">
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.ProjectName)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.ProjectName)
+                </dd>
+
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.Description)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.Description)
+                </dd>
+            </dl>
+        </div>
+
+        <div class="odoo-card-footer">
+            <form asp-action="Delete" class="odoo-actions">
+                <input type="hidden" asp-for="Id" />
+
+                <button type="submit" class="btn btn-danger odoo-btn-danger">
+                    Delete
+                </button>
+
+                <a asp-action="Index" class="btn btn-light odoo-btn-secondary">
+                    Cancel
+                </a>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -4,68 +4,75 @@
     ViewData["Title"] = "Edit Project";
 }
 
-<div class="container mt-4">
-    <div class="card shadow-sm border-0">
+<div class="odoo-container">
+    <div class="odoo-card">
 
-       
-        <div class="card-header bg-white d-flex justify-content-between align-items-center">
-            <h5 class="mb-0 fw-semibold">@ViewData["Title"]</h5>
+        <!-- Header / Action bar -->
+        <div class="odoo-card-header odoo-header-actions">
+            <div>
+                <h3>Edit Project</h3>
+                <p class="odoo-subtitle">Modify project information</p>
+            </div>
 
-            <span class="badge bg-light text-muted">
+            <span class="odoo-badge">
                 ID: @Model.Id
             </span>
         </div>
 
-      
-        <div class="card-body">
-            <form asp-action="Edit" method="post">
+        <!-- Body -->
+        <div class="odoo-card-body">
+            <form asp-action="Edit" method="post" class="odoo-form">
                 <input type="hidden" asp-for="Id" />
-                <div class="row">                  
-                    <div class="col-md-8">
 
-                        <div class="mb-3">
-                            <label asp-for="ProjectName"
-                                   class="form-label text-muted text-uppercase small">
+                <div class="odoo-form-layout">
+                    <!-- Main form -->
+                    <div class="odoo-form-main">
+
+                        <div class="odoo-field">
+                            <label asp-for="ProjectName" class="odoo-label">
                                 Project Name
                             </label>
-                            <input asp-for="ProjectName"
-                                   class="form-control" />
+                            <input asp-for="ProjectName" class="odoo-input" />
                             <span asp-validation-for="ProjectName"
-                                  class="text-danger small"></span>
+                                  class="odoo-error"></span>
                         </div>
-                        <div class="mb-3">
-                            <label asp-for="Description"
-                                   class="form-label text-muted text-uppercase small">
+
+                        <div class="odoo-field">
+                            <label asp-for="Description" class="odoo-label">
                                 Description
                             </label>
                             <textarea asp-for="Description"
-                                      class="form-control"
-                                      rows="4"></textarea>
-
+                                      rows="4"
+                                      class="odoo-input"></textarea>
                             <span asp-validation-for="Description"
-                                  class="text-danger small"></span>
+                                  class="odoo-error"></span>
                         </div>
-                    </div>                    
-                    <div class="col-md-4">
-                        <div class="p-3 bg-light rounded">
-                            <small class="text-muted text-uppercase">Actions</small>
 
-                            <div class="d-grid gap-2 mt-3">
+                    </div>
+
+                    <!-- Side actions (Odoo-style) -->
+                    <div class="odoo-form-side">
+                        <div class="odoo-side-card">
+                            <span class="odoo-side-title">Actions</span>
+
+                            <div class="odoo-side-actions">
                                 <button type="submit"
-                                        class="btn text-white"
-                                        style="background-color:#875a7b">
+                                        class="btn odoo-btn-primary">
                                     Save
                                 </button>
-                                <a asp-action="Index"                                   
-                                   class="btn btn-outline-secondary">
+
+                                <a asp-action="Index"
+                                   class="btn odoo-btn-secondary">
                                     Cancel
                                 </a>
                             </div>
                         </div>
                     </div>
+
                 </div>
             </form>
         </div>
+
     </div>
 </div>
 
