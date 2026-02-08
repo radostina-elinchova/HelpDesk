@@ -1,4 +1,5 @@
 ﻿using HelpDeskApp.Common;
+using HelpDeskApp.ViewModels.Models.Ticket;
 using System.ComponentModel.DataAnnotations;
 using System.Xml.Linq;
 
@@ -16,6 +17,8 @@ namespace HelpDeskApp.ViewModels.Models.Project
         [StringLength(ValidationConstants.DescriptionMaxLength)]
         [Display(Name = "Project Description")]
         public string Description { get; set; } = null!;
+        public virtual ICollection<TicketDetailsVM> Tickets { get; set; } = new HashSet<TicketDetailsVM>();
+
     }
 }
 

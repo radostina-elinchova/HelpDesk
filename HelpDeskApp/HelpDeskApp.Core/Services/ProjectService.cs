@@ -2,6 +2,7 @@
 using HelpDeskApp.Infrastructure.Data;
 using HelpDeskApp.Infrastructure.Data.Entities;
 using HelpDeskApp.ViewModels.Models.Project;
+using HelpDeskApp.ViewModels.Models.Ticket;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -26,6 +27,35 @@ namespace HelpDeskApp.Core.Services
                     Description = p.Description ?? string.Empty
 
                 }).ToListAsync();
+        }
+        public async Task<ProjectDetailsVM> GetProjectDetailsAsync(int projectId)
+        {
+            var project = await _context.Projects
+                .Where(p => p.Id == projectId)
+                .Include(p => p.Tickets)
+                .ThenInclude(t => t.Status)
+                .Select(p => new ProjectDetailsVM
+                {
+                    Id = p.Id,
+                    ProjectName = p.ProjectName,
+                    Description = p.Description,
+
+                    Tickets = p.Tickets.Select(t => new TicketDetailsVM
+                    {
+                        Id = t.Id,
+                        Title = t.Title,
+                        Status = t.Status.TicketStatusName,
+                        Category = t.SubCategory.Category.CategoryName
+                    }).ToList()
+                })
+                .FirstOrDefaultAsync();
+
+            if (project == null)
+            {
+                throw new InvalidOperationException("Project not found");
+            }
+
+            return project;
         }
         public async Task<Project> ProjectCreateAsync(string name, string? description)
         {

@@ -20,5 +20,7 @@ namespace HelpDeskApp.Core.Contracts
         Task EditProjectAsync(int id, string name, string? description);
 
         Task<bool> DeleteProjectAsync(int id);
+
+        Task<ProjectDetailsVM> GetProjectDetailsAsync(int projectId);
     }
 }

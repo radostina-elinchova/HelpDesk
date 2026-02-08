@@ -1,14 +1,11 @@
 ﻿@using HelpDeskApp.ViewModels.Models.Ticket
-@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+
 @{
 }
 @model TicketDetailsVM
 
-@* <div class="container mt-4">
-    <div class="card shadow-sm border-0">
-        <!-- Header -->
+<div class="container mt-4">
+    <div class="card shadow-sm border-0">     
         <div class="card-header bg-white d-flex justify-content-between align-items-center">
             <h5 class="mb-0 fw-semibold">@Model.Title</h5>
 
@@ -20,31 +17,29 @@
             </span>
         </div>
 
-        <!-- Body -->
         <div class="card-body">
             <div class="row">
-                <!-- LEFT SIDE -->
                 <div class="col-md-8">
                     <div class="mb-3">
                         <small class="text-muted text-uppercase">Project</small>
-                        <div class="fw-medium">@Model.ProjectName</div>
+                        <div class="fw-medium">@Model.Title</div>
                     </div>
 
                     <div class="mb-3">
                         <small class="text-muted text-uppercase">Category</small>
-                        <div>@Model.CategoryName / @Model.SubCategoryName</div>
+                        <div>@Model.Category</div>
                     </div>
 
                     <div class="mb-3">
-                        <small class="text-muted text-uppercase">Description</small>
+                        <small class="text-muted text-uppercase">Status</small>
                         <div class="p-3 bg-light rounded">
-                            @Model.Description
+                            @Model.Status
                         </div>
                     </div>
                 </div>
 
                 <!-- RIGHT SIDE -->
-                <div class="col-md-4">
+                @* <div class="col-md-4">
                     <div class="p-3 bg-light rounded">
                         <div class="mb-3">
                             <small class="text-muted text-uppercase">Created by</small>
@@ -66,8 +61,8 @@
                             </a>
                         }
                     </div>
-                </div>
+                </div> *@
             </div>
         </div>
     </div>
-</div> *@
+</div>

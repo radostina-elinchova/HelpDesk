@@ -1,4 +1,5 @@
 ﻿using HelpDeskApp.Core.Contracts;
+using HelpDeskApp.Core.Services;
 using HelpDeskApp.ViewModels.Models.Ticket;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -65,6 +66,12 @@ namespace HelpDeskApp.Controllers
         {
             var subCategories = await _ticketService.GetSubCategoriesAsync(categoryId);
             return Json(subCategories); 
+        }
+        [HttpGet]
+        public async Task<IActionResult> Details(int id)
+        {
+            var model = await _ticketService.GetByIdAsync(id);
+            return View(model);
         }
     }
 }

@@ -12,7 +12,7 @@ namespace HelpDeskApp.Core.Contracts
     public interface ITicketService
     {
         //Task<IEnumerable<TicketListVM>> GetAllAsync();
-        //Task<TicketDetailsVM?> GetByIdAsync(int id);
+        Task<TicketDetailsVM> GetByIdAsync(int id);
         Task CreateAsync(TicketFormVM model);
         //Task EditAsync(TicketFormVM model);
         //Task DeleteAsync(int id);

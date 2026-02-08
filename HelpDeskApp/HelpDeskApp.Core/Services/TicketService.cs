@@ -33,19 +33,20 @@ namespace HelpDeskApp.Core.Services
         //}
 
 
-        //public async Task<TicketDetailsVM> GetByIdAsync(int id)
-        //{
-        //    return await _context.Tickets
-        //        .Where(t => t.Id == id)
-        //        .Select(t => new TicketDetailsViewModel
-        //        {
-        //            Id = t.Id,
-        //            Title = t.Title,
-        //            Description = t.Description,
-        //            ProjectName = t.Project.Name,
-        //            AssigneeName = t.Assignee != null ? t.Assignee.UserName
-        //        }).FirstOrDefaultAsync();
-        //}
+        public async Task<TicketDetailsVM> GetByIdAsync(int id)
+        {
+            return await _context.Tickets
+                .Where(t => t.Id == id)
+                .Select(t => new TicketDetailsVM
+                {
+                    Id = t.Id,
+                    Title = t.Title,
+                    Status = t.Status.TicketStatusName,
+                    Category = t.SubCategory.Category.CategoryName,
+
+                }).FirstOrDefaultAsync();
+        }
+
 
         public async Task<TicketStatusVM> GetOpenStatusAsync()
         {

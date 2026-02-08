@@ -35,23 +35,8 @@ namespace HelpDeskApp.Controllers
 
         public async Task<IActionResult> Details(int id)
         {
-            var item = await _projectService.GetProjectByIdAsync(id);
-            if (item == null)
-            {
-                //if (User?.Identity?.IsAuthenticated == false)
-                //{
-                //    return RedirectToAction("Index", "Home");
-                //}
-                return RedirectToAction("Index");
-            }
-
-            ProjectDetailsVM project = new ProjectDetailsVM()
-            {
-                Id = item.Id,
-                ProjectName = item.ProjectName,
-                Description = item.Description,               
-            };
-            return View(project);
+            var model = await _projectService.GetProjectDetailsAsync(id);
+            return View(model);
         }
 
         [HttpGet]
