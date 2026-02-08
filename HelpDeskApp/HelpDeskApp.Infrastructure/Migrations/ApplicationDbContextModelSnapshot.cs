@@ -117,7 +117,7 @@ namespace HelpDeskApp.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("HelpDeskApp.Infrastructure.Data.Entities.Project", b =>
@@ -139,7 +139,7 @@ namespace HelpDeskApp.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Projects");
+                    b.ToTable("Projects", (string)null);
                 });
 
             modelBuilder.Entity("HelpDeskApp.Infrastructure.Data.Entities.SubCategory", b =>
@@ -162,7 +162,7 @@ namespace HelpDeskApp.Infrastructure.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("SubCategories");
+                    b.ToTable("SubCategories", (string)null);
                 });
 
             modelBuilder.Entity("HelpDeskApp.Infrastructure.Data.Entities.Ticket", b =>
@@ -180,7 +180,6 @@ namespace HelpDeskApp.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("CreatorId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Description")
@@ -214,7 +213,7 @@ namespace HelpDeskApp.Infrastructure.Migrations
 
                     b.HasIndex("SubCategoryId");
 
-                    b.ToTable("Tickets");
+                    b.ToTable("Tickets", (string)null);
                 });
 
             modelBuilder.Entity("HelpDeskApp.Infrastructure.Data.Entities.TicketStatus", b =>
@@ -232,7 +231,7 @@ namespace HelpDeskApp.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TicketStatus");
+                    b.ToTable("TicketStatus", (string)null);
                 });
 
             modelBuilder.Entity("HelpDeskApp.Infrastructure.Data.Entities.UserProject", b =>
@@ -247,7 +246,7 @@ namespace HelpDeskApp.Infrastructure.Migrations
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("UsersProjects");
+                    b.ToTable("UsersProjects", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -406,9 +405,7 @@ namespace HelpDeskApp.Infrastructure.Migrations
 
                     b.HasOne("HelpDeskApp.Infrastructure.Data.Entities.ApplicationUser", "Creator")
                         .WithMany("CreatedTickets")
-                        .HasForeignKey("CreatorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CreatorId");
 
                     b.HasOne("HelpDeskApp.Infrastructure.Data.Entities.Project", "Project")
                         .WithMany("Tickets")

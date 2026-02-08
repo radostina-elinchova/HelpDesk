@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HelpDeskApp.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260131134339_addm2m")]
-    partial class addm2m
+    [Migration("20260208123747_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -250,7 +250,7 @@ namespace HelpDeskApp.Infrastructure.Migrations
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("UserProject");
+                    b.ToTable("UsersProjects");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

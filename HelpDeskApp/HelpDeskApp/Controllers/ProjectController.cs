@@ -1,6 +1,6 @@
 ﻿using HelpDeskApp.Core.Contracts;
 using HelpDeskApp.Core.Services;
-using HelpDeskApp.Models.Project;
+using HelpDeskApp.ViewModels.Models.Project;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
@@ -89,7 +89,7 @@ namespace HelpDeskApp.Controllers
             {
                 Id = item.Id,
                 ProjectName = item.ProjectName,
-                Description = item.Description               
+                Description = item.Description ?? String.Empty,
             };
            
             return View(updatedProduct);

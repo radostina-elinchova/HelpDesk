@@ -1,10 +1,12 @@
 ﻿using HelpDeskApp.Common;
 using System.ComponentModel.DataAnnotations;
+using System.Xml.Linq;
 
-namespace HelpDeskApp.Models.Project
+namespace HelpDeskApp.ViewModels.Models.Project
 {
-    public class ProjectCreateVM
+    public class ProjectDeleteVM
     {
+
         public int Id { get; set; }
 
         [Required]
@@ -15,6 +17,5 @@ namespace HelpDeskApp.Models.Project
         [StringLength(ValidationConstants.DescriptionMaxLength)]
         [Display(Name = "Project Description")]
         public string Description { get; set; } = null!;
-
     }
 }

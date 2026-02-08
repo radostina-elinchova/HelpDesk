@@ -33,7 +33,8 @@ namespace HelpDeskApp
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddControllersWithViews();
-            builder.Services.AddTransient<IProjectService, ProjectService>();
+            builder.Services.AddScoped<IProjectService, ProjectService>();
+            builder.Services.AddScoped<ITicketService, TicketService>();
             var app = builder.Build();
             await app.PrepareDatabase(); 
 

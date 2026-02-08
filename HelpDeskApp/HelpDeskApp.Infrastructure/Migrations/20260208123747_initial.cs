@@ -220,6 +220,30 @@ namespace HelpDeskApp.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "UsersProjects",
+                columns: table => new
+                {
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ProjectId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UsersProjects", x => new { x.UserId, x.ProjectId });
+                    table.ForeignKey(
+                        name: "FK_UsersProjects_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UsersProjects_Projects_ProjectId",
+                        column: x => x.ProjectId,
+                        principalTable: "Projects",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Tickets",
                 columns: table => new
                 {
@@ -336,6 +360,11 @@ namespace HelpDeskApp.Infrastructure.Migrations
                 name: "IX_Tickets_SubCategoryId",
                 table: "Tickets",
                 column: "SubCategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UsersProjects_ProjectId",
+                table: "UsersProjects",
+                column: "ProjectId");
         }
 
         /// <inheritdoc />
@@ -360,19 +389,22 @@ namespace HelpDeskApp.Infrastructure.Migrations
                 name: "Tickets");
 
             migrationBuilder.DropTable(
+                name: "UsersProjects");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUsers");
-
-            migrationBuilder.DropTable(
-                name: "Projects");
 
             migrationBuilder.DropTable(
                 name: "SubCategories");
 
             migrationBuilder.DropTable(
                 name: "TicketStatus");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Projects");
 
             migrationBuilder.DropTable(
                 name: "Categories");

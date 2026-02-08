@@ -1,7 +1,7 @@
 ﻿using HelpDeskApp.Common;
 using System.ComponentModel.DataAnnotations;
 
-namespace HelpDeskApp.Models.Project
+namespace HelpDeskApp.ViewModels.Models.Project
 {
     public class ProjectIndexVM
     {

@@ -1,4 +1,5 @@
 ﻿using HelpDeskApp.Infrastructure.Data.Entities;
+using HelpDeskApp.ViewModels.Models.Project;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace HelpDeskApp.Core.Contracts
     public interface IProjectService
     {
 
-        Task<IEnumerable<Project>> GetAllProjectsAsync(string? userId);
+        Task<IEnumerable<ProjectIndexVM>> GetAllProjectsAsync(string? userId);
 
         Task<Project> GetProjectByIdAsync(int id);
 

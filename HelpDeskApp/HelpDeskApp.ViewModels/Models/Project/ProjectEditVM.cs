@@ -2,9 +2,10 @@
 using System.ComponentModel.DataAnnotations;
 using System.Xml.Linq;
 
-namespace HelpDeskApp.Models.Project
+
+namespace HelpDeskApp.ViewModels.Models.Project
 {
-    public class ProjectDetailsVM
+    public class ProjectEditVM
     {
         public int Id { get; set; }
 
@@ -18,4 +19,3 @@ namespace HelpDeskApp.Models.Project
         public string Description { get; set; } = null!;
     }
 }
-

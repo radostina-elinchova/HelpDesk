@@ -1,4 +1,4 @@
-namespace HelpDeskApp.Models
+namespace HelpDeskApp.ViewModels.Models
 {
     public class ErrorViewModel
     {

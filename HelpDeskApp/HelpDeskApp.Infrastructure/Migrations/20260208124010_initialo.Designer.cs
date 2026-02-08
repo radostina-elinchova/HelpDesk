@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HelpDeskApp.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260201090234_seedData")]
-    partial class seedData
+    [Migration("20260208124010_initialo")]
+    partial class initialo
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -183,7 +183,6 @@ namespace HelpDeskApp.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("CreatorId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Description")
@@ -409,9 +408,7 @@ namespace HelpDeskApp.Infrastructure.Migrations
 
                     b.HasOne("HelpDeskApp.Infrastructure.Data.Entities.ApplicationUser", "Creator")
                         .WithMany("CreatedTickets")
-                        .HasForeignKey("CreatorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CreatorId");
 
                     b.HasOne("HelpDeskApp.Infrastructure.Data.Entities.Project", "Project")
                         .WithMany("Tickets")

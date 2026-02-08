@@ -1,5 +1,5 @@
 using System.Diagnostics;
-using HelpDeskApp.Models;
+using HelpDeskApp.ViewModels.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HelpDeskApp.Controllers
