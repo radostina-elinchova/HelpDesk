@@ -20,20 +20,20 @@ namespace HelpDeskApp.Core.Services
         }
 
 
-        //public async Task<IEnumerable<TicketListVM>> GetAllAsync()
-        //{
-        //    return await _context.Tickets
-        //        .Select(t => new TicketListViewModel
-        //        {
-        //            Id = t.Id,
-        //            Title = t.Title,
-        //            ProjectName = t.Project.Name,
-        //            CreatorName = t.Creator.UserName
-        //        }).ToListAsync();
-        //}
+        public async Task<IEnumerable<TicketListVM>> GetAllAsync()
+        {
+            return await _context.Tickets
+                .Select(t => new TicketListVM
+                {
+                    Id = t.Id,
+                    Title = t.Title,
+                    ProjectName = t.Project.ProjectName,
+                    CreatorName = t.Creator.LastName,
+                }).ToListAsync();
+        }
 
 
-        public async Task<TicketDetailsVM> GetByIdAsync(int id)
+        public async Task<TicketDetailsVM?> GetByIdAsync(int id)
         {
             return await _context.Tickets
                 .Where(t => t.Id == id)

@@ -1,68 +1,97 @@
 ﻿@using HelpDeskApp.ViewModels.Models.Ticket
-
-@{
-}
 @model TicketDetailsVM
 
-<div class="container mt-4">
-    <div class="card shadow-sm border-0">     
-        <div class="card-header bg-white d-flex justify-content-between align-items-center">
-            <h5 class="mb-0 fw-semibold">@Model.Title</h5>
+@{
+    ViewData["Title"] = "Ticket Details";
+}
 
-            <span class="badge rounded-pill
-                @(Model.Status == "Open" ? "bg-success-subtle text-success" :
-                                    Model.Status == "Closed" ? "bg-danger-subtle text-danger" :
-                                    "bg-secondary-subtle text-secondary")">
+<div class="odoo-container">
+    <div class="odoo-card">
+
+        <!-- HEADER / ACTION BAR -->
+        <div class="odoo-card-header odoo-header-actions">
+            <div>
+                <h3 class="mb-1">@Model.Title</h3>
+                <span class="odoo-subtitle">Ticket details</span>
+            </div>
+
+            <span class="odoo-status
+                @(Model.Status == "Open" ? "odoo-status-open" :
+                                    Model.Status == "Closed" ? "odoo-status-closed" :
+                                    "odoo-status-default")">
                 @Model.Status
             </span>
         </div>
-
-        <div class="card-body">
+        <div class="odoo-card-body">
             <div class="row">
                 <div class="col-md-8">
-                    <div class="mb-3">
-                        <small class="text-muted text-uppercase">Project</small>
-                        <div class="fw-medium">@Model.Title</div>
-                    </div>
+                    <div class="odoo-form odoo-form-readonly">
 
-                    <div class="mb-3">
-                        <small class="text-muted text-uppercase">Category</small>
-                        <div>@Model.Category</div>
-                    </div>
-
-                    <div class="mb-3">
-                        <small class="text-muted text-uppercase">Status</small>
-                        <div class="p-3 bg-light rounded">
-                            @Model.Status
+                        <div class="odoo-field">
+                            <label class="odoo-label">Project</label>
+                            <div class="odoo-value">
+                                @Model.Title
+                            </div>
                         </div>
+
+                        <div class="odoo-field">
+                            <label class="odoo-label">Category</label>
+                            <div class="odoo-value">
+                                @Model.Category
+                            </div>
+                        </div>
+
+                        <div class="odoo-field">
+                            <label class="odoo-label">Status</label>
+                            <div class="odoo-value">
+                                @Model.Status
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 
-                <!-- RIGHT SIDE -->
-                @* <div class="col-md-4">
-                    <div class="p-3 bg-light rounded">
-                        <div class="mb-3">
-                            <small class="text-muted text-uppercase">Created by</small>
-                            <div>@Model.CreatorEmail</div>
+              @*   <!-- RIGHT: META INFO -->
+                <div class="col-md-4">
+                    <div class="odoo-side-card">
+
+                        <div class="odoo-side-item">
+                            <span class="odoo-side-label">Created by</span>
+                            <span class="odoo-side-value">@Model.CreatorEmail</span>
                         </div>
 
-                        <div class="mb-3">
-                            <small class="text-muted text-uppercase">Created on</small>
-                            <div>@Model.CreatedOn.ToString("dd MMM yyyy")</div>
+                        <div class="odoo-side-item">
+                            <span class="odoo-side-label">Created on</span>
+                            <span class="odoo-side-value">
+                                @Model.CreatedOn.ToString("dd MMM yyyy")
+                            </span>
                         </div>
 
-                        @if (User.IsInRole("Admin"))
+                        @if (User.IsInRole("Administrator"))
                         {
                             <a asp-action="Edit"
                                asp-route-id="@Model.Id"
-                               class="btn btn-sm w-100 text-white"
-                               style="background-color:#875a7b">
+                               class="btn odoo-btn-primary w-100 mt-3">
                                 Edit Ticket
                             </a>
                         }
                     </div>
                 </div> *@
+
             </div>
         </div>
+        <div class="odoo-card-footer">
+            <a asp-action="Index"
+               class="btn odoo-btn-secondary">
+                Back to list
+            </a>
+        </div>
+
     </div>
 </div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
