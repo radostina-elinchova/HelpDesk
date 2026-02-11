@@ -95,5 +95,46 @@ namespace HelpDeskApp.Controllers
 
             return View(model);
         }
+
+
+        [HttpGet]
+        public async Task<IActionResult> Delete(int id)
+        {
+            //string? userId = GetUserId();
+            //if (string.IsNullOrEmpty(userId))
+            //{
+            //    return RedirectToAction("Login", "Account");
+            //}
+
+            var ticket = await _ticketService.GetDeleteByIdAsync(id);
+
+            return View(ticket);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            //string? userId = GetUserId();
+            //if (string.IsNullOrEmpty(userId))
+            //{
+            //    return RedirectToAction("Login", "Account");
+            //}
+
+            try
+            {
+                await _ticketService.DeleteAsync(id);
+            }
+            //catch (UnauthorizedAccessException)
+            //{
+            //    return Unauthorized();
+            //}
+            catch (ArgumentException)
+            {
+                return NotFound();
+            }
+
+            return RedirectToAction("Index");
+        }
     }
 }

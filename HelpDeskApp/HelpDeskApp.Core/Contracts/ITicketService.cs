@@ -13,9 +13,10 @@ namespace HelpDeskApp.Core.Contracts
     {
         Task<IEnumerable<TicketListVM>> GetAllAsync();
         Task<TicketDetailsVM?> GetByIdAsync(int id);
+        Task<TicketDeleteVM?> GetDeleteByIdAsync(int id);
         Task CreateAsync(TicketFormVM model);
         //Task EditAsync(TicketFormVM model);
-        //Task DeleteAsync(int id);
+        Task DeleteAsync(int id);
         Task<TicketStatusVM> GetOpenStatusAsync();
         Task<IEnumerable<CategoryVM>> GetCategoriesAsync();
         Task<IEnumerable<ProjectIndexVM>> GetProjectsAsync();

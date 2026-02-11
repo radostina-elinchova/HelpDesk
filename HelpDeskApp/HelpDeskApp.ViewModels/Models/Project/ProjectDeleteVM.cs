@@ -4,8 +4,7 @@ using System.Xml.Linq;
 
 namespace HelpDeskApp.ViewModels.Models.Project
 {
-    public class ProjectDeleteVM
-    {
+    public class ProjectDeleteVM    {
 
         public int Id { get; set; }
 

@@ -374,3 +374,17 @@ body {
 }
 
 
+.odoo-warning-box {
+    background: #fff4f4;
+    border: 1px solid #f5c2c7;
+    color: #842029;
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.odoo-btn-danger {
+    background-color: #dc3545;
+    color: #fff;
+    border: none;
+}
