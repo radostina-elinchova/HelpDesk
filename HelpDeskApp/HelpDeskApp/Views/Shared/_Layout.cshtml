@@ -12,7 +12,6 @@
 
 <body class="odoo-body">
 
-    <!-- Top bar -->
     <header class="odoo-topbar">
         <div class="odoo-topbar-left">
             <a asp-controller="Home"
@@ -33,6 +32,11 @@
                    class="odoo-menu-item">
                     Projects
                 </a>
+                <a asp-controller="Ticket"
+                   asp-action="Index"
+                   class="odoo-menu-item">
+                    Tickets
+                </a>
             </nav>
         </div>
 
@@ -40,13 +44,9 @@
             <partial name="_LoginPartial" />
         </div>
     </header>
-
-    <!-- Main -->
     <main class="odoo-main">
         @RenderBody()
     </main>
-
-    <!-- Footer -->
     <footer class="odoo-footer">
         © 2026 HelpDeskApp
     </footer>

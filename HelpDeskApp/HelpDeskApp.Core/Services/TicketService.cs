@@ -20,20 +20,20 @@ namespace HelpDeskApp.Core.Services
         }
 
 
-        //public async Task<IEnumerable<TicketListVM>> GetAllAsync()
-        //{
-        //    return await _context.Tickets
-        //        .Select(t => new TicketListViewModel
-        //        {
-        //            Id = t.Id,
-        //            Title = t.Title,
-        //            ProjectName = t.Project.Name,
-        //            CreatorName = t.Creator.UserName
-        //        }).ToListAsync();
-        //}
+        public async Task<IEnumerable<TicketListVM>> GetAllAsync()
+        {
+            return await _context.Tickets
+                .Select(t => new TicketListVM
+                {
+                    Id = t.Id,
+                    Title = t.Title,
+                    ProjectName = t.Project.ProjectName,
+                    CreatorName = t.Creator.LastName,
+                }).ToListAsync();
+        }
 
 
-        public async Task<TicketDetailsVM> GetByIdAsync(int id)
+        public async Task<TicketDetailsVM?> GetByIdAsync(int id)
         {
             return await _context.Tickets
                 .Where(t => t.Id == id)
@@ -43,6 +43,19 @@ namespace HelpDeskApp.Core.Services
                     Title = t.Title,
                     Status = t.Status.TicketStatusName,
                     Category = t.SubCategory.Category.CategoryName,
+
+                }).FirstOrDefaultAsync();
+        }
+        public async Task<TicketDeleteVM?> GetDeleteByIdAsync(int id)
+        {
+            return await _context.Tickets
+                .Where(t => t.Id == id)
+                .Select(t => new TicketDeleteVM
+                {
+                    Id = t.Id,
+                    Title = t.Title,
+                    Status = t.Status.TicketStatusName,
+                   
 
                 }).FirstOrDefaultAsync();
         }
@@ -94,7 +107,7 @@ namespace HelpDeskApp.Core.Services
                 .ToListAsync();
         }
 
-        
+
         //public async Task UpdateAsync(TicketFormViewModel model)
         //{
         //    var ticket = await _context.Tickets.FindAsync(model.Id);
@@ -109,16 +122,16 @@ namespace HelpDeskApp.Core.Services
         //    }
         //}
 
-        
-        //public async Task DeleteAsync(int id)
-        //{
-        //    var ticket = await _context.Tickets.FindAsync(id);
-        //    if (ticket != null)
-        //    {
-        //        _context.Tickets.Remove(ticket);
-        //        await _context.SaveChangesAsync();
-        //    }
-        //}
+
+        public async Task DeleteAsync(int id)
+        {
+            var ticket = await _context.Tickets.FindAsync(id);
+            if (ticket != null)
+            {
+                _context.Tickets.Remove(ticket);
+                await _context.SaveChangesAsync();
+            }
+        }
 
 
 

@@ -16,9 +16,11 @@ namespace HelpDeskApp.Controllers
             _ticketService = ticketService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            //string? userId = GetUserId();
+            var tickets = await _ticketService.GetAllAsync();
+            return View(tickets);
         }
 
         [HttpGet]
@@ -29,12 +31,13 @@ namespace HelpDeskApp.Controllers
             {
                 Categories = await _ticketService.GetCategoriesAsync(),
                 Projects = await _ticketService.GetProjectsAsync(),
-                StatusId = status.Id,  
+                StatusId = status.Id,
                 Status = status.Name
             };
             return View(model);
         }
-        [HttpPost]       
+
+        [HttpPost]
         public async Task<IActionResult> Create(TicketFormVM model)
         {
             if (!ModelState.IsValid)
@@ -44,11 +47,12 @@ namespace HelpDeskApp.Controllers
                 //to do : check if project id is valid before fetching projects
                 model.Categories = await _ticketService.GetCategoriesAsync();
                 model.Projects = await _ticketService.GetProjectsAsync();
-                
+
                 if (model.CategoryId > 0)
                 {
                     model.SubCategories = await _ticketService.GetSubCategoriesAsync(model.CategoryId);
                 }
+
                 var status = await _ticketService.GetOpenStatusAsync();
                 if (status != null)
                 {
@@ -60,6 +64,7 @@ namespace HelpDeskApp.Controllers
             }
 
             var creatorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            
             await _ticketService.CreateAsync(model);
 
             return RedirectToAction("Index", "Home");
@@ -68,14 +73,71 @@ namespace HelpDeskApp.Controllers
         [HttpGet]
         public async Task<JsonResult> GetSubCategories(int categoryId)
         {
+            if (categoryId <= 0)
+            {
+                return Json(new List<object>());
+            } 
+
             var subCategories = await _ticketService.GetSubCategoriesAsync(categoryId);
-            return Json(subCategories); 
+            return Json(subCategories);
         }
+
         [HttpGet]
         public async Task<IActionResult> Details(int id)
         {
-            var model = await _ticketService.GetByIdAsync(id);
+            if (id <= 0)
+            {
+                return NotFound();
+            }
+            var model = await _ticketService.GetByIdAsync(id);          
+
+            if (model == null)
+            {
+                throw new InvalidOperationException("Destination not found");
+            }
+
             return View(model);
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> Delete(int id)
+        {
+            //string? userId = GetUserId();
+            //if (string.IsNullOrEmpty(userId))
+            //{
+            //    return RedirectToAction("Login", "Account");
+            //}
+
+            var ticket = await _ticketService.GetDeleteByIdAsync(id);
+
+            return View(ticket);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            //string? userId = GetUserId();
+            //if (string.IsNullOrEmpty(userId))
+            //{
+            //    return RedirectToAction("Login", "Account");
+            //}
+
+            try
+            {
+                await _ticketService.DeleteAsync(id);
+            }
+            //catch (UnauthorizedAccessException)
+            //{
+            //    return Unauthorized();
+            //}
+            catch (ArgumentException)
+            {
+                return NotFound();
+            }
+
+            return RedirectToAction("Index");
         }
     }
 }
