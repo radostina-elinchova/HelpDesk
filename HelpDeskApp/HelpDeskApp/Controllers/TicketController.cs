@@ -39,8 +39,12 @@ namespace HelpDeskApp.Controllers
         {
             if (!ModelState.IsValid)
             {
+                //to do : check if category id is valid before fetching subcategories
+                //to do : check if subcategory id is valid before fetching subcategories
+                //to do : check if project id is valid before fetching projects
                 model.Categories = await _ticketService.GetCategoriesAsync();
                 model.Projects = await _ticketService.GetProjectsAsync();
+                
                 if (model.CategoryId > 0)
                 {
                     model.SubCategories = await _ticketService.GetSubCategoriesAsync(model.CategoryId);
