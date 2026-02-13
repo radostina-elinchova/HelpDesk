@@ -18,6 +18,10 @@ namespace HelpDeskApp.ViewModels.Models.Project
         [Display(Name = "Project Description")]
         public string Description { get; set; } = null!;
         public virtual ICollection<TicketDetailsVM> Tickets { get; set; } = new HashSet<TicketDetailsVM>();
+        public virtual ICollection<ProjectUserSelectVM> AssignedUsers { get; set; } = new HashSet<ProjectUserSelectVM>();
+        public virtual ICollection<ProjectUserSelectVM> AvailableUsers { get; set; } = new HashSet<ProjectUserSelectVM>();
+
+        public string? SelectedUserId { get; set; }
 
     }
 }

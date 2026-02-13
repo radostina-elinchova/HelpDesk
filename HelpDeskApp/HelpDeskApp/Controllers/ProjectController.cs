@@ -42,7 +42,12 @@ namespace HelpDeskApp.Controllers
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-            return View();
+            var model = new ProjectCreateVM
+            {                
+                AvailableUsers = await _projectService.GetAvailableUsersAsync()
+            };
+
+            return View(model);
         }
 
         [HttpPost]
@@ -50,20 +55,19 @@ namespace HelpDeskApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                var newProject = await _projectService.ProjectCreateAsync(model.ProjectName, model.Description);
-
-
-                if (newProject != null)
-                {
-                    return RedirectToAction(nameof(Index));
-                }
+                await _projectService.ProjectCreateAsync(model);
+                return RedirectToAction(nameof(Index));
             }
+
+            model.AvailableUsers = await _projectService.GetAvailableUsersAsync();
+
             return View(model);
         }
 
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
+            //to do: Add it to service
             var item = await _projectService.GetProjectByIdAsync(id);
             if (item == null)
             {
@@ -123,8 +127,7 @@ namespace HelpDeskApp.Controllers
             };
             return View(product);
         }
-
-        // POST: ProductController/Delete/5
+       
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id, IFormCollection collection)
@@ -144,6 +147,19 @@ namespace HelpDeskApp.Controllers
         {
 
             return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> AddUser(int projectId, string userId)
+        {
+            await _projectService.AssignUserAsync(projectId, userId);
+            return RedirectToAction(nameof(Details), new { id = projectId });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RemoveUser(int projectId, string userId)
+        {
+            await _projectService.RemoveUserAsync(projectId, userId);
+            return RedirectToAction(nameof(Details), new { id = projectId });
         }
 
     }

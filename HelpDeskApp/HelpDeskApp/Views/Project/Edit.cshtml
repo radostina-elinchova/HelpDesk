@@ -6,8 +6,6 @@
 
 <div class="odoo-container">
     <div class="odoo-card">
-
-        <!-- Header / Action bar -->
         <div class="odoo-card-header odoo-header-actions">
             <div>
                 <h3>Edit Project</h3>
@@ -19,13 +17,11 @@
             </span>
         </div>
 
-        <!-- Body -->
         <div class="odoo-card-body">
             <form asp-action="Edit" method="post" class="odoo-form">
                 <input type="hidden" asp-for="Id" />
 
                 <div class="odoo-form-layout">
-                    <!-- Main form -->
                     <div class="odoo-form-main">
 
                         <div class="odoo-field">
@@ -49,8 +45,6 @@
                         </div>
 
                     </div>
-
-                    <!-- Side actions (Odoo-style) -->
                     <div class="odoo-form-side">
                         <div class="odoo-side-card">
                             <span class="odoo-side-title">Actions</span>

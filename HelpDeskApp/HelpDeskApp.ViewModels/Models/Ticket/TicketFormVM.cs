@@ -34,9 +34,9 @@ namespace HelpDeskApp.ViewModels.Models.Ticket
         public int StatusId { get; set; }
         public string Status { get; set; } = null!;
 
-        public IEnumerable<CategoryVM>? Categories { get; set; }
-        public IEnumerable<ProjectIndexVM>? Projects { get; set; }
-        public IEnumerable<SubCategoryVM>? SubCategories { get; set; }
+        public IEnumerable<CategoryVM>? Categories { get; set; } = new HashSet<CategoryVM>();
+        public IEnumerable<ProjectIndexVM>? Projects { get; set; } = new HashSet<ProjectIndexVM>();
+        public IEnumerable<SubCategoryVM>? SubCategories { get; set; } = new HashSet<SubCategoryVM>();
 
         public string? AssigneeId { get; set; }
 

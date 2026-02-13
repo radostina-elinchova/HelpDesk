@@ -6,8 +6,6 @@
 }
 
 <div class="odoo-container">
-
-    <!-- ACTION BAR -->
     <div class="odoo-action-bar mb-3">
         <h3>@ViewData["Title"]</h3>
     </div>
@@ -16,13 +14,10 @@
         <div class="col-md-6">
 
             <div class="odoo-card">
-
-                <!-- HEADER -->
                 <div class="odoo-card-header">
                     <h4 class="mb-0">@Model.ProjectName</h4>
                 </div>
 
-                <!-- BODY -->
                 <div class="odoo-card-body">
 
                     <div class="odoo-form odoo-form-readonly">
@@ -50,8 +45,6 @@
                     </div>
 
                 </div>
-
-                <!-- FOOTER -->
                 <div class="odoo-card-footer d-flex justify-content-between">
 
                     <form asp-action="Delete" method="post">
@@ -75,3 +68,6 @@
         </div>
     </div>
 </div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

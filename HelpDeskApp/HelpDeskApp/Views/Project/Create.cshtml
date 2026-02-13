@@ -7,44 +7,62 @@
 
 <div class="odoo-container">
     <div class="odoo-card">
-        <div class="odoo-card-header">
-            <h3>Create Project</h3>
-            <p class="odoo-subtitle">
-                Fill in the details below to create a new project.
-            </p>
+        <div class="odoo-card-header odoo-header-actions">
+            <div>
+                <h3 class="mb-1">New Project</h3>
+                <span class="odoo-subtitle">
+                    Create and assign team members using the management console
+                </span>
+            </div>
         </div>
-
         <div class="odoo-card-body">
             <form asp-action="Create" method="post" class="odoo-form">
 
-                <div class="odoo-field">
-                    <label asp-for="ProjectName" class="odoo-label">
-                        Project Name
-                    </label>
-                    <input asp-for="ProjectName" class="odoo-input" />
-                    <span asp-validation-for="ProjectName" class="odoo-error"></span>
-                </div>
+                <div class="row">
+                    <div class="col-md-8">
 
-                <div class="odoo-field">
-                    <label asp-for="Description" class="odoo-label">
-                        Description
-                    </label>
-                    <textarea asp-for="Description"
-                              rows="4"
-                              class="odoo-input"></textarea>
-                    <span asp-validation-for="Description" class="odoo-error"></span>
-                </div>
+                        <div class="odoo-field">
+                            <label asp-for="ProjectName" class="odoo-label"></label>
+                            <input asp-for="ProjectName" class="odoo-input" />
+                            <span asp-validation-for="ProjectName" class="odoo-error"></span>
+                        </div>
 
+                        <div class="odoo-field">
+                            <label asp-for="Description" class="odoo-label"></label>
+                            <textarea asp-for="Description"
+                                      rows="4"
+                                      class="odoo-input"></textarea>
+                            <span asp-validation-for="Description" class="odoo-error"></span>
+                        </div>
+
+                    </div>
+                    <div class="col-md-4">
+                        <div class="odoo-side-card">
+                            <div class="odoo-field">
+                                <label class="odoo-label">
+                                    Team Assignment
+                                </label>                               
+                                <select asp-for="SelectedUserIds"
+                                        asp-items="@(new SelectList(Model.AvailableUsers, "Id", "FullName"))"
+                                        class="odoo-input"
+                                        multiple="multiple"
+                                        style="height: 180px;">
+                                </select>
+                                <small class="text-muted d-block mt-1">
+                                    Hold **Ctrl** to select multiple members.
+                                </small>
+                                <span asp-validation-for="SelectedUserIds" class="odoo-error"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="odoo-card-footer">
                     <div class="odoo-actions">
-                        <a asp-action="Index"
-                           class="btn odoo-btn-secondary">
+                        <a asp-action="Index" class="btn odoo-btn-secondary">
                             Cancel
                         </a>
-
-                        <button type="submit"
-                                class="btn odoo-btn-primary">
-                            Create
+                        <button type="submit" class="btn odoo-btn-primary">
+                            Create Project
                         </button>
                     </div>
                 </div>
@@ -55,8 +73,5 @@
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    <partial name="_ValidationScriptsPartial" />
 }
-

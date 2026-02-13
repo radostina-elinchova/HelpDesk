@@ -388,3 +388,42 @@ body {
     color: #fff;
     border: none;
 }
+.odoo-form .odoo-field {
+    margin-bottom: 18px;
+    display: flex;
+    flex-direction: column;
+}
+
+.odoo-label {
+    font-weight: 500;
+    margin-bottom: 6px;
+    font-size: 14px;
+    color: #444;
+}
+
+.odoo-input {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 6px;
+    border: 1px solid #d6d6d6;
+    background-color: #fff;
+    font-size: 14px;
+    transition: all 0.2s ease-in-out;
+}
+
+    .odoo-input:focus {
+        border-color: #875A7B;
+        box-shadow: 0 0 0 2px rgba(135, 90, 123, 0.15);
+        outline: none;
+    }
+
+textarea.odoo-input {
+    resize: vertical;
+}
+
+.odoo-side-card {
+    background: #fafafa;
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid #e6e6e6;
+}
