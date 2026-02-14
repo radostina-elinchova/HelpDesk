@@ -26,19 +26,24 @@ namespace HelpDeskApp.Controllers
         [HttpGet]
         public async Task<IActionResult> Create(int projectId)
         {
-            
             var status = await _ticketService.GetOpenStatusAsync();
-            var model = new TicketFormVM
-            {
-                Categories = await _ticketService.GetCategoriesAsync(),
-                Projects = await _ticketService.GetProjectsAsync(),
-                StatusId = status.Id,
-                Status = status.Name
-            };
+            var categories = await _ticketService.GetCategoriesAsync();
+            var allProjects = await _ticketService.GetProjectsAsync();
+
             if (projectId != 0)
             {
-                model.ProjectId = projectId;
+                allProjects = allProjects.Where(p => p.Id != projectId).ToList();
             }
+
+            var model = new TicketFormVM
+            {
+                Categories = categories,
+                Projects = allProjects, 
+                StatusId = status.Id,
+                Status = status.Name,
+                ProjectId = projectId 
+            };
+
             return View(model);
         }
 
