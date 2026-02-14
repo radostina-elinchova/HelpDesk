@@ -37,21 +37,29 @@ namespace HelpDeskApp.Core.Services
         public async Task<ProjectDetailsVM> GetProjectDetailsAsync(int projectId)
         {
             var project = await _context.Projects
-              .Where(p => p.Id == projectId)
-              .Select(p => new ProjectDetailsVM
-              {
-                  Id = p.Id,
-                  ProjectName = p.ProjectName,
-                  Description = p.Description,
-                  AssignedUsers = p.UsersProjects
-                      .Select(up => new ProjectUserSelectVM
-                      {
-                          Id = up.User.Id,
-                          FullName = up.User.UserName ?? up.User.Email
-                      }).ToList()
-              })
-              .FirstOrDefaultAsync();      
-                
+  .Where(p => p.Id == projectId)
+  .Select(p => new ProjectDetailsVM
+  {
+      Id = p.Id,
+      ProjectName = p.ProjectName,
+      Description = p.Description,
+
+      AssignedUsers = p.UsersProjects
+          .Select(up => new ProjectUserSelectVM
+          {
+              Id = up.User.Id,
+              FullName = up.User.UserName ?? up.User.Email
+          }).ToList(),
+      Tickets = p.Tickets.Select(t => new TicketDetailsVM
+      {
+          Id = t.Id,
+          Title = t.Title,
+          Status = t.Status.TicketStatusName,
+
+      }).ToList()
+            })
+              .FirstOrDefaultAsync();
+
 
             var allUsers = await _context.Users
                 .Select(u => new ProjectUserSelectVM
@@ -63,6 +71,7 @@ namespace HelpDeskApp.Core.Services
             project.AvailableUsers = allUsers
                 .Where(u => !project.AssignedUsers.Any(a => a.Id == u.Id))
                 .ToList();
+
 
             return project;
         }

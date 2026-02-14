@@ -24,8 +24,9 @@ namespace HelpDeskApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Create()
+        public async Task<IActionResult> Create(int projectId)
         {
+            
             var status = await _ticketService.GetOpenStatusAsync();
             var model = new TicketFormVM
             {
@@ -34,6 +35,10 @@ namespace HelpDeskApp.Controllers
                 StatusId = status.Id,
                 Status = status.Name
             };
+            if (projectId != 0)
+            {
+                model.ProjectId = projectId;
+            }
             return View(model);
         }
 
@@ -64,7 +69,7 @@ namespace HelpDeskApp.Controllers
             }
 
             var creatorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            
+
             await _ticketService.CreateAsync(model);
 
             return RedirectToAction("Index", "Home");
@@ -76,7 +81,7 @@ namespace HelpDeskApp.Controllers
             if (categoryId <= 0)
             {
                 return Json(new List<object>());
-            } 
+            }
 
             var subCategories = await _ticketService.GetSubCategoriesAsync(categoryId);
             return Json(subCategories);
@@ -89,7 +94,7 @@ namespace HelpDeskApp.Controllers
             {
                 return NotFound();
             }
-            var model = await _ticketService.GetByIdAsync(id);          
+            var model = await _ticketService.GetByIdAsync(id);
 
             if (model == null)
             {

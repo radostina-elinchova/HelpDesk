@@ -8,15 +8,14 @@ namespace HelpDeskApp.Infrastructure.Data.Entities
     public class ApplicationUser : IdentityUser
     {
      
-        [Required]
         [MaxLength(ValidationConstants.DefaultNameMaxLength)]
         public string FirstName { get; set; } = null!;
 
-        [Required]
+       
         [MaxLength(ValidationConstants.DefaultNameMaxLength)]
         public string LastName { get; set; } = null!;
 
-        [Required]
+       
         [MaxLength(ValidationConstants.AddressMaxLength)]
         public string Address { get; set; } = null!;
 
