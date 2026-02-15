@@ -17,8 +17,6 @@
                   method="post">
 
                 <div class="row">
-
-                    <!-- STATUS -->
                     <div class="col-md-6 mb-3">
                         <label class="form-label text-muted text-uppercase small">
                             Status
@@ -31,8 +29,6 @@
 
                         <input type="hidden" asp-for="StatusId" />
                     </div>
-
-                    <!-- TITLE -->
                     <div class="col-md-6 mb-3">
                         <label asp-for="Title"
                                class="form-label text-muted text-uppercase small">
@@ -43,8 +39,6 @@
                         <span asp-validation-for="Title"
                               class="text-danger small"></span>
                     </div>
-
-                    <!-- DESCRIPTION -->
                     <div class="col-md-6 mb-3">
                         <label asp-for="Description"
                                class="form-label text-muted text-uppercase small">
@@ -55,8 +49,6 @@
                         <span asp-validation-for="Description"
                               class="text-danger small"></span>
                     </div>
-
-                    <!-- PROJECT -->
                     <div class="col-md-6 mb-3">
                         <label asp-for="ProjectId"
                                class="form-label text-muted text-uppercase small">
@@ -82,8 +74,6 @@
                         <span asp-validation-for="ProjectId"
                               class="text-danger small"></span>
                     </div>
-
-                    <!-- CATEGORY -->
                     <div class="col-md-6 mb-3">
                         <label asp-for="CategoryId"
                                class="form-label text-muted text-uppercase small">
@@ -101,7 +91,6 @@
                               class="text-danger small"></span>
                     </div>
 
-                    <!-- SUBCATEGORY -->
                     <div class="col-md-6 mb-3">
                         <label asp-for="SubCategoryId"
                                class="form-label text-muted text-uppercase small">
@@ -112,8 +101,8 @@
                                 class="form-select"
                                 id="subCategorySelect"
                                 asp-items="@(Model.SubCategories != null
-                                                                            ? new SelectList(Model.SubCategories, "Id", "Name", Model.SubCategoryId)
-                                                                            : null)">
+                                ? new SelectList(Model.SubCategories, "Id", "Name", Model.SubCategoryId)
+                                : null)">
                             <option value="">Select subcategory</option>
                         </select>
 
@@ -123,7 +112,6 @@
 
                 </div>
 
-                <!-- BUTTONS -->
                 <div class="d-flex justify-content-end gap-2 mt-3">
                     <button type="submit"
                             class="btn text-white"
