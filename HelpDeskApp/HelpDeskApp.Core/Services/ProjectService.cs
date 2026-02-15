@@ -98,16 +98,16 @@ namespace HelpDeskApp.Core.Services
 
             return item;
         }
-        public async Task EditProjectAsync(int id, string name, string? description)
+        public async Task EditProjectAsync(ProjectEditVM model)
         {
-            var project = await _context.Projects.FirstOrDefaultAsync(r => r.Id == id);
+            var project = await _context.Projects.FirstOrDefaultAsync(r => r.Id == model.Id);
 
             if (project == null)
             {
                 throw new UnauthorizedAccessException("You are not authorized to edit this project.");
             }
-            project.ProjectName = name;
-            project.Description = description;
+            project.ProjectName = model.ProjectName;
+            project.Description = model.Description;
 
             await _context.SaveChangesAsync();
         }

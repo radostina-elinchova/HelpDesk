@@ -82,6 +82,42 @@ namespace HelpDeskApp.Controllers
 
             return RedirectToAction("Index", "Ticket");
         }
+       
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {        
+            var ticket = await _ticketService.GetTicketEditAsync(id);
+
+            if (ticket == null)
+            {
+                return NotFound();
+            }         
+
+            return View(ticket);
+        }
+        
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(TicketEditVM model)        {
+          
+            if (ModelState.IsValid)
+            {                
+                model.Categories = await _ticketService.GetTicketCategoriesAsync();
+                model.Projects = await _ticketService.GetTicketProjectsAsync();
+                return View(model);
+            }
+
+            try
+            {               
+                await _ticketService.EditTicketAsync(model);               
+                return RedirectToAction("Index", "Ticket");
+            }
+            catch (Exception ex)
+            {               
+                ModelState.AddModelError("", "Възникна грешка при записването на промените.");
+                return View(model);
+            }
+        }
 
         [HttpGet]
         public async Task<JsonResult> GetSubCategories(int categoryId)
@@ -124,6 +160,11 @@ namespace HelpDeskApp.Controllers
 
             return View(ticket);
         }
+        //to do: implement soft delete
+        //to do: add on delete restrict for projects. Projects with tickets should not be deletable.
+        //To do: add it to project service and project controller.
+        //To do: add it to project details view - show message if project has tickets.
+        //To do: add it to project index view - show message if project has tickets.
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]

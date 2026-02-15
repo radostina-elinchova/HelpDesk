@@ -94,7 +94,7 @@ namespace HelpDeskApp.Controllers
 
             try
             {
-                await _projectService.EditProjectAsync(model.Id, model.ProjectName, model.Description);
+                await _projectService.EditProjectAsync(model);
             }
             catch (UnauthorizedAccessException)
             {
@@ -104,6 +104,12 @@ namespace HelpDeskApp.Controllers
             return RedirectToAction("Details", new { id = model.Id });
         }
 
+        //to do: implement soft delete
+        //to do: implement soft delete
+        //to do: add on delete restrict for projects. Projects with tickets should not be deletable.
+        //To do: add it to project service and project controller.
+        //To do: add it to project details view - show message if project has tickets.
+        //To do: add it to project index view - show message if project has tickets.
         public async Task<IActionResult> Delete(int id)
         {
             var item = await _projectService.GetProjectByIdAsync(id);

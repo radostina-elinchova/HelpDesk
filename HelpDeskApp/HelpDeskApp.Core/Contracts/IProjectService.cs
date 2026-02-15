@@ -14,7 +14,7 @@ namespace HelpDeskApp.Core.Contracts
         Task<IEnumerable<ProjectIndexVM>> GetAllProjectsAsync(string? userId);
         Task<Project> GetProjectByIdAsync(int id);
         Task<Project> CreateProjectAsync(ProjectCreateVM model);        
-        Task EditProjectAsync(int id, string name, string? description);
+        Task EditProjectAsync(ProjectEditVM model);
         Task<bool> DeleteProjectAsync(int id);
         Task<ProjectDetailsVM> GetProjectDetailsAsync(int projectId);
         Task AssignUserToProjectAsync(int projectId, string userId);

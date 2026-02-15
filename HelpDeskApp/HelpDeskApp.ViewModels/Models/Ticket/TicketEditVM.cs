@@ -8,8 +8,9 @@ using System.Threading.Tasks;
 
 namespace HelpDeskApp.ViewModels.Models.Ticket
 {
-    public class TicketFormVM
+    public class TicketEditVM
     {
+        public int Id { get; set; }
         // to do : use the global constants for validation. Do not use magical numbers in the code.
         [Required]
         [StringLength(100, MinimumLength = 5, ErrorMessage = "Заглавието трябва да е между 5 и 100 символа")]
@@ -40,6 +41,5 @@ namespace HelpDeskApp.ViewModels.Models.Ticket
         public IEnumerable<SubCategoryVM>? SubCategories { get; set; } = new HashSet<SubCategoryVM>();
 
         public string? AssigneeId { get; set; }
-
     }
 }
