@@ -49,21 +49,32 @@
                         <span asp-validation-for="Description"
                               class="text-danger small"></span>
                     </div>
-                     <div class="col-md-6 mb-3">
+                    <div class="col-md-6 mb-3">
                         <label asp-for="ProjectId"
                                class="form-label text-muted text-uppercase small">
                             Project
                         </label>
-                        <select asp-for="ProjectId"
-                                class="form-select"
-                                id="projectsSelect"
-                                asp-items="@(new SelectList(Model.Projects, "Id", "ProjectName"))">
-                            <option value="">Select project</option>
-                        </select>
+
+                        @if (Model.ProjectId != 0)
+                        {                            
+                            <input type="hidden" asp-for="ProjectId" />                          
+                            <input class="form-control"
+                                   value="@Model.Projects.FirstOrDefault(p => p.Id == Model.ProjectId)?.ProjectName"
+                                   readonly />
+                        }
+                        else
+                        {                           
+                            <select asp-for="ProjectId"
+                                    class="form-select"
+                                    id="projectsSelect"
+                                    asp-items="@(new SelectList(Model.Projects, "Id", "ProjectName"))">
+                                <option value="">Select project</option>
+                            </select>
+                        }
 
                         <span asp-validation-for="ProjectId"
                               class="text-danger small"></span>
-                    </div>                  
+                    </div>
                     <div class="col-md-6 mb-3">
                         <label asp-for="CategoryId"
                                class="form-label text-muted text-uppercase small">

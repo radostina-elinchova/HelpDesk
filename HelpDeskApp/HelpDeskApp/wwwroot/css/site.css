@@ -213,7 +213,6 @@ body {
 .odoo-link-danger {
     color: #dc3545;
 }
-/* Base */
 .odoo-body {
     background-color: #f5f6f8;
     font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
@@ -234,7 +233,7 @@ body {
 .odoo-topbar-left {
     display: flex;
     align-items: center;
-    gap: 32px;
+    gap: 20px;
 }
 
 .odoo-logo {
@@ -266,14 +265,11 @@ body {
     align-items: center;
     gap: 12px;
 }
-
-/* Main area */
 .odoo-main {
     padding: 32px 24px;
     min-height: calc(100vh - 96px);
 }
 
-/* Footer */
 .odoo-footer {
     height: 40px;
     font-size: 0.75rem;
@@ -426,4 +422,33 @@ textarea.odoo-input {
     padding: 16px;
     border-radius: 8px;
     border: 1px solid #e6e6e6;
+}
+.odoo-login-container {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f8f9fa;
+}
+
+.odoo-login-card {
+    width: 380px;
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+}
+
+.odoo-login-header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+    .odoo-login-header h2 {
+        margin-bottom: 5px;
+    }
+
+.odoo-login-btn {
+    width: 100%;
+    margin-top: 15px;
 }

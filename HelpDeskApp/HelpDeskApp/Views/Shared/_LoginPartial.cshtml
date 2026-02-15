@@ -3,25 +3,51 @@
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 
-<ul class="navbar-nav">
-@if (SignInManager.IsSignedIn(User))
-{
-    <li class="nav-item">
-        <a  class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @User.Identity?.Name!</a>
-    </li>
-    <li class="nav-item">
-        <form  class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-            <button  type="submit" class="nav-link btn btn-link text-dark">Logout</button>
-        </form>
-    </li>
-}
-else
-{
-    <li class="nav-item">
-        <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Register</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Login</a>
-    </li>
-}
-</ul>
+<div class="odoo-topbar-user">
+
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <div class="odoo-topbar-left">            
+            <button class="btn odoo-btn-primary btn-sm" style=align-items: center; gap: 4px;">               
+                <span class="odoo-username">
+                    @User.Identity?.Name
+                </span>
+                <span class="odoo-caret">▾</span>
+            </button>            
+            <a asp-area="Identity"
+               asp-page="/Account/Manage/Index"
+               class="btn odoo-btn-primary btn-sm">
+                My Profile
+            </a>
+
+            <form asp-area="Identity"
+                  asp-page="/Account/Logout"
+                  asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })"
+                  method="post"
+                  style="margin: 0;">
+                <button type="submit"
+                        class="btn odoo-btn-primary btn-sm">
+                    Log out
+                </button>
+            </form>
+
+        </div>
+    }
+    else
+    {
+        <div class="odoo-auth-links">
+            <a asp-area="Identity"
+               asp-page="/Account/Register"
+               class="btn odoo-btn-primary btn-sm">
+                Register
+            </a>
+
+            <a asp-area="Identity"
+               asp-page="/Account/Login"
+               class="btn odoo-btn-primary btn-sm">
+                Sign in
+            </a>
+        </div>
+    }
+
+</div>

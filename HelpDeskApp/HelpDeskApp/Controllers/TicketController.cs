@@ -29,21 +29,16 @@ namespace HelpDeskApp.Controllers
         public async Task<IActionResult> Create(int projectId)
         {
             var status = await _ticketService.GetTicketOpenStatusAsync();
-            var categories = await _ticketService.GetTicketCategoriesAsync();
+            var categories = await _ticketService.GetTicketCategoriesAsync();          
             var allProjects = await _ticketService.GetTicketProjectsAsync();
-
-            if (projectId != 0)
-            {
-                allProjects = allProjects.Where(p => p.Id != projectId).ToList();
-            }
 
             var model = new TicketFormVM
             {
                 Categories = categories,
-                Projects = allProjects, 
+                Projects = allProjects,
                 StatusId = status.Id,
                 Status = status.Name,
-                ProjectId = projectId 
+                ProjectId = projectId
             };
 
             return View(model);

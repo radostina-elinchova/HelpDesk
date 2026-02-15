@@ -19,7 +19,7 @@ namespace HelpDeskApp.Infrastructure.Data.Infrastructure
             var services = serviceScope.ServiceProvider;
 
             await RoleSeeder(services);
-            //await SeedAdministrator(services);
+            await SeedAdministrator(services);
 
             var context = services.GetRequiredService<ApplicationDbContext>();
             await SeedStatusAsync(context);
