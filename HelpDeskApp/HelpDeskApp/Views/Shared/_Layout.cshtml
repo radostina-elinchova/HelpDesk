@@ -14,7 +14,7 @@
 
     <header class="odoo-topbar">
         <div class="odoo-topbar-left">
-          
+
 
             <nav class="odoo-menu">
                 <a asp-controller="Home"
@@ -22,16 +22,19 @@
                    class="odoo-logo">
                     HelpDesk
                 </a>
-                <a asp-controller="Project"
-                   asp-action="Index"
-                   class="odoo-menu-item">
-                    Projects
-                </a>
-                <a asp-controller="Ticket"
-                   asp-action="Index"
-                   class="odoo-menu-item">
-                    Tickets
-                </a>
+                @if (this.User.Identity.IsAuthenticated)
+                {
+                    <a asp-controller="Project"
+                       asp-action="Index"
+                       class="odoo-menu-item">
+                        Projects
+                    </a>
+                    <a asp-controller="Ticket"
+                       asp-action="Index"
+                       class="odoo-menu-item">
+                        Tickets
+                    </a>
+                }
             </nav>
         </div>
 

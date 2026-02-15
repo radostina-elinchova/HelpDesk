@@ -20,9 +20,16 @@ namespace HelpDeskApp.Core.Services
         }
 
 
-        public async Task<IEnumerable<TicketListVM>> GetAllTicketsAsync(string? userId)
-        {
-            return await _context.Tickets
+        public async Task<IEnumerable<TicketListVM>> GetAllTicketsAsync(string? userId = null, bool isAdmin = false)
+        {            
+            var tickets = _context.Tickets.AsQueryable();
+           
+            if (!isAdmin && !string.IsNullOrEmpty(userId))
+            {
+                tickets = tickets.Where(t => t.CreatorId == userId);
+            }
+           
+            return await tickets
                 .Select(t => new TicketListVM
                 {
                     Id = t.Id,
@@ -30,7 +37,8 @@ namespace HelpDeskApp.Core.Services
                     ProjectName = t.Project.ProjectName,
                     CreatorName = t.Creator.LastName,
                     IsCteator = userId != null && t.CreatorId == userId,
-                }).ToListAsync();
+                })
+                .ToListAsync();
         }
 
         public async Task<TicketDetailsVM?> GetTicketByIdAsync(int id)
@@ -102,8 +110,9 @@ namespace HelpDeskApp.Core.Services
             };
             return openStatusVM;
         }
-        public async Task CreateTicketAsync(TicketFormVM model)
+        public async Task CreateTicketAsync(TicketFormVM model, string userId)
         {
+
             var openStatus = await GetTicketOpenStatusAsync();
             var ticket = new Ticket
             {
@@ -112,7 +121,8 @@ namespace HelpDeskApp.Core.Services
                 SubCategoryId = model.SubCategoryId,
                 ProjectId = model.ProjectId,
                 StatusId = openStatus.Id,
-                CreatedOn = DateTime.UtcNow
+                CreatedOn = DateTime.UtcNow,
+                CreatorId = userId
             };
             _context.Tickets.Add(ticket);
             await _context.SaveChangesAsync();

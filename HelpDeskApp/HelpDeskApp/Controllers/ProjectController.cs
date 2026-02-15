@@ -8,6 +8,7 @@ using System.Linq;
 
 namespace HelpDeskApp.Controllers
 {
+    [Authorize]
     public class ProjectController : BaseController
     {
         private readonly IProjectService _projectService;

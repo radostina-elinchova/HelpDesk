@@ -26,12 +26,12 @@
                         @ticket.Title
                     </span>
 
-                    <span class="odoo-status
+                @*     <span class="odoo-status
                             @(ticket.Status == "Open" ? "odoo-status-open" :
                                                     ticket.Status == "Closed" ? "odoo-status-closed" :
                                                     "odoo-status-default")">
                     @ticket.Status
-                </span>
+                </span> *@
             </div>
 
                 <div class="odoo-kanban-body">

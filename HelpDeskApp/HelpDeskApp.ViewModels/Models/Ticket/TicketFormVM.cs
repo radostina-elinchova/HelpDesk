@@ -40,6 +40,7 @@ namespace HelpDeskApp.ViewModels.Models.Ticket
         public IEnumerable<SubCategoryVM>? SubCategories { get; set; } = new HashSet<SubCategoryVM>();
 
         public string? AssigneeId { get; set; }
+        public string CreatorId { get; set; }
 
     }
 }

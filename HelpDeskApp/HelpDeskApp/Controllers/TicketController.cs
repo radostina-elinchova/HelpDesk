@@ -8,6 +8,7 @@ using System.Security.Claims;
 
 namespace HelpDeskApp.Controllers
 {
+    [Authorize]
     public class TicketController : BaseController
     {
         private readonly ITicketService _ticketService;
@@ -21,7 +22,9 @@ namespace HelpDeskApp.Controllers
         public async Task<IActionResult> Index()
         {
             string? userId = GetUserId();
-            var tickets = await _ticketService.GetAllTicketsAsync(userId);
+            bool isAdmin = User.IsInRole("Administrator");
+            var tickets = await _ticketService.GetAllTicketsAsync(userId, isAdmin);
+
             return View(tickets);
         }
 
@@ -31,6 +34,7 @@ namespace HelpDeskApp.Controllers
             var status = await _ticketService.GetTicketOpenStatusAsync();
             var categories = await _ticketService.GetTicketCategoriesAsync();          
             var allProjects = await _ticketService.GetTicketProjectsAsync();
+            string? userId = GetUserId();
 
             var model = new TicketFormVM
             {
@@ -38,7 +42,8 @@ namespace HelpDeskApp.Controllers
                 Projects = allProjects,
                 StatusId = status.Id,
                 Status = status.Name,
-                ProjectId = projectId
+                ProjectId = projectId,
+                CreatorId = userId
             };
 
             return View(model);
@@ -49,6 +54,8 @@ namespace HelpDeskApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(TicketFormVM model, bool fromProject)
         {
+            string? userId = GetUserId();
+            model.CreatorId = userId;
             if (!ModelState.IsValid)
             {
                 //to do : check if category id is valid before fetching subcategories
@@ -56,7 +63,7 @@ namespace HelpDeskApp.Controllers
                 //to do : check if project id is valid before fetching projects
                 model.Categories = await _ticketService.GetTicketCategoriesAsync();
                 model.Projects = await _ticketService.GetTicketProjectsAsync();
-
+                
                 if (model.CategoryId > 0)
                 {
                     model.SubCategories = await _ticketService.GetTicketSubCategoriesAsync(model.CategoryId);
@@ -71,10 +78,8 @@ namespace HelpDeskApp.Controllers
 
                 return View(model);
             }
-
-            var creatorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            await _ticketService.CreateTicketAsync(model);
+                       
+            await _ticketService.CreateTicketAsync(model, userId);
             if (fromProject)
             {                
                 return RedirectToAction("Details", "Project", new { id = model.ProjectId });
@@ -100,7 +105,7 @@ namespace HelpDeskApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(TicketEditVM model)        {
           
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {                
                 model.Categories = await _ticketService.GetTicketCategoriesAsync();
                 model.Projects = await _ticketService.GetTicketProjectsAsync();

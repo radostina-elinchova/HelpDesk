@@ -1,20 +1,33 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
-
-<div class="odoo-container">
-    <div class="odoo-card">
-        <div class="odoo-card-header">
-            <h1 class="odoo-kanban-title">Welcome to HelpDesk App</h1>
-        </div>
-        <div class="odoo-card-body">
-            <p>
-                HelpDesk App е модерно решение за управление на поддръжката и проекти.
-                Следете задачите си, управлявайте проекти и комуникирайте ефективно с екипа си.
-            </p>
-            <p>
-                Научете повече за <a href="https://learn.microsoft.com/aspnet/core" class="odoo-badge">ASP.NET Core</a> и как да изградите уеб приложения като това.
-            </p>
+@if (User.Identity?.IsAuthenticated == true)
+{
+    <div class="odoo-container">
+        <div class="odoo-card">
+            <div class="odoo-card-header">
+                <h1 class="odoo-kanban-title">Welcome to HelpDesk App</h1>
+            </div>
+            <div class="odoo-card-body">
+                <p>
+                    HelpDesk App е модерно решение за управление на поддръжката и проекти.
+                    Следете задачите си, управлявайте проекти и комуникирайте ефективно с екипа си.
+                </p>
+                <p>
+                    Научете повече за <a href="https://learn.microsoft.com/aspnet/core" class="odoo-badge">ASP.NET Core</a> и как да изградите уеб приложения като това.
+                </p>
+            </div>
         </div>
     </div>
-</div>
+}
+else
+{
+    <div class="container mt-5 text-center">
+        <div class="card shadow-sm border-0 p-5">
+            <h2 class="text-muted mb-4">Добре дошли в HelpDesk</h2>
+            <div class="alert alert-warning border-0 shadow-sm">
+                <p class="mb-0">Моля, <strong>влезте в профила си</strong>, за да достъпите системата за управление на тикети и проекти.</p>
+            </div>            
+        </div>
+    </div>
+}
