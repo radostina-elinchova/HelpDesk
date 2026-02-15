@@ -1,13 +1,14 @@
 ﻿using HelpDeskApp.Core.Contracts;
 using HelpDeskApp.Core.Services;
 using HelpDeskApp.ViewModels.Models.Ticket;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace HelpDeskApp.Controllers
 {
-    public class TicketController : Controller
+    public class TicketController : BaseController
     {
         private readonly ITicketService _ticketService;
 
@@ -16,19 +17,20 @@ namespace HelpDeskApp.Controllers
             _ticketService = ticketService;
         }
 
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
-            //string? userId = GetUserId();
-            var tickets = await _ticketService.GetAllAsync();
+            string? userId = GetUserId();
+            var tickets = await _ticketService.GetAllTicketsAsync(userId);
             return View(tickets);
         }
 
         [HttpGet]
         public async Task<IActionResult> Create(int projectId)
         {
-            var status = await _ticketService.GetOpenStatusAsync();
-            var categories = await _ticketService.GetCategoriesAsync();
-            var allProjects = await _ticketService.GetProjectsAsync();
+            var status = await _ticketService.GetTicketOpenStatusAsync();
+            var categories = await _ticketService.GetTicketCategoriesAsync();
+            var allProjects = await _ticketService.GetTicketProjectsAsync();
 
             if (projectId != 0)
             {
@@ -55,15 +57,15 @@ namespace HelpDeskApp.Controllers
                 //to do : check if category id is valid before fetching subcategories
                 //to do : check if subcategory id is valid before fetching subcategories
                 //to do : check if project id is valid before fetching projects
-                model.Categories = await _ticketService.GetCategoriesAsync();
-                model.Projects = await _ticketService.GetProjectsAsync();
+                model.Categories = await _ticketService.GetTicketCategoriesAsync();
+                model.Projects = await _ticketService.GetTicketProjectsAsync();
 
                 if (model.CategoryId > 0)
                 {
-                    model.SubCategories = await _ticketService.GetSubCategoriesAsync(model.CategoryId);
+                    model.SubCategories = await _ticketService.GetTicketSubCategoriesAsync(model.CategoryId);
                 }
 
-                var status = await _ticketService.GetOpenStatusAsync();
+                var status = await _ticketService.GetTicketOpenStatusAsync();
                 if (status != null)
                 {
                     model.StatusId = status.Id;
@@ -75,7 +77,7 @@ namespace HelpDeskApp.Controllers
 
             var creatorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            await _ticketService.CreateAsync(model);
+            await _ticketService.CreateTicketAsync(model);
 
             return RedirectToAction("Index", "Home");
         }
@@ -88,7 +90,7 @@ namespace HelpDeskApp.Controllers
                 return Json(new List<object>());
             }
 
-            var subCategories = await _ticketService.GetSubCategoriesAsync(categoryId);
+            var subCategories = await _ticketService.GetTicketSubCategoriesAsync(categoryId);
             return Json(subCategories);
         }
 
@@ -99,7 +101,7 @@ namespace HelpDeskApp.Controllers
             {
                 return NotFound();
             }
-            var model = await _ticketService.GetByIdAsync(id);
+            var model = await _ticketService.GetTicketByIdAsync(id);
 
             if (model == null)
             {
@@ -109,17 +111,15 @@ namespace HelpDeskApp.Controllers
             return View(model);
         }
 
-
         [HttpGet]
         public async Task<IActionResult> Delete(int id)
         {
-            //string? userId = GetUserId();
-            //if (string.IsNullOrEmpty(userId))
-            //{
-            //    return RedirectToAction("Login", "Account");
-            //}
-
-            var ticket = await _ticketService.GetDeleteByIdAsync(id);
+            string? userId = GetUserId();
+            if (string.IsNullOrEmpty(userId))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            var ticket = await _ticketService.GetTicketDeleteByIdAsync(id);
 
             return View(ticket);
         }
@@ -128,20 +128,20 @@ namespace HelpDeskApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            //string? userId = GetUserId();
-            //if (string.IsNullOrEmpty(userId))
-            //{
-            //    return RedirectToAction("Login", "Account");
-            //}
+            string? userId = GetUserId();
+            if (string.IsNullOrEmpty(userId))
+            {
+                return RedirectToAction("Login", "Account");
+            }
 
             try
             {
-                await _ticketService.DeleteAsync(id);
+                await _ticketService.DeleteTicketAsync(id);
             }
-            //catch (UnauthorizedAccessException)
-            //{
-            //    return Unauthorized();
-            //}
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized();
+            }
             catch (ArgumentException)
             {
                 return NotFound();

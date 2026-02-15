@@ -13,6 +13,7 @@ namespace HelpDeskApp.ViewModels.Models.Ticket
         public string Status { get; set; } = null!;
         public string ProjectName { get; set; } = null!;
         public string CreatorName { get; set; } = null!;
+        public bool IsCteator { get; set; }
 
     }
 }

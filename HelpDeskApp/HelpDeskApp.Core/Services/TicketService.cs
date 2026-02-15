@@ -20,7 +20,7 @@ namespace HelpDeskApp.Core.Services
         }
 
 
-        public async Task<IEnumerable<TicketListVM>> GetAllAsync()
+        public async Task<IEnumerable<TicketListVM>> GetAllTicketsAsync(string? userId)
         {
             return await _context.Tickets
                 .Select(t => new TicketListVM
@@ -29,11 +29,11 @@ namespace HelpDeskApp.Core.Services
                     Title = t.Title,
                     ProjectName = t.Project.ProjectName,
                     CreatorName = t.Creator.LastName,
+                    IsCteator = userId != null && t.CreatorId == userId,
                 }).ToListAsync();
         }
 
-
-        public async Task<TicketDetailsVM?> GetByIdAsync(int id)
+        public async Task<TicketDetailsVM?> GetTicketByIdAsync(int id)
         {
             return await _context.Tickets
                 .Where(t => t.Id == id)
@@ -46,7 +46,7 @@ namespace HelpDeskApp.Core.Services
 
                 }).FirstOrDefaultAsync();
         }
-        public async Task<TicketDeleteVM?> GetDeleteByIdAsync(int id)
+        public async Task<TicketDeleteVM?> GetTicketDeleteByIdAsync(int id)
         {
             return await _context.Tickets
                 .Where(t => t.Id == id)
@@ -54,14 +54,11 @@ namespace HelpDeskApp.Core.Services
                 {
                     Id = t.Id,
                     Title = t.Title,
-                    Status = t.Status.TicketStatusName,
-                   
+                    Status = t.Status.TicketStatusName,                  
 
                 }).FirstOrDefaultAsync();
         }
-
-
-        public async Task<TicketStatusVM> GetOpenStatusAsync()
+        public async Task<TicketStatusVM> GetTicketOpenStatusAsync()
         {
             var openStatus = await _context.TicketStatus.FirstOrDefaultAsync(s => s.TicketStatusName == "Open");
             var openStatusVM = new TicketStatusVM
@@ -71,9 +68,9 @@ namespace HelpDeskApp.Core.Services
             };
             return openStatusVM;
         }
-        public async Task CreateAsync(TicketFormVM model)
+        public async Task CreateTicketAsync(TicketFormVM model)
         {
-            var openStatus = await GetOpenStatusAsync();
+            var openStatus = await GetTicketOpenStatusAsync();
             var ticket = new Ticket
             {
                 Title = model.Title,
@@ -86,24 +83,34 @@ namespace HelpDeskApp.Core.Services
             _context.Tickets.Add(ticket);
             await _context.SaveChangesAsync(); 
         }
-        public async Task<IEnumerable<CategoryVM>> GetCategoriesAsync()
+        public async Task<IEnumerable<CategoryVM>> GetTicketCategoriesAsync()
         {
             return await _context.Categories
-                .Select(c => new CategoryVM { Id = c.Id, Name = c.CategoryName })
+                .Select(c => new CategoryVM
+                { 
+                    Id = c.Id, Name = c.CategoryName
+                })
                 .ToListAsync();
         }
-        public async Task<IEnumerable<ProjectIndexVM>> GetProjectsAsync()
+        public async Task<IEnumerable<ProjectIndexVM>> GetTicketProjectsAsync()
         {
             return await _context.Projects
-                .Select(c => new ProjectIndexVM { Id = c.Id, ProjectName = c.ProjectName })
+                .Select(c => new ProjectIndexVM 
+                { 
+                    Id = c.Id,
+                    ProjectName = c.ProjectName
+                })
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<SubCategoryVM>> GetSubCategoriesAsync(int categoryId)
+        public async Task<IEnumerable<SubCategoryVM>> GetTicketSubCategoriesAsync(int categoryId)
         {
             return await _context.SubCategories
                 .Where(s => s.CategoryId == categoryId)
-                .Select(s => new SubCategoryVM { Id = s.Id, Name = s.SubCategoryName })
+                .Select(s => new SubCategoryVM
+                { 
+                    Id = s.Id, Name = s.SubCategoryName 
+                })
                 .ToListAsync();
         }
 
@@ -123,7 +130,7 @@ namespace HelpDeskApp.Core.Services
         //}
 
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteTicketAsync(int id)
         {
             var ticket = await _context.Tickets.FindAsync(id);
             if (ticket != null)
@@ -132,10 +139,6 @@ namespace HelpDeskApp.Core.Services
                 await _context.SaveChangesAsync();
             }
         }
-
-
-
-
     }
 }
 

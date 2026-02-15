@@ -19,14 +19,14 @@ namespace HelpDeskApp.Core.Services
 
         public async Task<IEnumerable<ProjectIndexVM>> GetAllProjectsAsync(string? userId)
         {
-            var query = _context.Projects.AsNoTracking();
+            var projects = _context.Projects.AsNoTracking();
 
             if (!string.IsNullOrEmpty(userId))
             {
-                query = query.Where(p => p.UsersProjects.Any(up => up.UserId == userId));
+                projects = projects.Where(p => p.UsersProjects.Any(up => up.UserId == userId));
             }
 
-            return await query
+            return await projects
                 .Select(p => new ProjectIndexVM
                 {
                     Id = p.Id,
@@ -37,52 +37,54 @@ namespace HelpDeskApp.Core.Services
         public async Task<ProjectDetailsVM> GetProjectDetailsAsync(int projectId)
         {
             var project = await _context.Projects
-  .Where(p => p.Id == projectId)
-  .Select(p => new ProjectDetailsVM
-  {
-      Id = p.Id,
-      ProjectName = p.ProjectName,
-      Description = p.Description,
+                .AsNoTracking()
+                .Where(p => p.Id == projectId)
+                .Select(p => new ProjectDetailsVM
+                {
+                    Id = p.Id,
+                    ProjectName = p.ProjectName,
+                    Description = p.Description,
+                    AssignedUsers = p.UsersProjects.Select(up => new ProjectUserSelectVM
+                    {
+                        Id = up.User.Id,
+                        FullName = up.User.UserName ?? up.User.Email
+                    }).ToList(),
+                    Tickets = p.Tickets.Select(t => new TicketDetailsVM
+                    {
+                        Id = t.Id,
+                        Title = t.Title,
+                        Status = t.Status.TicketStatusName,
+                    }).ToList()
+                })
+                .FirstOrDefaultAsync();
+            
+            if (project == null)
+            {
+                return null; 
+            }
+                       
+            var assignedUserIds = project.AssignedUsers.Select(a => a.Id).ToList();
 
-      AssignedUsers = p.UsersProjects
-          .Select(up => new ProjectUserSelectVM
-          {
-              Id = up.User.Id,
-              FullName = up.User.UserName ?? up.User.Email
-          }).ToList(),
-      Tickets = p.Tickets.Select(t => new TicketDetailsVM
-      {
-          Id = t.Id,
-          Title = t.Title,
-          Status = t.Status.TicketStatusName,
-
-      }).ToList()
-            })
-              .FirstOrDefaultAsync();
-
-
-            var allUsers = await _context.Users
+            project.AvailableUsers = await _context.Users
+                .AsNoTracking()
+                .Where(u => !assignedUserIds.Contains(u.Id))
                 .Select(u => new ProjectUserSelectVM
                 {
                     Id = u.Id,
                     FullName = u.UserName ?? u.Email
                 })
                 .ToListAsync();
-            project.AvailableUsers = allUsers
-                .Where(u => !project.AssignedUsers.Any(a => a.Id == u.Id))
-                .ToList();
-
 
             return project;
         }
-        public async Task<Project> ProjectCreateAsync(ProjectCreateVM model)
+        public async Task<Project> CreateProjectAsync(ProjectCreateVM model)
         {
             Project item = new Project
             {
                 ProjectName = model.ProjectName,
                 Description = model.Description
             };
-            // To Do: Consistent load of the items (for ticket categories and project users)
+            // To Do: Consistent load of the items (for ticket categories and project users) - return view model
 
             foreach (var userId in model.SelectedUserIds)
             {
@@ -122,6 +124,7 @@ namespace HelpDeskApp.Core.Services
             }
             return false;
         }
+        // To Do: Consistent load of the items (for ticket categories and project users) - return view model
         public async Task<Project> GetProjectByIdAsync(int id)
         {
             var project = await _context.Projects.FirstOrDefaultAsync(r => r.Id == id);
@@ -131,9 +134,9 @@ namespace HelpDeskApp.Core.Services
             }
             return project;
         }
-        // to do: see the approach used in the sample example
+        
 
-        public async Task AssignUserAsync(int projectId, string userId)
+        public async Task AssignUserToProjectAsync(int projectId, string userId)
         {
             var userProject = new UserProject
             {
@@ -145,7 +148,7 @@ namespace HelpDeskApp.Core.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task RemoveUserAsync(int projectId, string userId)
+        public async Task RemoveUserFromProjectAsync(int projectId, string userId)
         {
             var entry = await _context.UsersProjects
                 .FirstOrDefaultAsync(up => up.ProjectId == projectId && up.UserId == userId);

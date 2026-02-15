@@ -10,6 +10,7 @@ namespace HelpDeskApp.ViewModels.Models.Ticket
 {
     public class TicketFormVM
     {
+        // to do : use the global constants for validation. Do not use magical numbers
         [Required(ErrorMessage = "Заглавието е задължително")]
         [StringLength(100, MinimumLength = 5, ErrorMessage = "Заглавието трябва да е между 5 и 100 символа")]
         public string Title { get; set; } = null!;

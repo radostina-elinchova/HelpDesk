@@ -8,12 +8,14 @@
 <div class="odoo-container">
     <div class="odoo-action-bar">
         <h3>@ViewData["Title"]</h3>
-
-        <a asp-controller="Ticket"
-           asp-action="Create"
-           class="btn odoo-btn-primary">
-            + Create
-        </a>
+        @if (User?.Identity?.IsAuthenticated == true)
+        {
+            <a asp-controller="Ticket"
+               asp-action="Create"
+               class="btn odoo-btn-primary">
+                + Create
+            </a>
+        }        
     </div>
     <div class="odoo-kanban">
         @foreach (var ticket in Model)

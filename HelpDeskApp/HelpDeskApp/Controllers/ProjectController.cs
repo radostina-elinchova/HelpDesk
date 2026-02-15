@@ -23,14 +23,14 @@ namespace HelpDeskApp.Controllers
             string? userId = GetUserId();
             var projects = await _projectService.GetAllProjectsAsync(userId);
 
-            var models = projects.Select(project => new ProjectIndexVM
-            {
-                Id = project.Id,
-                ProjectName = project.ProjectName,
-                Description = project.Description ?? String.Empty,
-            }).ToList();
+            //var models = projects.Select(project => new ProjectIndexVM
+            //{
+            //    Id = project.Id,
+            //    ProjectName = project.ProjectName,
+            //    Description = project.Description ?? String.Empty,
+            //}).ToList();
 
-            return View(models);
+            return View(projects);
         }
 
         public async Task<IActionResult> Details(int id)
