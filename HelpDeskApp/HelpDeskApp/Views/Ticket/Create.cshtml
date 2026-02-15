@@ -13,7 +13,9 @@
         </div>
 
         <div class="card-body">
-            <form asp-controller="Ticket" asp-action="Create" method="post">
+            <form asp-controller="Ticket" asp-action="Create"
+                  asp-route-fromProject="@(Model.ProjectId != 0)"
+                  method="post">
 
                 <div class="row">     
                     

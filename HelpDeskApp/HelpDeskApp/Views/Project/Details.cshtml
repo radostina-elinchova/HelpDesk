@@ -94,9 +94,9 @@
                     No team members assigned
                 </div>
             }
-          
-            @* @if (User.IsInRole("Administrator"))
-            { *@
+
+            @if (Model.AvailableUsers != null && Model.AvailableUsers.Any())
+            {
                 <form asp-action="AddUser"
                       method="post"
                       class="d-flex gap-2 mt-3">
@@ -106,18 +106,22 @@
                     <select name="userId"
                             class="odoo-input"
                             style="max-width:300px;">
+                        <option value="">-- Select user --</option>
                         @foreach (var user in Model.AvailableUsers)
                         {
                             <option value="@user.Id">@user.FullName</option>
                         }
                     </select>
 
-                    <button type="submit"
-                            class="btn odoo-btn-primary">
-                        + Add
-                    </button>
+                    <button type="submit" class="btn odoo-btn-primary">Add User</button>
                 </form>
-            @* } *@
+            }
+            else
+            {               
+                <div class="alert alert-info mt-3 py-2 small">
+                    Всички налични потребители вече са добавени към този проект.
+                </div>
+            }
 
         </div>
         <div class="odoo-card-body border-top">

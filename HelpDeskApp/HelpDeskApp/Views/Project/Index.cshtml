@@ -15,41 +15,52 @@
             + Create
         </a>
     </div>
+
     <div class="odoo-kanban">
-        @foreach (var project in Model)
+        @if (Model != null && Model.Any())
         {
-            <div class="odoo-kanban-card">
-                <div class="odoo-kanban-header">
-                    <span class="odoo-kanban-title">
-                        @project.ProjectName
-                    </span>
+            @foreach (var project in Model)
+            {
+                <div class="odoo-kanban-card">
+                    <div class="odoo-kanban-header">
+                        <span class="odoo-kanban-title">
+                            @project.ProjectName
+                        </span>
+                    </div>
+
+                    <div class="odoo-kanban-body">
+                        <p class="odoo-kanban-description">
+                            @project.Description
+                        </p>
+                    </div>
+
+                    <div class="odoo-kanban-footer">
+                        <a asp-action="Details"
+                           asp-route-id="@project.Id"
+                           class="odoo-link">
+                            Open
+                        </a>
+
+                        <a asp-action="Edit"
+                           asp-route-id="@project.Id"
+                           class="odoo-link">
+                            Edit
+                        </a>
+
+                        <a asp-action="Delete"
+                           asp-route-id="@project.Id"
+                           class="odoo-link odoo-link-danger">
+                            Delete
+                        </a>
+                    </div>
                 </div>
-
-                <div class="odoo-kanban-body">
-                    <p class="odoo-kanban-description">
-                        @project.Description
-                    </p>
-                </div>
-
-                <div class="odoo-kanban-footer">
-                    <a asp-action="Details"
-                       asp-route-id="@project.Id"
-                       class="odoo-link">
-                        Open
-                    </a>
-
-                    <a asp-action="Edit"
-                       asp-route-id="@project.Id"
-                       class="odoo-link">
-                        Edit
-                    </a>
-
-                    <a asp-action="Delete"
-                       asp-route-id="@project.Id"
-                       class="odoo-link odoo-link-danger">
-                        Delete
-                    </a>
-                </div>
+            }
+        }
+        else
+        {
+            <div class="odoo-no-data text-center p-5">
+                <h4 class="text-muted">Още няма проекти</h4>
+                <p>Кликнете върху бутона "Create", за да добавите първия си проект.</p>
             </div>
         }
     </div>

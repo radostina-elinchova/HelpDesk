@@ -21,10 +21,10 @@ namespace HelpDeskApp.Core.Services
         {
             var projects = _context.Projects.AsNoTracking();
 
-            if (!string.IsNullOrEmpty(userId))
-            {
-                projects = projects.Where(p => p.UsersProjects.Any(up => up.UserId == userId));
-            }
+            //if (!string.IsNullOrEmpty(userId))
+            //{
+            //    projects = projects.Where(p => p.UsersProjects.Any(up => up.UserId == userId));
+            //}
 
             return await projects
                 .Select(p => new ProjectIndexVM

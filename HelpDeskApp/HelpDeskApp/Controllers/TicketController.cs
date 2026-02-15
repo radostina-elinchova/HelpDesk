@@ -45,7 +45,9 @@ namespace HelpDeskApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(TicketFormVM model)
+
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(TicketFormVM model, bool fromProject)
         {
             if (!ModelState.IsValid)
             {
@@ -73,8 +75,12 @@ namespace HelpDeskApp.Controllers
             var creatorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             await _ticketService.CreateTicketAsync(model);
+            if (fromProject)
+            {                
+                return RedirectToAction("Details", "Project", new { id = model.ProjectId });
+            }
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Ticket");
         }
 
         [HttpGet]
