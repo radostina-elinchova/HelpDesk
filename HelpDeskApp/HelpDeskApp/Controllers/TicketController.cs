@@ -1,5 +1,6 @@
 ﻿using HelpDeskApp.Core.Contracts;
 using HelpDeskApp.Core.Services;
+using HelpDeskApp.Infrastructure.Data.Entities;
 using HelpDeskApp.ViewModels.Models.Ticket;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,7 +19,6 @@ namespace HelpDeskApp.Controllers
             _ticketService = ticketService;
         }
 
-        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             string? userId = GetUserId();
@@ -139,12 +139,14 @@ namespace HelpDeskApp.Controllers
         [HttpGet]
         public async Task<IActionResult> Details(int id)
         {
+            string? userId = GetUserId();
             if (id <= 0)
             {
                 return NotFound();
             }
             var model = await _ticketService.GetTicketByIdAsync(id);
 
+            model.IsCreator = model.CreatorId == userId;
             if (model == null)
             {
                 throw new InvalidOperationException("Destination not found");

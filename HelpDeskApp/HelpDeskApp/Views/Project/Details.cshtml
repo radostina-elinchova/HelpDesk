@@ -12,14 +12,14 @@
                 <p class="odoo-subtitle">Project details</p>
             </div>
 
-            @* @if (User.Identity!.IsAuthenticated && User.IsInRole("Administrator"))
+            @if (User.Identity!.IsAuthenticated && User.IsInRole("Administrator"))
             { *@
                 <a asp-action="Edit"
                    asp-route-id="@Model.Id"
                    class="btn odoo-btn-primary">
                     Edit
                 </a>
-            @* } *@
+            @* }
         </div>
         <div class="odoo-card-body">
             <div class="odoo-form odoo-form-readonly">
@@ -69,17 +69,17 @@
                                     <td>@user.FullName</td>
                                     <td class="text-end">
 
-                                        @* @if (User.IsInRole("Administrator"))
-                                        { *@
+                                        @if (User.IsInRole("Administrator"))
+                                        {
                                             <form asp-action="RemoveUser" method="post">
                                                 <input type="hidden" name="projectId" value="@Model.Id" />
                                                 <input type="hidden" name="userId" value="@user.Id" />
                                                 <button type="submit"
-                                                        class="btn btn-sm btn-outline-danger">
+                                                class="btn btn-sm btn-outline-danger">
                                                     ✖
                                                 </button>
                                             </form>
-                                        @* } *@
+                                        }
 
                                     </td>
                                 </tr>
@@ -91,7 +91,7 @@
             else
             {
                 <div class="odoo-empty-state text-center py-3 text-muted">
-                    No team members assigned
+                    Няма потребители, добавени към този проект.
                 </div>
             }
 

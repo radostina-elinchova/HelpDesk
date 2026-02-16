@@ -49,12 +49,11 @@
 
                     </div>
                 </div>
-
-              @*   <!-- RIGHT: META INFO -->
+               
                 <div class="col-md-4">
                     <div class="odoo-side-card">
 
-                        <div class="odoo-side-item">
+                        @* <div class="odoo-side-item">
                             <span class="odoo-side-label">Created by</span>
                             <span class="odoo-side-value">@Model.CreatorEmail</span>
                         </div>
@@ -64,9 +63,9 @@
                             <span class="odoo-side-value">
                                 @Model.CreatedOn.ToString("dd MMM yyyy")
                             </span>
-                        </div>
+                        </div> *@
 
-                        @if (User.IsInRole("Administrator"))
+                        @if (Model.IsCreator)
                         {
                             <a asp-action="Edit"
                                asp-route-id="@Model.Id"
@@ -75,7 +74,7 @@
                             </a>
                         }
                     </div>
-                </div> *@
+                </div>
 
             </div>
         </div>

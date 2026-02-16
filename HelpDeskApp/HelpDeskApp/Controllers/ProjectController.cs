@@ -17,8 +17,7 @@ namespace HelpDeskApp.Controllers
         {
             _projectService = projectService;
         }
-
-        [AllowAnonymous]
+              
         public async Task<IActionResult> Index()
         {
             string? userId = GetUserId();
