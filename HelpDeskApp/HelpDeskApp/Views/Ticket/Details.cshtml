@@ -65,7 +65,7 @@
                             </span>
                         </div> *@
 
-                        @if (Model.IsCreator)
+                        @if (Model.IsCreator || User.IsInRole("Administrator"))
                         {
                             <a asp-action="Edit"
                                asp-route-id="@Model.Id"

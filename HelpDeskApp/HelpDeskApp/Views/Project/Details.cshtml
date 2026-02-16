@@ -13,13 +13,13 @@
             </div>
 
             @if (User.Identity!.IsAuthenticated && User.IsInRole("Administrator"))
-            { *@
+            {
                 <a asp-action="Edit"
                    asp-route-id="@Model.Id"
                    class="btn odoo-btn-primary">
                     Edit
                 </a>
-            @* }
+            }
         </div>
         <div class="odoo-card-body">
             <div class="odoo-form odoo-form-readonly">
@@ -75,7 +75,7 @@
                                                 <input type="hidden" name="projectId" value="@Model.Id" />
                                                 <input type="hidden" name="userId" value="@user.Id" />
                                                 <button type="submit"
-                                                class="btn btn-sm btn-outline-danger">
+                                                        class="btn btn-sm btn-outline-danger">
                                                     ✖
                                                 </button>
                                             </form>
@@ -94,35 +94,36 @@
                     Няма потребители, добавени към този проект.
                 </div>
             }
-
-            @if (Model.AvailableUsers != null && Model.AvailableUsers.Any())
+            @if (User.IsInRole("Administrator"))
             {
-                <form asp-action="AddUser"
-                      method="post"
-                      class="d-flex gap-2 mt-3">
+                @if (Model.AvailableUsers != null && Model.AvailableUsers.Any())
+                {
+                    <form asp-action="AddUser"
+                          method="post"
+                          class="d-flex gap-2 mt-3">
 
-                    <input type="hidden" name="projectId" value="@Model.Id" />
+                        <input type="hidden" name="projectId" value="@Model.Id" />
 
-                    <select name="userId"
-                            class="odoo-input"
-                            style="max-width:300px;">
-                        <option value="">-- Select user --</option>
-                        @foreach (var user in Model.AvailableUsers)
-                        {
-                            <option value="@user.Id">@user.FullName</option>
-                        }
-                    </select>
+                        <select name="userId"
+                                class="odoo-input"
+                                style="max-width:300px;">
+                            <option value="">-- Select user --</option>
+                            @foreach (var user in Model.AvailableUsers)
+                            {
+                                <option value="@user.Id">@user.FullName</option>
+                            }
+                        </select>
 
-                    <button type="submit" class="btn odoo-btn-primary">Add User</button>
-                </form>
+                        <button type="submit" class="btn odoo-btn-primary">Add User</button>
+                    </form>
+                }
+                else
+                {
+                    <div class="alert alert-info mt-3 py-2 small">
+                        Всички налични потребители вече са добавени към този проект.
+                    </div>
+                }
             }
-            else
-            {               
-                <div class="alert alert-info mt-3 py-2 small">
-                    Всички налични потребители вече са добавени към този проект.
-                </div>
-            }
-
         </div>
         <div class="odoo-card-body border-top">
 
