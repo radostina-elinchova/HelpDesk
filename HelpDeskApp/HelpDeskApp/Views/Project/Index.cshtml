@@ -16,9 +16,10 @@
         </a>
     </div>
 
-    <div class="odoo-kanban">
+   
         @if (Model != null && Model.Any())
         {
+        <div class="odoo-kanban">
             @foreach (var project in Model)
             {
                 <div class="odoo-kanban-card">
@@ -55,6 +56,8 @@
                     </div>
                 </div>
             }
+
+        </div>
         }
         else
         {
@@ -63,7 +66,7 @@
                 <p>Кликнете върху бутона "Create", за да добавите първия си проект.</p>
             </div>
         }
-    </div>
+    
 </div>
 
 @section Scripts {

@@ -16,8 +16,8 @@
 
             <span class="odoo-status
                 @(Model.Status == "Open" ? "odoo-status-open" :
-                                    Model.Status == "Closed" ? "odoo-status-closed" :
-                                    "odoo-status-default")">
+                                                      Model.Status == "Closed" ? "odoo-status-closed" :
+                                                      "odoo-status-default")">
                 @Model.Status
             </span>
         </div>
@@ -49,11 +49,12 @@
 
                     </div>
                 </div>
-               
-                <div class="col-md-4">
-                    <div class="odoo-side-card">
+                @if (Model.IsCreator || User.IsInRole("Administrator"))
+                {
+                    <div class="col-md-4">
+                        <div class="odoo-side-card">
 
-                        @* <div class="odoo-side-item">
+                            @* <div class="odoo-side-item">
                             <span class="odoo-side-label">Created by</span>
                             <span class="odoo-side-value">@Model.CreatorEmail</span>
                         </div>
@@ -65,17 +66,16 @@
                             </span>
                         </div> *@
 
-                        @if (Model.IsCreator || User.IsInRole("Administrator"))
-                        {
+
                             <a asp-action="Edit"
                                asp-route-id="@Model.Id"
                                class="btn odoo-btn-primary w-100 mt-3">
                                 Edit Ticket
                             </a>
-                        }
-                    </div>
-                </div>
 
+                        </div>
+                    </div>
+                }
             </div>
         </div>
         <div class="odoo-card-footer">
