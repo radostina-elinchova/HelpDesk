@@ -6,7 +6,6 @@ namespace HelpDeskApp.Infrastructure.Data.Entities
 {
     public class Category
     {
-        [Required]
         public int Id { get; set; }
 
         [Required]

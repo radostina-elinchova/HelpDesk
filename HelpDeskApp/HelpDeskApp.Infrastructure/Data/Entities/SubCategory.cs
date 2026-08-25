@@ -4,8 +4,7 @@ using System.ComponentModel.DataAnnotations;
 namespace HelpDeskApp.Infrastructure.Data.Entities
 {
     public class SubCategory
-    {
-        [Required]
+    {        
         public int Id { get; set; }
 
         [Required]

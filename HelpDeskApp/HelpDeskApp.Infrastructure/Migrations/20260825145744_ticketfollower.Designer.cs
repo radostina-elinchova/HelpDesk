@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HelpDeskApp.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260216070718_iinitial")]
-    partial class iinitial
+    [Migration("20260825145744_ticketfollower")]
+    partial class ticketfollower
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -183,6 +183,7 @@ namespace HelpDeskApp.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("CreatorId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Description")
@@ -217,6 +218,24 @@ namespace HelpDeskApp.Infrastructure.Migrations
                     b.HasIndex("SubCategoryId");
 
                     b.ToTable("Tickets");
+                });
+
+            modelBuilder.Entity("HelpDeskApp.Infrastructure.Data.Entities.TicketFollower", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("TicketId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("FollowedOn")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("UserId", "TicketId");
+
+                    b.HasIndex("TicketId");
+
+                    b.ToTable("TicketFollowers");
                 });
 
             modelBuilder.Entity("HelpDeskApp.Infrastructure.Data.Entities.TicketStatus", b =>
@@ -404,11 +423,14 @@ namespace HelpDeskApp.Infrastructure.Migrations
                 {
                     b.HasOne("HelpDeskApp.Infrastructure.Data.Entities.ApplicationUser", "Assignee")
                         .WithMany("AssignedTickets")
-                        .HasForeignKey("AssigneeId");
+                        .HasForeignKey("AssigneeId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("HelpDeskApp.Infrastructure.Data.Entities.ApplicationUser", "Creator")
                         .WithMany("CreatedTickets")
-                        .HasForeignKey("CreatorId");
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("HelpDeskApp.Infrastructure.Data.Entities.Project", "Project")
                         .WithMany("Tickets")
@@ -437,6 +459,25 @@ namespace HelpDeskApp.Infrastructure.Migrations
                     b.Navigation("Status");
 
                     b.Navigation("SubCategory");
+                });
+
+            modelBuilder.Entity("HelpDeskApp.Infrastructure.Data.Entities.TicketFollower", b =>
+                {
+                    b.HasOne("HelpDeskApp.Infrastructure.Data.Entities.Ticket", "Ticket")
+                        .WithMany("TicketFollowers")
+                        .HasForeignKey("TicketId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HelpDeskApp.Infrastructure.Data.Entities.ApplicationUser", "User")
+                        .WithMany("TicketFollowers")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Ticket");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("HelpDeskApp.Infrastructure.Data.Entities.UserProject", b =>
@@ -515,6 +556,8 @@ namespace HelpDeskApp.Infrastructure.Migrations
 
                     b.Navigation("CreatedTickets");
 
+                    b.Navigation("TicketFollowers");
+
                     b.Navigation("UsersProjects");
                 });
 
@@ -528,6 +571,11 @@ namespace HelpDeskApp.Infrastructure.Migrations
                     b.Navigation("Tickets");
 
                     b.Navigation("UsersProjects");
+                });
+
+            modelBuilder.Entity("HelpDeskApp.Infrastructure.Data.Entities.Ticket", b =>
+                {
+                    b.Navigation("TicketFollowers");
                 });
 
             modelBuilder.Entity("HelpDeskApp.Infrastructure.Data.Entities.TicketStatus", b =>

@@ -5,7 +5,6 @@ namespace HelpDeskApp.Infrastructure.Data.Entities
 {
     public class TicketStatus
     {
-        [Required]
         public int Id { get; set; }
 
         [Required]

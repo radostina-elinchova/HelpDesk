@@ -26,5 +26,6 @@ namespace HelpDeskApp.Infrastructure.Data.Entities
         public virtual ICollection<Ticket> AssignedTickets { get; set; } = new HashSet<Ticket>();
 
         public virtual ICollection<UserProject> UsersProjects { get; set; } = new HashSet<UserProject>();
+        public virtual ICollection<TicketFollower> TicketFollowers { get; set; } = new HashSet<TicketFollower>();
     }
 }
