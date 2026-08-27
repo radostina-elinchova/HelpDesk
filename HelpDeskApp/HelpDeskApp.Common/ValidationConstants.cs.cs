@@ -1,6 +1,6 @@
 ﻿namespace HelpDeskApp.Common
 {
-    public class ValidationConstants
+    public static class ValidationConstants
     {
         public const int DefaultNameMinLength = 2;
         public const int DefaultNameMaxLength = 30;        

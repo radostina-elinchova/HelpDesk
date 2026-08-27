@@ -175,9 +175,16 @@ namespace HelpDeskApp.Controllers
         public async Task<IActionResult> Edit(TicketEditVM model)        {
           
             if (!ModelState.IsValid)
-            {                
-                model.Categories = await _ticketService.GetTicketCategoriesAsync();
-                model.Projects = await _ticketService.GetTicketProjectsAsync();
+            {
+                if (model.CategoryId > 0)
+                {
+                    model.SubCategories = await _ticketService.GetTicketSubCategoriesAsync(model.CategoryId);
+                }
+
+                if (model.ProjectId > 0)
+                {
+                    model.AvailableUsers = await _ticketService.GetProjectUsersAsync(model.ProjectId);
+                }
                 return View(model);
             }
 
@@ -213,13 +220,14 @@ namespace HelpDeskApp.Controllers
             {
                 return NotFound();
             }
-            var model = await _ticketService.GetTicketByIdAsync(id);
 
-            model.IsCreator = model.CreatorId == userId;
+            var model = await _ticketService.GetTicketByIdAsync(id);
             if (model == null)
             {
                 throw new InvalidOperationException("Destination not found");
             }
+            model.IsCreator = model.CreatorId == userId;
+            
 
             return View(model);
         }

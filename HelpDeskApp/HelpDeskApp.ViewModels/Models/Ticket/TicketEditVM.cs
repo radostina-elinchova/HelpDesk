@@ -21,20 +21,16 @@ namespace HelpDeskApp.ViewModels.Models.Ticket
         [StringLength(ValidationConstants.TicketDescriptionMaxLength, MinimumLength = ValidationConstants.TicketDescriptionMinLength,
             ErrorMessage = "Ticket Description must be between {2} and {1} charachters")]
         public string Description { get; set; } = null!;
-
-        [Required]
+       
         [Range(1, int.MaxValue, ErrorMessage = "Select a category")]
         public int CategoryId { get; set; }
-
-        [Required]
+        
         [Range(1, int.MaxValue, ErrorMessage = "Select a subcategory")]
         public int SubCategoryId { get; set; }
-
-        [Required]
+       
         [Range(1, int.MaxValue, ErrorMessage = "Select a project")]
         public int ProjectId { get; set; }
-
-        [Required]
+        
         [Range(1, int.MaxValue, ErrorMessage = "Select a status")]
         public int StatusId { get; set; }
         public string Status { get; set; } = null!;

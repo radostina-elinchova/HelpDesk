@@ -14,7 +14,7 @@ namespace HelpDeskApp.ViewModels.Models.Project
         [Display(Name = "Project Name")]
         public string ProjectName { get; set; } = null!;
 
-        [StringLength(ValidationConstants.DescriptionMaxLength)]
+        [StringLength( ValidationConstants.DefaultNameMaxLength, MinimumLength = ValidationConstants.DefaultNameMinLength)]
         [Display(Name = "Project Description")]
         public string Description { get; set; } = null!;
     }
