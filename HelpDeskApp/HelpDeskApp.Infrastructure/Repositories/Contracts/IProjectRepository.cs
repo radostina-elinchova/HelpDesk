@@ -19,6 +19,7 @@ namespace HelpDeskApp.Infrastructure.Repositories.Contracts
         void AddUserProject(UserProject userProject);
         void Remove(Project project);
         void RemoveUserProject(UserProject userProject);
+        Task<IEnumerable<Project>> GetFavoriteProjectsAsync(string userId);
         Task SaveChangesAsync();
     }
     }

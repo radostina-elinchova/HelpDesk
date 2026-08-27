@@ -39,6 +39,7 @@ namespace HelpDeskApp
             builder.Services.AddScoped<ITicketRepository, TicketRepository>();
             builder.Services.AddScoped<IProjectService, ProjectService>();
             builder.Services.AddScoped<ITicketService, TicketService>();
+            builder.Services.AddScoped<IProjectFavoriteService, ProjectFavoriteService>();
             var app = builder.Build();
             await app.PrepareDatabase(); 
 

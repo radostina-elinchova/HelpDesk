@@ -29,7 +29,8 @@ namespace HelpDeskApp.Core.Services
             {
                 Id = p.Id,
                 ProjectName = p.ProjectName,
-                Description = p.Description ?? string.Empty
+                Description = p.Description ?? string.Empty,
+                IsFavorite = p.UsersProjects.Any(up => up.UserId == userId && up.IsFavorite)
             }).ToList();
         }
 

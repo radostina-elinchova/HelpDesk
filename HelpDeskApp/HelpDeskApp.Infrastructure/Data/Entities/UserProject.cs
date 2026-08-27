@@ -21,5 +21,7 @@ namespace HelpDeskApp.Infrastructure.Data.Entities
         public int ProjectId { get; set; }
        
         public virtual Project Project { get; set; } = null!;
+        public bool IsFavorite { get; set; }
+
     }
 }

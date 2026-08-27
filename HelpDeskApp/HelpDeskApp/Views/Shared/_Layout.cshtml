@@ -34,6 +34,14 @@
                        class="odoo-menu-item">
                         Tickets
                     </a>
+                    @if (!User.IsInRole("Administrator"))
+                    {
+                        <a asp-controller="ProjectFavorite"
+                        asp-action="Index"
+                       class="odoo-menu-item">
+                        Favorites
+                    </a>
+                    }
                 }
             </nav>
         </div>

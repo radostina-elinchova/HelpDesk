@@ -1,0 +1,55 @@
+﻿@using HelpDeskApp.ViewModels.Models.Project
+@model IEnumerable<ProjectIndexVM>
+
+@{
+    ViewData["Title"] = "Favorite Projects";
+}
+
+<div class="container mt-4">
+    <h2>Favorite Projects</h2>
+
+    @if (!Model.Any())
+    {
+        <p>You don't have any favorite projects yet.</p>
+    }
+    else
+    {
+        @foreach (var project in Model)
+        {
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5>@project.ProjectName</h5>
+                    <p>@project.Description</p>
+
+                    <a asp-controller="Project"
+                       asp-action="Details"
+                       asp-route-id="@project.Id"
+                       class="btn btn-outline-secondary">
+                        Details
+                    </a>
+
+                    <form asp-controller="ProjectFavorite"
+                          asp-action="Remove"
+                          method="post"
+                          class="d-inline">
+
+                        <input type="hidden"
+                               name="projectId"
+                               value="@project.Id" />
+
+                        <button type="submit"
+                                class="btn btn-outline-danger">
+                            ★ Remove from favorites
+                        </button>
+                    </form>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

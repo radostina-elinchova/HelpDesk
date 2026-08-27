@@ -22,11 +22,51 @@
         <div class="odoo-kanban">
             @foreach (var project in Model)
             {
+             
                 <div class="odoo-kanban-card">
                     <div class="odoo-kanban-header">
                         <span class="odoo-kanban-title">
                             @project.ProjectName
                         </span>
+                    @if (!User.IsInRole("Administrator"))
+                    {
+                        @if (project.IsFavorite)
+                        {
+                            <form asp-controller="ProjectFavorite"
+                            asp-action="Remove"
+                            method="post"
+                            class="d-inline">
+
+                                <input type="hidden"
+                                name="projectId"
+                                value="@project.Id" />
+
+                                <button type="submit"
+                                class="btn btn-link text-decoration-none">
+                                    ★
+                                </button>
+
+                            </form>
+                        }
+                        else
+                        {
+                            <form asp-controller="ProjectFavorite"
+                            asp-action="Add"
+                                method="post"
+                                class="d-inline">
+
+                            <input type="hidden"
+                                    name="projectId"
+                                    value="@project.Id" />
+
+                            <button type="submit"
+                                    class="btn btn-link text-decoration-none">
+                                ☆
+                            </button>
+
+                        </form>
+                        }
+                    }
                     </div>
 
                     <div class="odoo-kanban-body">

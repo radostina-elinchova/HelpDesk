@@ -15,6 +15,7 @@ namespace HelpDeskApp.ViewModels.Models.Project
         [StringLength(ValidationConstants.DescriptionMaxLength)]
         [Display(Name = "Project Description")]
         public string Description { get; set; } = null!;
-       
+        public bool IsFavorite { get; set; }
+
     }
 }

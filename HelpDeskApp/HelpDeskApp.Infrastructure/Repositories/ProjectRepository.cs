@@ -80,6 +80,14 @@ namespace HelpDeskApp.Infrastructure.Repositories
         {
             _context.UsersProjects.Remove(userProject);
         }
+        public async Task<IEnumerable<Project>> GetFavoriteProjectsAsync(string userId)
+        {
+            return await _context.UsersProjects
+                .AsNoTracking()
+                .Where(up => up.UserId == userId && up.IsFavorite)
+                .Select(up => up.Project)
+                .ToListAsync();
+        }
 
         public async Task SaveChangesAsync()
         {
