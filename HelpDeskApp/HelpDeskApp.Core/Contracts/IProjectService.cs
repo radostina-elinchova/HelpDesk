@@ -11,7 +11,7 @@ namespace HelpDeskApp.Core.Contracts
     public interface IProjectService
     {
 
-        Task<IEnumerable<ProjectIndexVM>> GetAllProjectsAsync(string? userId);
+        Task<IEnumerable<ProjectIndexVM>> GetAllProjectsAsync(string? userId,bool isAdmin);
         Task<Project> GetProjectByIdAsync(int id);
         Task<Project> CreateProjectAsync(ProjectCreateVM model);        
         Task EditProjectAsync(ProjectEditVM model);
@@ -20,5 +20,6 @@ namespace HelpDeskApp.Core.Contracts
         Task AssignUserToProjectAsync(int projectId, string userId);
         Task RemoveUserFromProjectAsync(int projectId, string userId);
         Task<IEnumerable<ProjectUserSelectVM>> GetAvailableUsersAsync();
+        Task<bool> IsUserInProjectAsync(int projectId, string userId);
     }
 }

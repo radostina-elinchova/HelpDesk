@@ -23,6 +23,8 @@ namespace HelpDeskApp.Core.Contracts
         Task<IEnumerable<ProjectIndexVM>> GetTicketProjectsAsync();
         Task<IEnumerable<SubCategoryVM>> GetTicketSubCategoriesAsync(int categoryId);
         Task<IEnumerable<ProjectUserSelectVM>> GetProjectUsersAsync(int projectId);
+        Task<bool> CanUserAccessTicketAsync(int ticketId, string userId);
+        Task<bool> IsTicketCreatorAsync(int ticketId, string userId);
 
     }
 }

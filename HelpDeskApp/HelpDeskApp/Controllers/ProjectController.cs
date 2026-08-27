@@ -21,18 +21,41 @@ namespace HelpDeskApp.Controllers
         public async Task<IActionResult> Index()
         {
             string? userId = GetUserId();
-            var projects = await _projectService.GetAllProjectsAsync(userId);           
+            bool isAdmin = User.IsInRole("Administrator");
+            var projects = await _projectService.GetAllProjectsAsync(userId, isAdmin);           
 
             return View(projects);
         }
 
         public async Task<IActionResult> Details(int id)
         {
+            if (id <= 0)
+            {
+                return BadRequest();
+            }
             var model = await _projectService.GetProjectDetailsAsync(id);
+            if (model == null)
+            {
+                return NotFound();
+            }
+
+            string userId = GetUserId();
+          
+
+            if (!User.IsInRole("Administrator"))
+            {
+                bool hasAccess = await _projectService.IsUserInProjectAsync(id, userId);
+
+                if (!hasAccess)
+                {
+                    return Forbid();
+                }
+            }
             return View(model);
         }
 
         [HttpGet]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Create()
         {
             var model = new ProjectCreateVM
@@ -45,6 +68,7 @@ namespace HelpDeskApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Create(ProjectCreateVM model)
         {
             if (!ModelState.IsValid)
@@ -58,6 +82,7 @@ namespace HelpDeskApp.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Edit(int id)
         {
             //to do: Add it to service
@@ -80,6 +105,7 @@ namespace HelpDeskApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Edit(ProjectEditVM model)
         {
             string? userId = GetUserId();
@@ -111,6 +137,7 @@ namespace HelpDeskApp.Controllers
         //To do: add it to project service and project controller.
         //To do: add it to project details view - show message if project has tickets.
         //To do: add it to project index view - show message if project has tickets.
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Delete(int id)
         {
             var item = await _projectService.GetProjectByIdAsync(id);
@@ -130,6 +157,7 @@ namespace HelpDeskApp.Controllers
        
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Delete(int id, IFormCollection collection)
         {
             var deleted = await _projectService.DeleteProjectAsync(id);
@@ -149,6 +177,8 @@ namespace HelpDeskApp.Controllers
             return View();
         }
         [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> AddUser(int projectId, string userId)
         {
             await _projectService.AssignUserToProjectAsync(projectId, userId);
@@ -156,6 +186,8 @@ namespace HelpDeskApp.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> RemoveUser(int projectId, string userId)
         {
             await _projectService.RemoveUserFromProjectAsync(projectId, userId);

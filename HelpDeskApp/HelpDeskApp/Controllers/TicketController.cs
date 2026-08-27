@@ -45,9 +45,9 @@ namespace HelpDeskApp.Controllers
                 ProjectId = projectId
             };
 
-            if (User.IsInRole("Administrator") &&  projectId > 0)
+            if (User.IsInRole("Administrator") && projectId > 0)
             {
-                model.AvailableUsers =  await _ticketService.GetProjectUsersAsync(projectId);
+                model.AvailableUsers = await _ticketService.GetProjectUsersAsync(projectId);
             }
 
             return View(model);
@@ -104,7 +104,7 @@ namespace HelpDeskApp.Controllers
             {
                 ModelState.AddModelError(string.Empty, ex.Message);
 
-                model.Categories =await _ticketService.GetTicketCategoriesAsync();
+                model.Categories = await _ticketService.GetTicketCategoriesAsync();
 
                 model.Projects = await _ticketService.GetTicketProjectsAsync();
 
@@ -124,7 +124,7 @@ namespace HelpDeskApp.Controllers
             }
             catch (InvalidOperationException ex)
             {
-                ModelState.AddModelError(string.Empty,ex.Message);
+                ModelState.AddModelError(string.Empty, ex.Message);
 
                 model.Categories = await _ticketService.GetTicketCategoriesAsync();
 
@@ -147,32 +147,59 @@ namespace HelpDeskApp.Controllers
 
             if (fromProject)
             {
-                return RedirectToAction("Details","Project",
+                return RedirectToAction("Details", "Project",
                     new
                     {
                         id = model.ProjectId
                     });
             }
 
-            return RedirectToAction( "Index", "Ticket");
+            return RedirectToAction("Index", "Ticket");
         }
 
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
-        {        
+        {
+            if (id <= 0)
+            {
+                return BadRequest();
+            }
             var ticket = await _ticketService.GetTicketEditAsync(id);
 
             if (ticket == null)
             {
                 return NotFound();
-            }         
+            }
+            string userId = GetUserId()!;
 
+            if (!User.IsInRole("Administrator"))
+            {
+                bool isCreator = await _ticketService.IsTicketCreatorAsync(id, userId);
+
+                if (!isCreator)
+                {
+                    return Forbid();
+                }
+            }
             return View(ticket);
         }
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(TicketEditVM model)        {
+        public async Task<IActionResult> Edit(TicketEditVM model)
+        {
+            string userId = GetUserId()!;
+
+            if (!User.IsInRole("Administrator"))
+            {
+                bool isCreator = await _ticketService.IsTicketCreatorAsync(model.Id, userId);
+
+                if (!isCreator)
+                {
+                    return Forbid();
+                }
+            }
+
 
             if (!ModelState.IsValid)
             {
@@ -194,12 +221,12 @@ namespace HelpDeskApp.Controllers
             }
 
             try
-            {               
-                await _ticketService.EditTicketAsync(model);               
+            {
+                await _ticketService.EditTicketAsync(model);
                 return RedirectToAction("Index", "Ticket");
             }
             catch (Exception ex)
-            {               
+            {
                 ModelState.AddModelError("", "Възникна грешка при записването на промените.");
                 return View(model);
             }
@@ -229,10 +256,18 @@ namespace HelpDeskApp.Controllers
             var model = await _ticketService.GetTicketByIdAsync(id);
             if (model == null)
             {
-                throw new InvalidOperationException("Destination not found");
+                return NotFound();
+            }
+            if (!User.IsInRole("Administrator"))
+            {
+                bool canAccess = await _ticketService.CanUserAccessTicketAsync(id, userId);
+
+                if (!canAccess)
+                {
+                    return Forbid();
+                }
             }
             model.IsCreator = model.CreatorId == userId;
-            
 
             return View(model);
         }
@@ -240,7 +275,7 @@ namespace HelpDeskApp.Controllers
         [HttpGet]
         public async Task<IActionResult> Delete(int id)
         {
-            string? userId = GetUserId();
+            string userId = GetUserId();
             if (string.IsNullOrEmpty(userId))
             {
                 return RedirectToAction("Login", "Account");

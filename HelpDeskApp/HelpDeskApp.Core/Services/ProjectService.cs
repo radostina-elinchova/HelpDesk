@@ -17,14 +17,14 @@ namespace HelpDeskApp.Core.Services
             _context = context;
         }
 
-        public async Task<IEnumerable<ProjectIndexVM>> GetAllProjectsAsync(string? userId)
+        public async Task<IEnumerable<ProjectIndexVM>> GetAllProjectsAsync(string? userId, bool isAdmin)
         {
             var projects = _context.Projects.AsNoTracking();
 
-            //if (!string.IsNullOrEmpty(userId))
-            //{
-            //    projects = projects.Where(p => p.UsersProjects.Any(up => up.UserId == userId));
-            //}
+            if (!isAdmin)
+            {
+                projects = projects.Where(p => p.UsersProjects.Any(up =>up.UserId == userId));
+            }
 
             return await projects
                 .Select(p => new ProjectIndexVM
@@ -169,6 +169,12 @@ namespace HelpDeskApp.Core.Services
                     FullName = u.UserName ?? u.Email
                 })
                 .ToListAsync();
+        }
+        public async Task<bool> IsUserInProjectAsync(int projectId,string userId)
+        {
+            return await _context.UsersProjects
+                .AsNoTracking()
+                .AnyAsync(up => up.ProjectId == projectId && up.UserId == userId);
         }
 
 

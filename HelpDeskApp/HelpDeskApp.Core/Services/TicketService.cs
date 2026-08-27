@@ -26,7 +26,7 @@ namespace HelpDeskApp.Core.Services
            
             if (!isAdmin && !string.IsNullOrEmpty(userId))
             {
-                tickets = tickets.Where(t => t.CreatorId == userId);
+                tickets = tickets.Where(t => t.Project.UsersProjects.Any(up => up.UserId == userId));
             }
            
             return await tickets
@@ -342,6 +342,33 @@ namespace HelpDeskApp.Core.Services
                                ?? string.Empty
                 })
                 .ToListAsync();
+        }
+        public async Task<bool> CanUserAccessTicketAsync(int ticketId, string userId)
+        {
+            var projectId = await _context.Tickets
+                .AsNoTracking()
+                .Where(t => t.Id == ticketId)
+                .Select(t => (int?)t.ProjectId)
+                .FirstOrDefaultAsync();
+
+            if (projectId == null)
+            {
+                return false;
+            }
+
+            return await _context.UsersProjects
+                .AsNoTracking()
+                .AnyAsync(up =>
+                    up.ProjectId == projectId.Value &&
+                    up.UserId == userId);
+        }
+        public async Task<bool> IsTicketCreatorAsync(int ticketId,string userId)
+        {
+            return await _context.Tickets
+                .AsNoTracking()
+                .AnyAsync(t =>
+                    t.Id == ticketId &&
+                    t.CreatorId == userId);
         }
     }
 }
