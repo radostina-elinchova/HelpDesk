@@ -69,7 +69,7 @@ namespace HelpDeskApp.Core.Services
                 return null;
             }
 
-            var model = new TicketEditVM
+            return new TicketEditVM
             {
                 Id = ticket.Id,
                 Title = ticket.Title,
@@ -78,14 +78,13 @@ namespace HelpDeskApp.Core.Services
                 SubCategoryId = ticket.SubCategoryId,
                 ProjectId = ticket.ProjectId,
                 StatusId = ticket.StatusId,
-                Status = ticket.Status?.TicketStatusName ?? "N/A",
+                Status = ticket.Status.TicketStatusName,
                 AssigneeId = ticket.AssigneeId,
                 Categories = await GetTicketCategoriesAsync(),
                 Projects = await GetTicketProjectsAsync(),
-                SubCategories = await GetTicketSubCategoriesAsync(ticket.SubCategoryId)
+                SubCategories = await GetTicketSubCategoriesAsync(ticket.SubCategory.CategoryId),
+                AvailableUsers =  await GetProjectUsersAsync(ticket.ProjectId)
             };
-
-            return model;
         }
         public async Task<TicketDeleteVM?> GetTicketDeleteByIdAsync(int id)
         {
@@ -102,29 +101,108 @@ namespace HelpDeskApp.Core.Services
         //to do: adding all statuses
         public async Task<TicketStatusVM> GetTicketOpenStatusAsync()
         {
-            var openStatus = await _context.TicketStatus.FirstOrDefaultAsync(s => s.TicketStatusName == "Open");
-            var openStatusVM = new TicketStatusVM
+            var openStatus = await _context.TicketStatus
+                .AsNoTracking()
+                .FirstOrDefaultAsync(s =>
+                    s.TicketStatusName == "Open");
+
+            if (openStatus == null)
             {
-                Id = openStatus != null ? openStatus.Id : 0,
-                Name = openStatus != null ? openStatus.TicketStatusName : "Open"
+                throw new InvalidOperationException(
+                    "Open ticket status is not configured.");
+            }
+
+            return new TicketStatusVM
+            {
+                Id = openStatus.Id,
+                Name = openStatus.TicketStatusName
             };
-            return openStatusVM;
         }
-        public async Task CreateTicketAsync(TicketFormVM model, string userId)
+        public async Task CreateTicketAsync(TicketFormVM model, string userId, bool isAdmin)
         {
+            bool projectExists = await _context.Projects
+                .AsNoTracking()
+                .AnyAsync(p => p.Id == model.ProjectId);
+
+            if (!projectExists)
+            {
+                throw new KeyNotFoundException(
+                    "The selected project does not exist.");
+            }
+
+            // Normal user may create tickets only
+            // in projects where they are a member.
+            if (!isAdmin)
+            {
+                bool userInProject =
+                    await _context.UsersProjects
+                        .AsNoTracking()
+                        .AnyAsync(up =>
+                            up.UserId == userId &&
+                            up.ProjectId == model.ProjectId);
+
+                if (!userInProject)
+                {
+                    throw new UnauthorizedAccessException(
+                        "You do not have access to this project.");
+                }
+
+                // Ignore forged AssigneeId from a normal user.
+                model.AssigneeId = null;
+            }
+
+            var subCategory = await _context.SubCategories
+                .AsNoTracking()
+                .FirstOrDefaultAsync(sc =>
+                    sc.Id == model.SubCategoryId);
+
+            if (subCategory == null)
+            {
+                throw new KeyNotFoundException("The selected subcategory does not exist.");
+            }
+
+            if (subCategory.CategoryId != model.CategoryId)
+            {
+                throw new InvalidOperationException("The selected subcategory does not belong to the selected category.");
+            }
+
+            if (isAdmin && !string.IsNullOrWhiteSpace(model.AssigneeId))
+            {
+                bool assigneeExists = await _context.Users
+                    .AsNoTracking()
+                    .AnyAsync(u => u.Id == model.AssigneeId);
+
+                if (!assigneeExists)
+                {
+                    throw new KeyNotFoundException("The selected assignee does not exist.");
+                }
+
+                bool assigneeInProject = await _context.UsersProjects
+                        .AsNoTracking()
+                        .AnyAsync(up =>
+                            up.UserId == model.AssigneeId &&
+                            up.ProjectId == model.ProjectId);
+
+                if (!assigneeInProject)
+                {
+                    throw new InvalidOperationException("The assignee must belong to the selected project.");
+                }
+            }
 
             var openStatus = await GetTicketOpenStatusAsync();
+
             var ticket = new Ticket
             {
-                Title = model.Title,
-                Description = model.Description,
-                SubCategoryId = model.SubCategoryId,
+                Title = model.Title.Trim(),
+                Description = model.Description.Trim(),
                 ProjectId = model.ProjectId,
+                SubCategoryId = model.SubCategoryId,
+                CreatorId = userId,
+                AssigneeId = isAdmin ? model.AssigneeId : null,
                 StatusId = openStatus.Id,
-                CreatedOn = DateTime.UtcNow,
-                CreatorId = userId
+                CreatedOn = DateTime.UtcNow
             };
-            _context.Tickets.Add(ticket);
+            await _context.Tickets.AddAsync(ticket);
             await _context.SaveChangesAsync();
         }
         public async Task<IEnumerable<CategoryVM>> GetTicketCategoriesAsync()
@@ -163,19 +241,82 @@ namespace HelpDeskApp.Core.Services
 
         public async Task EditTicketAsync(TicketEditVM model)
         {
+            var ticket = await _context.Tickets.FirstOrDefaultAsync(t =>t.Id == model.Id);
 
-            var ticket = await _context.Tickets
-                .FirstOrDefaultAsync(t => t.Id == model.Id);
-
-            if (ticket != null)
+            if (ticket == null)
             {
-                ticket.Title = model.Title;
-                ticket.Description = model.Description;
-                ticket.ProjectId = model.ProjectId;
-                ticket.SubCategoryId = model.SubCategoryId;
-                ticket.StatusId = model.StatusId;
-                await _context.SaveChangesAsync();
+                throw new KeyNotFoundException("Ticket not found.");
             }
+
+            bool projectExists = await _context.Projects
+                .AsNoTracking()
+                .AnyAsync(p =>
+                    p.Id == model.ProjectId);
+
+            if (!projectExists)
+            {
+                throw new KeyNotFoundException("The selected project does not exist.");
+            }
+
+            var subCategory = await _context.SubCategories
+                .AsNoTracking()
+                .FirstOrDefaultAsync(sc =>
+                    sc.Id == model.SubCategoryId);
+
+            if (subCategory == null)
+            {
+                throw new KeyNotFoundException("The selected subcategory does not exist.");
+            }
+
+            if (subCategory.CategoryId != model.CategoryId)
+            {
+                throw new InvalidOperationException("The selected subcategory does not belong to the selected category.");
+            }
+
+            bool statusExists = await _context.TicketStatus
+                .AsNoTracking()
+                .AnyAsync(s =>
+                    s.Id == model.StatusId);
+
+            if (!statusExists)
+            {
+                throw new KeyNotFoundException("The selected status does not exist.");
+            }
+
+            if (!string.IsNullOrWhiteSpace(
+                    model.AssigneeId))
+            {
+                bool assigneeExists =
+                    await _context.Users
+                        .AsNoTracking()
+                        .AnyAsync(u =>
+                            u.Id == model.AssigneeId);
+
+                if (!assigneeExists)
+                {
+                    throw new KeyNotFoundException("The selected assignee does not exist.");
+                }
+
+                bool assigneeInProject =
+                    await _context.UsersProjects
+                        .AsNoTracking()
+                        .AnyAsync(up =>
+                            up.UserId == model.AssigneeId &&
+                            up.ProjectId == model.ProjectId);
+
+                if (!assigneeInProject)
+                {
+                    throw new InvalidOperationException("The assignee must belong to the selected project.");
+                }
+            }
+
+            ticket.Title = model.Title.Trim();
+            ticket.Description = model.Description.Trim();
+            ticket.ProjectId = model.ProjectId;
+            ticket.SubCategoryId = model.SubCategoryId;
+            ticket.StatusId = model.StatusId;
+            ticket.AssigneeId = model.AssigneeId;
+            await _context.SaveChangesAsync();
         }
 
 
@@ -187,6 +328,20 @@ namespace HelpDeskApp.Core.Services
                 _context.Tickets.Remove(ticket);
                 await _context.SaveChangesAsync();
             }
+        }
+        public async Task<IEnumerable<ProjectUserSelectVM>> GetProjectUsersAsync(int projectId)
+        {
+            return await _context.UsersProjects
+                .AsNoTracking()
+                .Where(up => up.ProjectId == projectId)
+                .Select(up => new ProjectUserSelectVM
+                {
+                    Id = up.UserId,
+                    FullName = up.User.UserName
+                               ?? up.User.Email
+                               ?? string.Empty
+                })
+                .ToListAsync();
         }
     }
 }

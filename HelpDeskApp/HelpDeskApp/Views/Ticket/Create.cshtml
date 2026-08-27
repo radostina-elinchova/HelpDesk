@@ -16,7 +16,9 @@
             <form asp-controller="Ticket" asp-action="Create"
                   asp-route-fromProject="@(Model.ProjectId != 0)"
                   method="post">
-
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger mb-3">
+                </div>
                 <div class="row">     
                     
                     <div class="col-md-6 mb-3">
@@ -27,9 +29,9 @@
                                class="form-control"
                                readonly />
                                                       
-                        <input type="hidden" asp-for="StatusId" />
-                     
-                        <span asp-validation-for="StatusId" class="text-danger small"></span>
+                        @* <input type="hidden" asp-for="StatusId" /> 
+                      *@
+                        @* <span asp-validation-for="StatusId" class="text-danger small"></span> *@
                     </div>
                     <div class="col-md-6 mb-3">
                         <label asp-for="Title"
@@ -88,13 +90,32 @@
                         <span asp-validation-for="ProjectId"
                               class="text-danger small"></span>
                     </div>
+                    @if (User.IsInRole("Administrator"))
+                    {
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="AssigneeId"
+                                   class="form-label text-muted text-uppercase small">
+                                Assignee
+                            </label>
 
+                            <select asp-for="AssigneeId"
+                                    class="form-select"
+                                    id="assigneeSelect"
+                                    asp-items="@(new SelectList(Model.AvailableUsers, "Id", "FullName"))">
+
+                            <option value="">
+                                -- Unassigned --
+                            </option>
+
+                            </select>
+                        </div>
+                                        }
                     <div class="col-md-6 mb-3">
                         <label asp-for="CategoryId"
                                class="form-label text-muted text-uppercase small">
                             Category
                         </label>
-                        <input type="hidden" asp-for="CreatorId" />
+                        @* <input type="hidden" asp-for="CreatorId" /> *@
                         <select asp-for="CategoryId"
                                 class="form-select"
                                 id="categorySelect"

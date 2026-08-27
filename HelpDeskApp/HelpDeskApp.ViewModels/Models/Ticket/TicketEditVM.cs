@@ -1,4 +1,5 @@
-﻿using HelpDeskApp.ViewModels.Models.Project;
+﻿using HelpDeskApp.Common;
+using HelpDeskApp.ViewModels.Models.Project;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -11,34 +12,38 @@ namespace HelpDeskApp.ViewModels.Models.Ticket
     public class TicketEditVM
     {
         public int Id { get; set; }
-        // to do : use the global constants for validation. Do not use magical numbers in the code.
         [Required]
-        [StringLength(100, MinimumLength = 5, ErrorMessage = "Заглавието трябва да е между 5 и 100 символа")]
+        [StringLength(ValidationConstants.TicketTitleMaxLength, MinimumLength = ValidationConstants.TicketTitleMinLength,
+            ErrorMessage = "Ticket Name must be between {2} and {1} charachters")]
         public string Title { get; set; } = null!;
 
         [Required]
-        [StringLength(1000, MinimumLength = 10, ErrorMessage = "Описанието трябва да е поне 10 символа")]
+        [StringLength(ValidationConstants.TicketDescriptionMaxLength, MinimumLength = ValidationConstants.TicketDescriptionMinLength,
+            ErrorMessage = "Ticket Description must be between {2} and {1} charachters")]
         public string Description { get; set; } = null!;
 
         [Required]
-        [Range(1, int.MaxValue, ErrorMessage = "Избраната категория е невалидна")]
+        [Range(1, int.MaxValue, ErrorMessage = "Select a category")]
         public int CategoryId { get; set; }
 
         [Required]
-        [Range(1, int.MaxValue, ErrorMessage = "Избраната подкатегория е невалидна")]
+        [Range(1, int.MaxValue, ErrorMessage = "Select a subcategory")]
         public int SubCategoryId { get; set; }
 
         [Required]
-        [Range(1, int.MaxValue, ErrorMessage = "Избраният проект е невалиден")]
+        [Range(1, int.MaxValue, ErrorMessage = "Select a project")]
         public int ProjectId { get; set; }
 
         [Required]
+        [Range(1, int.MaxValue, ErrorMessage = "Select a status")]
         public int StatusId { get; set; }
         public string Status { get; set; } = null!;
 
         public IEnumerable<CategoryVM>? Categories { get; set; } = new HashSet<CategoryVM>();
         public IEnumerable<ProjectIndexVM>? Projects { get; set; } = new HashSet<ProjectIndexVM>();
         public IEnumerable<SubCategoryVM>? SubCategories { get; set; } = new HashSet<SubCategoryVM>();
+        public IEnumerable<TicketStatusVM>? Statuses { get; set; } = new HashSet<TicketStatusVM>();
+        public IEnumerable<ProjectUserSelectVM>? AvailableUsers { get; set; } = new HashSet<ProjectUserSelectVM>();
 
         public string? AssigneeId { get; set; }
     }

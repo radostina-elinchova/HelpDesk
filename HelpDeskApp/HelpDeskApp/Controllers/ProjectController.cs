@@ -44,17 +44,17 @@ namespace HelpDeskApp.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ProjectCreateVM model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                await _projectService.CreateProjectAsync(model);
-                return RedirectToAction(nameof(Index));
+                model.AvailableUsers = await _projectService.GetAvailableUsersAsync();
+                return View(model);              
             }
+            await _projectService.CreateProjectAsync(model);
+            return RedirectToAction(nameof(Index));
 
-            model.AvailableUsers = await _projectService.GetAvailableUsersAsync();
-
-            return View(model);
         }
 
         [HttpGet]
@@ -79,6 +79,7 @@ namespace HelpDeskApp.Controllers
 
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(ProjectEditVM model)
         {
             string? userId = GetUserId();

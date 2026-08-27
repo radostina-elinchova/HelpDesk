@@ -32,62 +32,131 @@ namespace HelpDeskApp.Controllers
         public async Task<IActionResult> Create(int projectId)
         {
             var status = await _ticketService.GetTicketOpenStatusAsync();
-            var categories = await _ticketService.GetTicketCategoriesAsync();          
-            var allProjects = await _ticketService.GetTicketProjectsAsync();
-            string? userId = GetUserId();
+
+            var categories = await _ticketService.GetTicketCategoriesAsync();
+
+            var projects = await _ticketService.GetTicketProjectsAsync();
 
             var model = new TicketFormVM
             {
                 Categories = categories,
-                Projects = allProjects,
-                StatusId = status.Id,
+                Projects = projects,
                 Status = status.Name,
-                ProjectId = projectId,
-                CreatorId = userId
+                ProjectId = projectId
             };
+
+            if (User.IsInRole("Administrator") &&  projectId > 0)
+            {
+                model.AvailableUsers =  await _ticketService.GetProjectUsersAsync(projectId);
+            }
 
             return View(model);
         }
 
         [HttpPost]
-
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(TicketFormVM model, bool fromProject)
         {
             string? userId = GetUserId();
-            model.CreatorId = userId;
+
+            if (string.IsNullOrWhiteSpace(userId))
+            {
+                return Unauthorized();
+            }
+
+            bool isAdmin = User.IsInRole("Administrator");
+
+            if (!isAdmin)
+            {
+                model.AssigneeId = null;
+            }
+
             if (!ModelState.IsValid)
             {
-                //to do : check if category id is valid before fetching subcategories
-                //to do : check if subcategory id is valid before fetching subcategories
-                //to do : check if project id is valid before fetching projects
                 model.Categories = await _ticketService.GetTicketCategoriesAsync();
+
                 model.Projects = await _ticketService.GetTicketProjectsAsync();
-                
+
                 if (model.CategoryId > 0)
                 {
                     model.SubCategories = await _ticketService.GetTicketSubCategoriesAsync(model.CategoryId);
                 }
 
-                var status = await _ticketService.GetTicketOpenStatusAsync();
-                if (status != null)
+                if (isAdmin && model.ProjectId > 0)
                 {
-                    model.StatusId = status.Id;
-                    model.Status = status.Name;
+                    model.AvailableUsers = await _ticketService.GetProjectUsersAsync(model.ProjectId);
                 }
+
+                model.Status = "Open";
 
                 return View(model);
             }
-                       
-            await _ticketService.CreateTicketAsync(model, userId);
-            if (fromProject)
-            {                
-                return RedirectToAction("Details", "Project", new { id = model.ProjectId });
+
+            try
+            {
+                await _ticketService.CreateTicketAsync(model, userId, isAdmin);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Forbid();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+
+                model.Categories =await _ticketService.GetTicketCategoriesAsync();
+
+                model.Projects = await _ticketService.GetTicketProjectsAsync();
+
+                if (model.CategoryId > 0)
+                {
+                    model.SubCategories = await _ticketService.GetTicketSubCategoriesAsync(model.CategoryId);
+                }
+
+                if (isAdmin && model.ProjectId > 0)
+                {
+                    model.AvailableUsers = await _ticketService.GetProjectUsersAsync(model.ProjectId);
+                }
+
+                model.Status = "Open";
+
+                return View(model);
+            }
+            catch (InvalidOperationException ex)
+            {
+                ModelState.AddModelError(string.Empty,ex.Message);
+
+                model.Categories = await _ticketService.GetTicketCategoriesAsync();
+
+                model.Projects = await _ticketService.GetTicketProjectsAsync();
+
+                if (model.CategoryId > 0)
+                {
+                    model.SubCategories = await _ticketService.GetTicketSubCategoriesAsync(model.CategoryId);
+                }
+
+                if (isAdmin && model.ProjectId > 0)
+                {
+                    model.AvailableUsers = await _ticketService.GetProjectUsersAsync(model.ProjectId);
+                }
+
+                model.Status = "Open";
+
+                return View(model);
             }
 
-            return RedirectToAction("Index", "Ticket");
+            if (fromProject)
+            {
+                return RedirectToAction("Details","Project",
+                    new
+                    {
+                        id = model.ProjectId
+                    });
+            }
+
+            return RedirectToAction( "Index", "Ticket");
         }
-       
+
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {        
