@@ -275,13 +275,28 @@ namespace HelpDeskApp.Controllers
         [HttpGet]
         public async Task<IActionResult> Delete(int id)
         {
-            string userId = GetUserId();
-            if (string.IsNullOrEmpty(userId))
+            if (id <= 0)
             {
-                return RedirectToAction("Login", "Account");
+                return NotFound();
             }
+           
             var ticket = await _ticketService.GetTicketDeleteByIdAsync(id);
+            if (ticket == null)
+            {
+                return NotFound();
+            }
 
+            string userId = GetUserId()!;
+
+            if (!User.IsInRole("Administrator"))
+            {
+                bool isCreator = await _ticketService.IsTicketCreatorAsync(id, userId);
+
+                if (!isCreator)
+                {
+                    return Forbid();
+                }
+            }
             return View(ticket);
         }
         //to do: implement soft delete
@@ -294,26 +309,33 @@ namespace HelpDeskApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            string? userId = GetUserId();
-            if (string.IsNullOrEmpty(userId))
+            if (id <= 0)
             {
-                return RedirectToAction("Login", "Account");
+                return NotFound();
+            }
+
+            string userId = GetUserId()!;
+
+            if (!User.IsInRole("Administrator"))
+            {
+                bool isCreator = await _ticketService.IsTicketCreatorAsync(id, userId);
+
+                if (!isCreator)
+                {
+                    return Forbid();
+                }
             }
 
             try
             {
                 await _ticketService.DeleteTicketAsync(id);
             }
-            catch (UnauthorizedAccessException)
-            {
-                return Unauthorized();
-            }
-            catch (ArgumentException)
+            catch (KeyNotFoundException)
             {
                 return NotFound();
             }
 
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
         }
     }
 }
