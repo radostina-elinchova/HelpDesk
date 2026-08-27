@@ -103,7 +103,7 @@ namespace HelpDeskApp.Core.Services
 
             if (project == null)
             {
-                throw new UnauthorizedAccessException("You are not authorized to edit this project.");
+                throw new UnauthorizedAccessException("Project not found");
             }
 
             project.ProjectName = model.ProjectName;
@@ -145,6 +145,13 @@ namespace HelpDeskApp.Core.Services
 
         public async Task AssignUserToProjectAsync(int projectId, string userId)
         {
+            bool userProjectExists = await _projectRepository.UserProjectExistsAsync(projectId, userId);
+
+            if (userProjectExists)
+            {
+                throw new InvalidOperationException("User is already assigned to this project.");
+            }
+
             var userProject = new UserProject
             {
                 ProjectId = projectId,
@@ -152,6 +159,7 @@ namespace HelpDeskApp.Core.Services
             };
 
             _projectRepository.AddUserProject(userProject);
+
             await _projectRepository.SaveChangesAsync();
         }
 
