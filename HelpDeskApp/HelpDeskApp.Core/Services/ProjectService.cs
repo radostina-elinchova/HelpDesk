@@ -103,7 +103,7 @@ namespace HelpDeskApp.Core.Services
 
             if (project == null)
             {
-                throw new UnauthorizedAccessException("Project not found");
+                throw new KeyNotFoundException("Project not found.");
             }
 
             project.ProjectName = model.ProjectName;
