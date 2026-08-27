@@ -1,6 +1,7 @@
 ﻿using HelpDeskApp.Core.Contracts;
 using HelpDeskApp.Infrastructure.Data;
 using HelpDeskApp.Infrastructure.Data.Entities;
+using HelpDeskApp.Infrastructure.Repositories;
 using HelpDeskApp.Infrastructure.Repositories.Contracts;
 using HelpDeskApp.ViewModels.Models.Project;
 using HelpDeskApp.ViewModels.Models.Ticket;
@@ -14,29 +15,37 @@ namespace HelpDeskApp.Core.Services
     public class TicketService : ITicketService
     {
         private readonly ITicketRepository _ticketRepository;
+        private readonly ITicketFollowerRepository _ticketFollowerRepository;
 
-        public TicketService(ITicketRepository ticketRepository)
+        public TicketService(ITicketRepository ticketRepository, ITicketFollowerRepository ticketFollowerRepository)
         {
             _ticketRepository = ticketRepository;
+            _ticketFollowerRepository = ticketFollowerRepository;
         }
 
-        public async Task<IEnumerable<TicketListVM>> GetAllTicketsAsync(string? userId = null, bool isAdmin = false)
+        public async Task<IEnumerable<TicketListVM>> GetAllTicketsAsync(string? userId, bool isAdmin)
         {
             var tickets = await _ticketRepository.GetAllAsync();
 
-            if (!isAdmin && !string.IsNullOrEmpty(userId))
+            if (!isAdmin)
             {
-                tickets = tickets.Where(t => t.Project.UsersProjects.Any(up => up.UserId == userId));
+                tickets = tickets
+                    .Where(t => t.Project.UsersProjects.Any(up => up.UserId == userId));
             }
 
-            return tickets.Select(t => new TicketListVM
-            {
-                Id = t.Id,
-                Title = t.Title,
-                ProjectName = t.Project.ProjectName,
-                CreatorName = t.Creator.LastName,
-                IsCteator = userId != null && t.CreatorId == userId
-            }).ToList();
+            var followedTicketIds = await _ticketFollowerRepository
+                .GetFollowedTicketIdsAsync(userId!);
+
+            return tickets
+                .Select(t => new TicketListVM
+                {
+                    Id = t.Id,
+                    Title = t.Title,
+                    ProjectName = t.Project.ProjectName,
+                    Status = t.Status.TicketStatusName,
+                    IsFollowing = followedTicketIds.Contains(t.Id)
+                })
+                .ToList();
         }
 
         public async Task<TicketDetailsVM?> GetTicketByIdAsync(int id)

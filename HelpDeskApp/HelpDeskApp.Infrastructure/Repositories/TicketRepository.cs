@@ -24,8 +24,9 @@ namespace HelpDeskApp.Infrastructure.Repositories
             return await _context.Tickets
                 .AsNoTracking()
                 .Include(t => t.Project)
-                .ThenInclude(p => p.UsersProjects)
+                    .ThenInclude(p => p.UsersProjects)
                 .Include(t => t.Creator)
+                .Include(t => t.Status)
                 .ToListAsync();
         }
 

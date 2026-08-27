@@ -32,16 +32,23 @@
                     <a asp-controller="Ticket"
                        asp-action="Index"
                        class="odoo-menu-item">
-                        Tickets
+                       Tickets
                     </a>
                     @if (!User.IsInRole("Administrator"))
                     {
                         <a asp-controller="ProjectFavorite"
                         asp-action="Index"
-                       class="odoo-menu-item">
+                        class="odoo-menu-item">
                         Favorites
                     </a>
                     }
+                    
+                    <a asp-controller="TicketFollower"
+                        asp-action="Index"
+                        class="odoo-menu-item">
+                        Following
+                    </a>
+                   
                 }
             </nav>
         </div>

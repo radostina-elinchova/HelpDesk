@@ -52,6 +52,34 @@
                            class="odoo-link">
                             Open
                         </a>
+                        @if (ticket.IsFollowing)
+                        {
+                            <form asp-controller="TicketFollower"
+                                  asp-action="Unfollow"
+                                  method="post"
+                                  class="d-inline-flex align-items-center">
+
+                                <input type="hidden" name="ticketId" value="@ticket.Id" />
+
+                                <button type="submit" class="odoo-link">
+                                    Unfollow
+                                </button>
+                            </form>
+                        }
+                        else
+                        {
+                            <form asp-controller="TicketFollower"
+                                  asp-action="Follow"
+                                  method="post"
+                                  class="d-inline-flex align-items-center">
+
+                                <input type="hidden" name="ticketId" value="@ticket.Id" />
+
+                                <button type="submit" class="odoo-link">
+                                    Follow
+                                </button>
+                            </form>
+                        }
 
                         <a asp-action="Edit"
                            asp-route-id="@ticket.Id"

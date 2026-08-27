@@ -15,6 +15,7 @@ namespace HelpDeskApp.ViewModels.Models.Ticket
         public string CreatorName { get; set; } = null!;
         public bool IsCteator { get; set; }
         public string CreatorId { get; set; }
+        public bool IsFollowing { get; set; }
 
     }
 }
