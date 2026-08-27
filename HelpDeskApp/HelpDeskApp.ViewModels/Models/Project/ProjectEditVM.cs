@@ -10,11 +10,12 @@ namespace HelpDeskApp.ViewModels.Models.Project
         public int Id { get; set; }
 
         [Required]
-        [StringLength(ValidationConstants.DefaultNameMaxLength, MinimumLength = ValidationConstants.DefaultNameMinLength)]
+        [StringLength(ValidationConstants.DefaultNameMaxLength, MinimumLength = ValidationConstants.DefaultNameMinLength,
+            ErrorMessage = "Project Name must be between {2} and {1} characters.")]
         [Display(Name = "Project Name")]
         public string ProjectName { get; set; } = null!;
 
-        [StringLength( ValidationConstants.DefaultNameMaxLength, MinimumLength = ValidationConstants.DefaultNameMinLength)]
+        [StringLength(ValidationConstants.DescriptionMaxLength)]
         [Display(Name = "Project Description")]
         public string Description { get; set; } = null!;
     }

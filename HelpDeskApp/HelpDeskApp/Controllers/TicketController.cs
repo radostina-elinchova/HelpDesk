@@ -173,9 +173,13 @@ namespace HelpDeskApp.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(TicketEditVM model)        {
-          
+
             if (!ModelState.IsValid)
             {
+                model.Categories = await _ticketService.GetTicketCategoriesAsync();
+
+                model.Projects = await _ticketService.GetTicketProjectsAsync();
+
                 if (model.CategoryId > 0)
                 {
                     model.SubCategories = await _ticketService.GetTicketSubCategoriesAsync(model.CategoryId);
@@ -185,6 +189,7 @@ namespace HelpDeskApp.Controllers
                 {
                     model.AvailableUsers = await _ticketService.GetProjectUsersAsync(model.ProjectId);
                 }
+
                 return View(model);
             }
 
