@@ -36,6 +36,7 @@ namespace HelpDeskApp
                 .AddEntityFrameworkStores<ApplicationDbContext>();           
             builder.Services.AddControllersWithViews();
             builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
+            builder.Services.AddScoped<ITicketRepository, TicketRepository>();
             builder.Services.AddScoped<IProjectService, ProjectService>();
             builder.Services.AddScoped<ITicketService, TicketService>();
             var app = builder.Build();

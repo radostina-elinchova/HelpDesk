@@ -1,5 +1,6 @@
 ﻿using HelpDeskApp.Core.Contracts;
 using HelpDeskApp.Infrastructure.Data.Entities;
+using HelpDeskApp.Infrastructure.Repositories;
 using HelpDeskApp.Infrastructure.Repositories.Contracts;
 using HelpDeskApp.ViewModels.Models.Project;
 using HelpDeskApp.ViewModels.Models.Ticket;
@@ -8,43 +9,69 @@ namespace HelpDeskApp.Core.Services
 {
     public class ProjectService : IProjectService
     {
-        private readonly IProjectRepository projectRepository;
+        private readonly IProjectRepository _projectRepository;
 
         public ProjectService(IProjectRepository projectRepository)
         {
-            this.projectRepository = projectRepository;
+            _projectRepository = projectRepository;
         }
 
         public async Task<IEnumerable<ProjectIndexVM>> GetAllProjectsAsync(string? userId, bool isAdmin)
         {
-            var projects = await projectRepository.AllAsync();
+            var projects = await _projectRepository.GetAllAsync();
 
             if (!isAdmin)
             {
-                projects = projects
-                    .Where(p => p.UsersProjects.Any(up => up.UserId == userId));
+                projects = projects.Where(p => p.UsersProjects.Any(up => up.UserId == userId));
             }
 
-            return projects
-                .Select(p => new ProjectIndexVM
-                {
-                    Id = p.Id,
-                    ProjectName = p.ProjectName,
-                    Description = p.Description ?? string.Empty
-                })
-                .ToList();
+            return projects.Select(p => new ProjectIndexVM
+            {
+                Id = p.Id,
+                ProjectName = p.ProjectName,
+                Description = p.Description ?? string.Empty
+            }).ToList();
         }
 
-        public async Task<Project> GetProjectByIdAsync(int id)
+        public async Task<ProjectDetailsVM?> GetProjectDetailsAsync(int projectId)
         {
-            var project = await projectRepository.FindAsync(id);
+            var project = await _projectRepository.GetWithRelatedDataAsync(projectId);
 
             if (project == null)
             {
-                throw new InvalidOperationException("Project not found.");
+                return null;
             }
 
-            return project;
+            var model = new ProjectDetailsVM
+            {
+                Id = project.Id,
+                ProjectName = project.ProjectName,
+                Description = project.Description,
+                AssignedUsers = project.UsersProjects.Select(up => new ProjectUserSelectVM
+                {
+                    Id = up.User.Id,
+                    FullName = up.User.UserName ?? up.User.Email
+                }).ToList(),
+                Tickets = project.Tickets.Select(t => new TicketDetailsVM
+                {
+                    Id = t.Id,
+                    Title = t.Title,
+                    Status = t.Status.TicketStatusName
+                }).ToList()
+            };
+
+            var assignedUserIds = model.AssignedUsers.Select(a => a.Id);
+            var users = await _projectRepository.GetAllUsersAsync();
+
+            model.AvailableUsers = users
+                .Where(u => !assignedUserIds.Contains(u.Id))
+                .Select(u => new ProjectUserSelectVM
+                {
+                    Id = u.Id,
+                    FullName = u.UserName ?? u.Email
+                }).ToList();
+
+            return model;
         }
 
         public async Task<Project> CreateProjectAsync(ProjectCreateVM model)
@@ -63,94 +90,57 @@ namespace HelpDeskApp.Core.Services
                 });
             }
 
-            projectRepository.Add(project);
+            _projectRepository.Add(project);
 
-            await projectRepository.SaveChangesAsync();
+            await _projectRepository.SaveChangesAsync();
 
             return project;
         }
 
         public async Task EditProjectAsync(ProjectEditVM model)
         {
-            var project = await projectRepository.FindAsync(model.Id);
+            var project = await _projectRepository.GetByIdAsync(model.Id);
 
             if (project == null)
             {
-                throw new UnauthorizedAccessException(
-                    "You are not authorized to edit this project.");
+                throw new UnauthorizedAccessException("You are not authorized to edit this project.");
             }
 
             project.ProjectName = model.ProjectName;
             project.Description = model.Description;
 
-            await projectRepository.SaveChangesAsync();
+            await _projectRepository.SaveChangesAsync();
         }
 
         public async Task<bool> DeleteProjectAsync(int id)
         {
-            var project = await projectRepository.FindAsync(id);
+            var project = await _projectRepository.GetByIdAsync(id);
 
             if (project == null)
             {
                 return false;
             }
 
-            projectRepository.Remove(project);
-
-            await projectRepository.SaveChangesAsync();
-
+            _projectRepository.Remove(project);
+            await _projectRepository.SaveChangesAsync();
             return true;
         }
 
-        public async Task<ProjectDetailsVM> GetProjectDetailsAsync(int projectId)
+        public async Task<Project> GetProjectByIdAsync(int id)
         {
-            var project = await projectRepository.ReadAsync(projectId);
+            var project = await _projectRepository.GetByIdAsync(id);
 
             if (project == null)
             {
-                return null!;
+                return null;
             }
 
-            var model = new ProjectDetailsVM
+            return new Project
             {
                 Id = project.Id,
                 ProjectName = project.ProjectName,
-                Description = project.Description,
-
-                AssignedUsers = project.UsersProjects
-                    .Select(up => new ProjectUserSelectVM
-                    {
-                        Id = up.User.Id,
-                        FullName = up.User.UserName ?? up.User.Email
-                    })
-                    .ToList(),
-
-                Tickets = project.Tickets
-                    .Select(t => new TicketDetailsVM
-                    {
-                        Id = t.Id,
-                        Title = t.Title,
-                        Status = t.Status.TicketStatusName
-                    })
-                    .ToList()
+                Description = project.Description ?? string.Empty
             };
-
-            var assignedUserIds = model.AssignedUsers
-                .Select(u => u.Id)
-                .ToList();
-
-            var users = await projectRepository.AllUsersAsync();
-
-            model.AvailableUsers = users
-                .Where(u => !assignedUserIds.Contains(u.Id))
-                .Select(u => new ProjectUserSelectVM
-                {
-                    Id = u.Id,
-                    FullName = u.UserName ?? u.Email
-                })
-                .ToList();
-
-            return model;
         }
 
         public async Task AssignUserToProjectAsync(int projectId, string userId)
@@ -161,41 +151,35 @@ namespace HelpDeskApp.Core.Services
                 UserId = userId
             };
 
-            projectRepository.AddMembership(userProject);
-
-            await projectRepository.SaveChangesAsync();
+            _projectRepository.AddUserProject(userProject);
+            await _projectRepository.SaveChangesAsync();
         }
 
         public async Task RemoveUserFromProjectAsync(int projectId, string userId)
         {
-            var userProject = await projectRepository
-                .FindMembershipAsync(projectId, userId);
+            var userProject = await _projectRepository.GetUserProjectAsync(projectId, userId);
 
-            if (userProject == null)
+            if (userProject != null)
             {
-                return;
+                _projectRepository.RemoveUserProject(userProject);
+                await _projectRepository.SaveChangesAsync();
             }
-
-            projectRepository.RemoveMembership(userProject);
-
-            await projectRepository.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<ProjectUserSelectVM>> GetAvailableUsersAsync()
         {
-            var users = await projectRepository.AllUsersAsync();
+            var users = await _projectRepository.GetAllUsersAsync();
 
-            return users
-                .Select(u => new ProjectUserSelectVM
-                {
-                    Id = u.Id,
-                    FullName = u.UserName ?? u.Email
-                })
-                .ToList();
+            return users.Select(u => new ProjectUserSelectVM
+            {
+                Id = u.Id,
+                FullName = u.UserName ?? u.Email
+            }).ToList();
         }
+
         public async Task<bool> IsUserInProjectAsync(int projectId, string userId)
         {
-            return await projectRepository.MembershipExistsAsync(projectId, userId);
+            return await _projectRepository.UserProjectExistsAsync(projectId, userId);
         }
     }
 }

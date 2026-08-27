@@ -9,27 +9,16 @@ namespace HelpDeskApp.Infrastructure.Repositories.Contracts
 {
     public interface IProjectRepository
     {
-
-        Task<IEnumerable<Project>> AllAsync();
-
-        Task<Project?> FindAsync(int id);
-
-        Task<Project?> ReadAsync(int id);
-
-        Task<IEnumerable<ApplicationUser>> AllUsersAsync();
-
-        Task<UserProject?> FindMembershipAsync(int projectId, string userId);
-
-        Task<bool> MembershipExistsAsync(int projectId, string userId);
-
+        Task<IEnumerable<Project>> GetAllAsync();
+        Task<Project?> GetByIdAsync(int id);
+        Task<Project?> GetWithRelatedDataAsync(int id);
+        Task<IEnumerable<ApplicationUser>> GetAllUsersAsync();
+        Task<UserProject?> GetUserProjectAsync(int projectId, string userId);
+        Task<bool> UserProjectExistsAsync(int projectId, string userId);
         void Add(Project project);
-
-        void AddMembership(UserProject userProject);
-
+        void AddUserProject(UserProject userProject);
         void Remove(Project project);
-
-        void RemoveMembership(UserProject userProject);
-
+        void RemoveUserProject(UserProject userProject);
         Task SaveChangesAsync();
     }
     }

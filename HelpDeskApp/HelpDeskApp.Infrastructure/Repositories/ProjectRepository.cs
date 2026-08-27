@@ -19,7 +19,7 @@ namespace HelpDeskApp.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Project>> AllAsync()
+        public async Task<IEnumerable<Project>> GetAllAsync()
         {
             return await _context.Projects
                 .AsNoTracking()
@@ -27,13 +27,12 @@ namespace HelpDeskApp.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task<Project?> FindAsync(int id)
+        public async Task<Project?> GetByIdAsync(int id)
         {
-            return await _context.Projects
-                .FirstOrDefaultAsync(p => p.Id == id);
+            return await _context.Projects.FirstOrDefaultAsync(p => p.Id == id);
         }
 
-        public async Task<Project?> ReadAsync(int id)
+        public async Task<Project?> GetWithRelatedDataAsync(int id)
         {
             return await _context.Projects
                 .AsNoTracking()
@@ -44,32 +43,22 @@ namespace HelpDeskApp.Infrastructure.Repositories
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
-        public async Task<IEnumerable<ApplicationUser>> AllUsersAsync()
+        public async Task<IEnumerable<ApplicationUser>> GetAllUsersAsync()
         {
-            return await _context.Users
-                .AsNoTracking()
-                .ToListAsync();
+            return await _context.Users.AsNoTracking().ToListAsync();
         }
 
-        public async Task<UserProject?> FindMembershipAsync(
-            int projectId,
-            string userId)
+        public async Task<UserProject?> GetUserProjectAsync(int projectId, string userId)
         {
             return await _context.UsersProjects
-                .FirstOrDefaultAsync(up =>
-                    up.ProjectId == projectId &&
-                    up.UserId == userId);
+                .FirstOrDefaultAsync(up => up.ProjectId == projectId && up.UserId == userId);
         }
 
-        public async Task<bool> MembershipExistsAsync(
-            int projectId,
-            string userId)
+        public async Task<bool> UserProjectExistsAsync(int projectId, string userId)
         {
             return await _context.UsersProjects
                 .AsNoTracking()
-                .AnyAsync(up =>
-                    up.ProjectId == projectId &&
-                    up.UserId == userId);
+                .AnyAsync(up => up.ProjectId == projectId && up.UserId == userId);
         }
 
         public void Add(Project project)
@@ -77,7 +66,7 @@ namespace HelpDeskApp.Infrastructure.Repositories
             _context.Projects.Add(project);
         }
 
-        public void AddMembership(UserProject userProject)
+        public void AddUserProject(UserProject userProject)
         {
             _context.UsersProjects.Add(userProject);
         }
@@ -87,7 +76,7 @@ namespace HelpDeskApp.Infrastructure.Repositories
             _context.Projects.Remove(project);
         }
 
-        public void RemoveMembership(UserProject userProject)
+        public void RemoveUserProject(UserProject userProject)
         {
             _context.UsersProjects.Remove(userProject);
         }
@@ -96,6 +85,6 @@ namespace HelpDeskApp.Infrastructure.Repositories
         {
             await _context.SaveChangesAsync();
         }
-
     }
 }
+

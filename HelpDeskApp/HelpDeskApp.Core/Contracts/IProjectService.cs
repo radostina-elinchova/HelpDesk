@@ -12,11 +12,11 @@ namespace HelpDeskApp.Core.Contracts
     {
 
         Task<IEnumerable<ProjectIndexVM>> GetAllProjectsAsync(string? userId, bool isAdmin);
-        Task<Project> GetProjectByIdAsync(int id);
-        Task<Project> CreateProjectAsync(ProjectCreateVM model);        
+        Task<Project?> GetProjectByIdAsync(int id);
+        Task<Project> CreateProjectAsync(ProjectCreateVM model);
         Task EditProjectAsync(ProjectEditVM model);
         Task<bool> DeleteProjectAsync(int id);
-        Task<ProjectDetailsVM> GetProjectDetailsAsync(int projectId);
+        Task<ProjectDetailsVM?> GetProjectDetailsAsync(int projectId);
         Task AssignUserToProjectAsync(int projectId, string userId);
         Task RemoveUserFromProjectAsync(int projectId, string userId);
         Task<IEnumerable<ProjectUserSelectVM>> GetAvailableUsersAsync();
