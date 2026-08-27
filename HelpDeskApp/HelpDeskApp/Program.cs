@@ -3,6 +3,8 @@ using HelpDeskApp.Core.Services;
 using HelpDeskApp.Infrastructure.Data;
 using HelpDeskApp.Infrastructure.Data.Entities;
 using HelpDeskApp.Infrastructure.Data.Infrastructure;
+using HelpDeskApp.Infrastructure.Repositories;
+using HelpDeskApp.Infrastructure.Repositories.Contracts;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -31,8 +33,9 @@ namespace HelpDeskApp
 
             })
                 .AddRoles<IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+                .AddEntityFrameworkStores<ApplicationDbContext>();           
             builder.Services.AddControllersWithViews();
+            builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
             builder.Services.AddScoped<IProjectService, ProjectService>();
             builder.Services.AddScoped<ITicketService, TicketService>();
             var app = builder.Build();
