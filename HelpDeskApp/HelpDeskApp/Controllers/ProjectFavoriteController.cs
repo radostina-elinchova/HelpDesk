@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HelpDeskApp.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Client")]
     public class ProjectFavoriteController : BaseController
     {
         private readonly IProjectFavoriteService _projectFavoriteService;

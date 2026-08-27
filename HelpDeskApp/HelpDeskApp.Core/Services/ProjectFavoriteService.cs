@@ -21,24 +21,15 @@ namespace HelpDeskApp.Core.Services
 
         public async Task<bool> AddToFavoritesAsync(int projectId, string userId)
         {
-            var userProject = await _projectRepository.GetUserProjectAsync(projectId, userId);
+            var userProject = await _projectRepository
+                .GetUserProjectAsync(projectId, userId);
 
             if (userProject == null)
-            {              
-
-                userProject = new UserProject
-                {
-                    ProjectId = projectId,
-                    UserId = userId,                   
-                    IsFavorite = true
-                };
-
-                _projectRepository.AddUserProject(userProject);
-            }
-            else
             {
-                userProject.IsFavorite = true;
+                return false;
             }
+
+            userProject.IsFavorite = true;
 
             await _projectRepository.SaveChangesAsync();
 
