@@ -1,0 +1,138 @@
+﻿@using HelpDeskApp.ViewModels.Models.Ticket
+@model TicketManagementVM
+
+@{
+    ViewData["Title"] = "Ticket Management";
+}
+
+<div class="o-admin-page">
+
+    <div class="o-control-panel">
+        <div class="o-control-panel-title">
+            <h1>Tickets</h1>
+
+            <span class="o-record-count">
+                @Model.Tickets.Count() tickets
+            </span>
+        </div>
+    </div>
+
+    <div class="o-list-container">
+
+        @if (Model.Tickets.Any())
+        {
+            <table class="o-list-table">
+
+                <thead>
+                    <tr>
+                        <th>Ticket</th>
+                        <th>Project</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @foreach (var ticket in Model.Tickets)
+                    {
+                        <tr>
+
+                            <td>
+                                <a asp-area=""
+                                   asp-controller="Ticket"
+                                   asp-action="Details"
+                                   asp-route-id="@ticket.Id"
+                                   class="o-record-link">
+                                    @ticket.Title
+                                </a>
+                            </td>
+
+                            <td>
+                                @ticket.ProjectName
+                            </td>
+
+                            <td>
+                                <form asp-area="Admin"
+                                      asp-controller="TicketManagement"
+                                      asp-action="ChangeStatus"
+                                      method="post"
+                                      class="o-status-form">
+
+                                    <input type="hidden"
+                                           name="ticketId"
+                                           value="@ticket.Id" />
+
+                                    <select name="statusId"
+                                            class="o-status-select">
+
+                                        @foreach (var status in Model.Statuses)
+                                        {
+                                            if (status.Id == ticket.StatusId)
+                                            {
+                                                <option value="@status.Id" selected>
+                                                    @status.Name
+                                                </option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@status.Id">
+                                                    @status.Name
+                                                </option>
+                                            }
+                                        }
+
+                                    </select>
+
+                                    <button type="submit"
+                                            class="o-status-save">
+                                        Save
+                                    </button>
+
+                                </form>
+                            </td>
+
+                            <td class="o-row-actions">
+
+                                <a asp-area=""
+                                   asp-controller="Ticket"
+                                   asp-action="Details"
+                                   asp-route-id="@ticket.Id">
+                                    View
+                                </a>
+
+                                <a asp-area=""
+                                   asp-controller="Ticket"
+                                   asp-action="Edit"
+                                   asp-route-id="@ticket.Id">
+                                    Edit
+                                </a>
+
+                                <a asp-area=""
+                                   asp-controller="Ticket"
+                                   asp-action="Delete"
+                                   asp-route-id="@ticket.Id"
+                                   class="o-delete-link">
+                                    Delete
+                                </a>
+
+                            </td>
+
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+        }
+        else
+        {
+            <div class="o-empty-state">
+                <h3>No tickets</h3>
+                <p>There are no tickets to manage.</p>
+            </div>
+        }
+
+    </div>
+
+</div>

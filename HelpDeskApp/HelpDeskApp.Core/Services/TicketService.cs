@@ -42,6 +42,7 @@ namespace HelpDeskApp.Core.Services
                     Id = t.Id,
                     Title = t.Title,
                     ProjectName = t.Project.ProjectName,
+                    StatusId = t.StatusId,
                     Status = t.Status.TicketStatusName,
                     IsFollowing = followedTicketIds.Contains(t.Id)
                 })
@@ -348,6 +349,40 @@ namespace HelpDeskApp.Core.Services
         public async Task<bool> IsTicketCreatorAsync(int ticketId, string userId)
         {
             return await _ticketRepository.TicketCreatorExistsAsync(ticketId, userId);
+        }
+        public async Task<IEnumerable<TicketStatusVM>> GetStatusesAsync()
+        {
+            var statuses = await _ticketRepository.GetAllStatusesAsync();
+
+            return statuses
+                .Select(s => new TicketStatusVM
+                {
+                    Id = s.Id,
+                    Name = s.TicketStatusName
+                })
+                .ToList();
+        }
+        public async Task ChangeStatusAsync(int ticketId, int statusId)
+        {
+            var ticket = await _ticketRepository.GetByIdAsync(ticketId);
+
+            if (ticket == null)
+            {
+                throw new KeyNotFoundException("Ticket not found.");
+            }
+
+            var statuses = await _ticketRepository.GetAllStatusesAsync();
+
+            bool statusExists = statuses.Any(s => s.Id == statusId);
+
+            if (!statusExists)
+            {
+                throw new KeyNotFoundException("The selected status does not exist.");
+            }
+
+            ticket.StatusId = statusId;
+
+            await _ticketRepository.SaveChangesAsync();
         }
     }
 }

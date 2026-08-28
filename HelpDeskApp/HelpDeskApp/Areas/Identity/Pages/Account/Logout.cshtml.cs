@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace WebShopApp.Areas.Identity.Pages.Account
+namespace HelpDeskApp.Areas.Identity.Pages.Account
 {
     public class LogoutModel : PageModel
     {

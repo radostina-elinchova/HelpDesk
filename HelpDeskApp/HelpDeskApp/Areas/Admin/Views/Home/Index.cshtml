@@ -1,0 +1,63 @@
+﻿@{
+    ViewData["Title"] = "Administration";
+}
+
+<div class="o-admin-dashboard">
+
+    <div class="o-dashboard-header">
+        <div>
+            <h1>Administration</h1>
+            <p>Manage your HelpDesk workspace</p>
+        </div>
+    </div>
+
+    <div class="o-management-kanban">
+       
+        <a asp-area="Admin"
+           asp-controller="ProjectManagement"
+           asp-action="Index"
+           class="o-management-card">
+
+            <div class="o-management-card-icon">
+                P
+            </div>
+
+            <div class="o-management-card-content">
+                <h2>Projects</h2>
+                <p>
+                    Manage projects, project members and access.
+                </p>
+            </div>
+
+            <div class="o-management-card-footer">
+                Project Management
+                <span>→</span>
+            </div>
+
+        </a>
+        <a asp-area="Admin"
+           asp-controller="TicketManagement"
+           asp-action="Index"
+           class="o-management-card">
+
+            <div class="o-management-card-icon">
+                T
+            </div>
+
+            <div class="o-management-card-content">
+                <h2>Tickets</h2>
+                <p>
+                    Manage tickets, statuses and assignees.
+                </p>
+            </div>
+
+            <div class="o-management-card-footer">
+                Ticket Management
+                <span>→</span>
+            </div>
+
+        </a>
+
+    </div>
+
+</div>

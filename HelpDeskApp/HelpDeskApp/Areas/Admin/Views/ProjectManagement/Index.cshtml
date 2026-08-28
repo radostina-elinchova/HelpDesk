@@ -1,0 +1,106 @@
+﻿@model IEnumerable<ProjectIndexVM>
+
+@{
+    ViewData["Title"] = "Projects";
+}
+
+<div class="o-admin-page">
+
+    <div class="o-control-panel">
+        <div class="o-control-panel-title">
+            <h1>Projects</h1>
+            <span class="o-record-count">@Model.Count() projects</span>
+        </div>
+
+        <div class="o-control-panel-actions">
+            <a asp-area=""
+               asp-controller="Project"
+               asp-action="Create"
+               class="o-btn-primary">
+                New
+            </a>
+        </div>
+    </div>
+
+    <div class="o-list-container">
+
+        @if (Model.Any())
+        {
+            <table class="o-list-table">
+                <thead>
+                    <tr>
+                        <th class="o-project-column">Project</th>
+                        <th>Description</th>
+                        <th class="o-actions-column"></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var project in Model)
+                    {
+                        <tr>
+                            <td>
+                                <a asp-area=""
+                                   asp-controller="Project"
+                                   asp-action="Details"
+                                   asp-route-id="@project.Id"
+                                   class="o-record-link">
+                                    @project.ProjectName
+                                </a>
+                            </td>
+
+                            <td class="o-description">
+                                @project.Description
+                            </td>
+
+                            <td class="o-row-actions">
+                                <a asp-area=""
+                                   asp-controller="Project"
+                                   asp-action="Details"
+                                   asp-route-id="@project.Id">
+                                    View
+                                </a>
+
+                                <a asp-area=""
+                                   asp-controller="Project"
+                                   asp-action="Edit"
+                                   asp-route-id="@project.Id">
+                                    Edit
+                                </a>
+
+                                <a asp-area=""
+                                   asp-controller="Project"
+                                   asp-action="Delete"
+                                   asp-route-id="@project.Id"
+                                   class="o-delete-link">
+                                    Delete
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div class="o-empty-state">
+                <h3>No projects yet</h3>
+                <p>Create a project to start managing tickets and users.</p>
+
+                <a asp-area=""
+                   asp-controller="Project"
+                   asp-action="Create"
+                   class="o-btn-primary">
+                    New Project
+                </a>
+            </div>
+        }
+
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

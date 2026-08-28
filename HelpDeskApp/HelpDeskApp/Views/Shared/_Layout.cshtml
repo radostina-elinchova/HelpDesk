@@ -22,52 +22,118 @@
                    class="odoo-logo">
                     HelpDesk
                 </a>
-                @if (this.User.Identity.IsAuthenticated)
+                @if (User.IsInRole("Administrator"))
                 {
-                    <a asp-controller="Project"
+                    <li class="nav-item dropdown o-admin-nav">
+
+                         <a class="dropdown-item"
+                                   asp-area="Admin"
+                                   asp-controller="Home"
+                                   asp-action="Index">
+                            Administration
+                        </a>
+
+                        <ul class="dropdown-menu o-admin-dropdown">
+
+                            <li>
+                                <a class="dropdown-item"
+                                   asp-area="Admin"
+                                   asp-controller="Home"
+                                   asp-action="Index">
+                                    Dashboard
+                                </a>
+                            </li>
+
+                            <li>
+                                <hr class="dropdown-divider" />
+                            </li>
+
+                            <li>
+                                <a class="dropdown-item"
+                                   asp-area="Admin"
+                                   asp-controller="ProjectManagement"
+                                   asp-action="Manage">
+                                    Project Management
+                                </a>
+                            </li>
+
+                            <li>
+                                <a class="dropdown-item"
+                                   asp-area="Admin"
+                                   asp-controller="TicketManagement"
+                                   asp-action="Manage">
+                                    Ticket Management
+                                </a>
+                            </li>
+
+                        </ul>
+
+                    </li>
+                }
+               @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <a asp-area=""
+                       asp-controller="Project"
                        asp-action="Index"
                        class="odoo-menu-item">
                         Projects
                     </a>
-                    <a asp-controller="Ticket"
+
+                    <a asp-area=""
+                       asp-controller="Ticket"
                        asp-action="Index"
                        class="odoo-menu-item">
-                       Tickets
+                        Tickets
                     </a>
+
+
                     @if (!User.IsInRole("Administrator"))
                     {
-                        <a asp-controller="ProjectFavorite"
-                        asp-action="Index"
-                        class="odoo-menu-item">
-                        Favorites
-                    </a>
+                        <a asp-area=""
+                           asp-controller="ProjectFavorite"
+                           asp-action="Index"
+                           class="odoo-menu-item">
+                            Favorites
+                        </a>
                     }
-                    
-                    <a asp-controller="TicketFollower"
-                        asp-action="Index"
-                        class="odoo-menu-item">
+
+
+                    <a asp-area=""
+                       asp-controller="TicketFollower"
+                       asp-action="Index"
+                       class="odoo-menu-item">
                         Following
                     </a>
-                   
                 }
+
             </nav>
+
         </div>
 
+
+        <!-- LOGIN -->
         <div class="odoo-topbar-right">
             <partial name="_LoginPartial" />
         </div>
+
     </header>
+
+
     <main class="odoo-main">
         @RenderBody()
     </main>
+
+
     <footer class="odoo-footer">
         © 2026 HelpDeskApp
     </footer>
+
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
+
 </body>
 </html>

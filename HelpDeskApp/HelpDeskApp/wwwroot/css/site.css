@@ -458,3 +458,352 @@ button.odoo-link {
     padding: 0;
     cursor: pointer;
 }
+/* =========================
+   Odoo 17 - Admin List View
+   ========================= */
+
+.o-admin-page {
+    background: #f8f9fa;
+    min-height: calc(100vh - 60px);
+}
+
+/* Control panel */
+
+.o-control-panel {
+    background: #ffffff;
+    border-bottom: 1px solid #dee2e6;
+    padding: 16px 24px 12px;
+}
+
+.o-control-panel-title {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+    .o-control-panel-title h1 {
+        margin: 0;
+        font-size: 22px;
+        font-weight: 500;
+        color: #212529;
+    }
+
+.o-record-count {
+    font-size: 13px;
+    color: #6c757d;
+}
+
+.o-control-panel-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Odoo primary button */
+
+.o-btn-primary {
+    display: inline-block;
+    padding: 6px 14px;
+    background: #714b67;
+    border: 1px solid #714b67;
+    border-radius: 3px;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+    .o-btn-primary:hover {
+        background: #5f3f57;
+        border-color: #5f3f57;
+        color: #ffffff;
+    }
+
+/* List */
+
+.o-list-container {
+    background: #ffffff;
+}
+
+.o-list-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+    .o-list-table thead {
+        background: #f8f9fa;
+    }
+
+    .o-list-table th {
+        padding: 9px 12px;
+        border-bottom: 1px solid #dee2e6;
+        border-right: 1px solid #e9ecef;
+        color: #495057;
+        font-weight: 500;
+        text-align: left;
+    }
+
+    .o-list-table td {
+        padding: 10px 12px;
+        border-bottom: 1px solid #e9ecef;
+        vertical-align: middle;
+        color: #343a40;
+    }
+
+    .o-list-table tbody tr:hover {
+        background: #f8f9fa;
+    }
+
+.o-project-column {
+    width: 25%;
+}
+
+.o-actions-column {
+    width: 210px;
+}
+
+.o-description {
+    color: #6c757d !important;
+}
+
+/* Project name */
+
+.o-record-link {
+    color: #714b67;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+    .o-record-link:hover {
+        color: #5f3f57;
+        text-decoration: underline;
+    }
+
+/* Row actions */
+
+.o-row-actions {
+    white-space: nowrap;
+    text-align: right;
+}
+
+    .o-row-actions a {
+        color: #714b67;
+        text-decoration: none;
+        margin-left: 14px;
+        font-size: 13px;
+    }
+
+        .o-row-actions a:hover {
+            text-decoration: underline;
+        }
+
+    .o-row-actions .o-delete-link {
+        color: #dc3545;
+    }
+
+/* Empty list */
+
+.o-empty-state {
+    padding: 80px 20px;
+    text-align: center;
+}
+
+    .o-empty-state h3 {
+        margin-bottom: 8px;
+        font-size: 20px;
+        font-weight: 500;
+    }
+
+    .o-empty-state p {
+        margin-bottom: 20px;
+        color: #6c757d;
+    }
+/* ==================================
+   ODOO INSPIRED ADMIN DASHBOARD
+   ================================== */
+
+.o-admin-dashboard {
+    min-height: calc(100vh - 60px);
+    padding: 24px;
+    background-color: #f8f9fa;
+}
+
+.o-dashboard-header {
+    margin-bottom: 24px;
+}
+
+    .o-dashboard-header h1 {
+        margin: 0;
+        color: #212529;
+        font-size: 24px;
+        font-weight: 500;
+    }
+
+    .o-dashboard-header p {
+        margin: 5px 0 0;
+        color: #6c757d;
+        font-size: 14px;
+    }
+
+
+/* KANBAN */
+
+.o-management-kanban {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+    max-width: 850px;
+}
+
+
+/* CARD */
+
+.o-management-card {
+    display: flex;
+    flex-direction: column;
+    min-height: 210px;
+    background: #ffffff;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    color: #343a40;
+    text-decoration: none;
+    transition: box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+    .o-management-card:hover {
+        border-color: #c9c2c7;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+        color: #343a40;
+    }
+
+
+/* ICON */
+
+.o-management-card-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    margin: 18px 18px 5px;
+    border-radius: 4px;
+    background-color: #714b67;
+    color: #ffffff;
+    font-size: 19px;
+    font-weight: 600;
+}
+
+
+/* CONTENT */
+
+.o-management-card-content {
+    flex-grow: 1;
+    padding: 10px 18px 18px;
+}
+
+    .o-management-card-content h2 {
+        margin: 0 0 8px;
+        color: #714b67;
+        font-size: 18px;
+        font-weight: 500;
+    }
+
+    .o-management-card-content p {
+        margin: 0;
+        color: #6c757d;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+
+/* FOOTER */
+
+.o-management-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 18px;
+    border-top: 1px solid #e9ecef;
+    color: #714b67;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.o-management-card:hover .o-management-card-footer {
+    background-color: #f8f9fa;
+}
+/* ==================================
+   ODOO ADMIN NAVIGATION
+   ================================== */
+
+.o-admin-nav-link {
+    color: #714b67 !important;
+    font-weight: 500;
+}
+
+    .o-admin-nav-link:hover,
+    .o-admin-nav-link:focus {
+        color: #5f3f57 !important;
+    }
+
+.o-admin-dropdown {
+    min-width: 220px;
+    padding: 5px 0;
+    border: 1px solid #dee2e6;
+    border-radius: 3px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.10);
+}
+
+    .o-admin-dropdown .dropdown-item {
+        padding: 8px 16px;
+        color: #343a40;
+        font-size: 14px;
+    }
+
+        .o-admin-dropdown .dropdown-item:hover,
+        .o-admin-dropdown .dropdown-item:focus {
+            background-color: #f3f0f2;
+            color: #714b67;
+        }
+
+    .o-admin-dropdown .dropdown-divider {
+        margin: 4px 0;
+    }
+.o-status-form {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.o-status-select {
+    min-width: 140px;
+    padding: 5px 28px 5px 8px;
+    border: 1px solid #ced4da;
+    border-radius: 3px;
+    background-color: #ffffff;
+    color: #343a40;
+    font-size: 13px;
+}
+
+    .o-status-select:focus {
+        outline: none;
+        border-color: #714b67;
+        box-shadow: 0 0 0 1px #714b67;
+    }
+
+.o-status-save {
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: #714b67;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+    .o-status-save:hover {
+        color: #5f3f57;
+        text-decoration: underline;
+    }
