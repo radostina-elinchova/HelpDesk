@@ -61,6 +61,16 @@ namespace HelpDeskApp.Infrastructure.Repositories
         {
             _context.TicketFollowers.Remove(ticketFollower);
         }
+        public async Task<IEnumerable<string>>
+    GetFollowerUserIdsAsync(int ticketId)
+        {
+            return await _context.TicketFollowers
+                .AsNoTracking()
+                .Where(tf => tf.TicketId == ticketId)
+                .Select(tf => tf.UserId)
+                .Distinct()
+                .ToListAsync();
+        }
 
         public async Task SaveChangesAsync()
         {

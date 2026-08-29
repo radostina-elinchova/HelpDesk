@@ -125,8 +125,14 @@
 
     </header>
 
-
+      @if (User.Identity?.IsAuthenticated == true)
+        {
+            <div id="notification-container"
+                 class="container mt-3">
+            </div>
+        }
     <main class="odoo-main">
+      
         @RenderBody()
     </main>
 
@@ -141,6 +147,10 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
-
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <script src="~/microsoft/signalr/dist/browser/signalr.min.js"> </script>
+        <script src="~/js/notifications.js"></script>
+    }
 </body>
 </html>

@@ -17,11 +17,15 @@ namespace HelpDeskApp.Core.Services
     {
         private readonly ITicketRepository _ticketRepository;
         private readonly ITicketFollowerRepository _ticketFollowerRepository;
-
-        public TicketService(ITicketRepository ticketRepository, ITicketFollowerRepository ticketFollowerRepository)
+        private readonly INotificationService _notificationService;
+        public TicketService(
+            ITicketRepository ticketRepository, 
+            ITicketFollowerRepository ticketFollowerRepository,
+            INotificationService notificationService)
         {
             _ticketRepository = ticketRepository;
             _ticketFollowerRepository = ticketFollowerRepository;
+            _notificationService = notificationService;
         }
 
         public async Task<IEnumerable<TicketListVM>> GetAllTicketsAsync(string? userId, bool isAdmin)
@@ -307,6 +311,7 @@ namespace HelpDeskApp.Core.Services
             ticket.AssigneeId = model.AssigneeId;
 
             await _ticketRepository.SaveChangesAsync();
+            await _notificationService.NotifyTicketFollowersAsync(ticket.Id, $"Ticket \"{ticket.Title}\" was updated.");
         }
 
         public async Task DeleteTicketAsync(int id)

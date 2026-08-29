@@ -19,7 +19,7 @@ namespace HelpDeskApp.Infrastructure.Repositories.Contracts
 
         void Remove(TicketFollower ticketFollower);
         Task<ICollection<int>> GetFollowedTicketIdsAsync(string userId);
-
+        Task<IEnumerable<string>> GetFollowerUserIdsAsync(int ticketId);
         Task SaveChangesAsync();
     }
 }

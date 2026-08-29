@@ -7,6 +7,8 @@ using HelpDeskApp.Infrastructure.Repositories;
 using HelpDeskApp.Infrastructure.Repositories.Contracts;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using HelpDeskApp.Hubs;
+using HelpDeskApp.Services;
 
 namespace HelpDeskApp
 {
@@ -35,6 +37,7 @@ namespace HelpDeskApp
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();           
             builder.Services.AddControllersWithViews();
+            builder.Services.AddSignalR();
             builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
             builder.Services.AddScoped<ITicketRepository, TicketRepository>();
             builder.Services.AddScoped<IProjectService, ProjectService>();
@@ -44,6 +47,7 @@ namespace HelpDeskApp
             builder.Services.AddScoped<ITicketFollowerService, TicketFollowerService>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<INotificationService, NotificationService>();
             var app = builder.Build();
             await app.PrepareDatabase(); 
 
@@ -73,6 +77,8 @@ namespace HelpDeskApp
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
             app.MapRazorPages();
+
+            app.MapHub<NotificationHub>("/notificationHub");
 
             app.Run(); 
         }
