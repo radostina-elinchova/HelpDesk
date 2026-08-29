@@ -21,5 +21,6 @@ namespace HelpDeskApp.Core.Contracts
         Task RemoveUserFromProjectAsync(int projectId, string userId);
         Task<IEnumerable<ProjectUserSelectVM>> GetAvailableUsersAsync();
         Task<bool> IsUserInProjectAsync(int projectId, string userId);
+        Task<ProjectQueryVM> GetAllProjectsAsync(ProjectQueryVM queryModel, string? userId,  bool isAdmin);
     }
 }

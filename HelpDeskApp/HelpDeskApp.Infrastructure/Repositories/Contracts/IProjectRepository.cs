@@ -21,6 +21,8 @@ namespace HelpDeskApp.Infrastructure.Repositories.Contracts
         void RemoveUserProject(UserProject userProject);
         Task<IEnumerable<Project>> GetFavoriteProjectsAsync(string userId);
         Task SaveChangesAsync();
+        Task<IEnumerable<Project>> GetFilteredAsync(string? userId, bool isAdmin, string? searchTerm,  bool favoritesOnly, int currentPage, int pageSize);
+        Task<int> GetFilteredCountAsync(string? userId, bool isAdmin,  string? searchTerm, bool favoritesOnly);
     }
     }
 

@@ -1,0 +1,58 @@
+﻿@using HelpDeskApp.ViewModels.Models.User
+@model UserDetailsVM
+
+@{
+    ViewData["Title"] = "User Details";
+}
+
+<div class="container py-4">
+    <h1>User Details</h1>
+
+    <dl class="row mt-4">
+        <dt class="col-sm-3">Username</dt>
+        <dd class="col-sm-9">@Model.UserName</dd>
+
+        <dt class="col-sm-3">Email</dt>
+        <dd class="col-sm-9">@Model.Email</dd>
+
+        <dt class="col-sm-3">Full name</dt>
+        <dd class="col-sm-9">@Model.FullName</dd>
+
+        <dt class="col-sm-3">Address</dt>
+        <dd class="col-sm-9">@Model.Address</dd>
+
+        <dt class="col-sm-3">Role</dt>
+        <dd class="col-sm-9">@Model.Role</dd>
+
+        <dt class="col-sm-3">Projects</dt>
+        <dd class="col-sm-9">@Model.ProjectsCount</dd>
+
+        <dt class="col-sm-3">Created tickets</dt>
+        <dd class="col-sm-9">@Model.CreatedTicketsCount</dd>
+
+        <dt class="col-sm-3">Assigned tickets</dt>
+        <dd class="col-sm-9">@Model.AssignedTicketsCount</dd>
+
+        <dt class="col-sm-3">Followed tickets</dt>
+        <dd class="col-sm-9">@Model.FollowedTicketsCount</dd>
+    </dl>
+
+    @if (!Model.CanBeDeleted)
+    {
+        <div class="alert alert-warning">@Model.DeleteRestrictionMessage</div>
+    }
+
+    <div class="d-flex gap-2">
+        <a asp-action="Index" class="btn btn-outline-secondary">Back</a>
+        <a asp-action="Delete"
+           asp-route-id="@Model.Id"
+           class="btn btn-danger">
+            Delete
+        </a>
+    </div>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

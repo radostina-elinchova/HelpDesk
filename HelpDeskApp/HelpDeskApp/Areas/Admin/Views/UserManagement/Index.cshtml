@@ -1,0 +1,137 @@
+﻿@using HelpDeskApp.ViewModels.Models.Common
+@model UserQueryVM
+
+@{
+    ViewData["Title"] = "User Management";
+}
+
+<div class="o-admin-page">
+    <div class="o-control-panel">
+        <div class="o-control-panel-title">
+            <h1>Users</h1>
+            <span class="o-record-count">@Model.Result.TotalItems users</span>
+        </div>
+
+        <form asp-action="Index" method="get" class="o-search-panel">
+            <input asp-for="SearchTerm"
+                   class="o-search-input"
+                   placeholder="Search name, username or email..." />
+
+            <select asp-for="Role" class="o-search-select">
+                <option value="">All roles</option>
+                <option value="Administrator">Administrator</option>
+                <option value="Client">Client</option>
+            </select>
+
+            <select asp-for="PageSize" class="o-search-select">
+                <option value="5">5 per page</option>
+                <option value="10">10 per page</option>
+                <option value="20">20 per page</option>
+            </select>
+
+            <button type="submit" class="o-btn-primary">Search</button>
+            <a asp-action="Index" class="o-btn-secondary">Clear</a>
+        </form>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="o-message o-message-success">@TempData["SuccessMessage"]</div>
+    }
+
+    <div class="o-list-container">
+        @if (Model.Result.Items.Any())
+        {
+            <table class="o-list-table">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Email</th>
+                        <th>Full Name</th>
+                        <th>Role</th>
+                        <th class="o-actions-column"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model.Result.Items)
+                    {
+                        <tr>
+                            <td>
+                                <a asp-action="Details"
+                                   asp-route-id="@user.Id"
+                                   class="o-record-link">
+                                    @user.UserName
+                                </a>
+                            </td>
+                            <td>@user.Email</td>
+                            <td>@user.FullName</td>
+                            <td><span class="o-role-badge">@user.Role</span></td>
+                            <td class="o-row-actions">
+                                <a asp-action="Details" asp-route-id="@user.Id">View</a>
+                                <a asp-action="Delete"
+                                   asp-route-id="@user.Id"
+                                   class="o-delete-link">Delete</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <div class="o-pagination-bar">
+                <span class="o-pagination-info">
+                    Page @Model.Result.CurrentPage of @Model.Result.TotalPages
+                </span>
+
+                <div class="o-pagination-actions">
+                    @if (Model.Result.HasPreviousPage)
+                    {
+                        <a asp-action="Index"
+                           asp-route-searchTerm="@Model.SearchTerm"
+                           asp-route-role="@Model.Role"
+                           asp-route-currentPage="@(Model.Result.CurrentPage - 1)"
+                           asp-route-pageSize="@Model.Result.PageSize"
+                           class="o-page-button">‹</a>
+                    }
+                    else
+                    {
+                        <span class="o-page-button disabled">‹</span>
+                    }
+
+                @for (int pageNumber = 1; pageNumber <= Model.Result.TotalPages; pageNumber++)
+                {
+                    <a asp-action="Index"
+                    asp-route-searchTerm="@Model.SearchTerm"
+                    asp-route-role="@Model.Role"
+                    asp-route-currentPage="@pageNumber"
+                    asp-route-pageSize="@Model.Result.PageSize"
+                    class="o-page-button @(pageNumber == Model.Result.CurrentPage ? "active" : null)">
+                    @pageNumber
+                    </a>
+                }
+
+                    @if (Model.Result.HasNextPage)
+                    {
+                        <a asp-action="Index"
+                           asp-route-searchTerm="@Model.SearchTerm"
+                           asp-route-role="@Model.Role"
+                           asp-route-currentPage="@(Model.Result.CurrentPage + 1)"
+                           asp-route-pageSize="@Model.Result.PageSize"
+                           class="o-page-button">›</a>
+                    }
+                    else
+                    {
+                        <span class="o-page-button disabled">›</span>
+                    }
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="o-empty-state">
+                <h3>No users found</h3>
+                <p>Try changing the search text or selected role.</p>
+                <a asp-action="Index" class="o-btn-primary">Clear filters</a>
+            </div>
+        }
+    </div>
+</div>

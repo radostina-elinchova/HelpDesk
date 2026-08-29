@@ -2,6 +2,7 @@
 using HelpDeskApp.Infrastructure.Data.Entities;
 using HelpDeskApp.Infrastructure.Repositories;
 using HelpDeskApp.Infrastructure.Repositories.Contracts;
+using HelpDeskApp.ViewModels.Models.Common;
 using HelpDeskApp.ViewModels.Models.Project;
 using HelpDeskApp.ViewModels.Models.Ticket;
 
@@ -189,6 +190,55 @@ namespace HelpDeskApp.Core.Services
         public async Task<bool> IsUserInProjectAsync(int projectId, string userId)
         {
             return await _projectRepository.UserProjectExistsAsync(projectId, userId);
+        }
+        public async Task<ProjectQueryVM> GetAllProjectsAsync(ProjectQueryVM queryModel, string? userId, bool isAdmin)
+        {
+            queryModel.SearchTerm = string.IsNullOrWhiteSpace(queryModel.SearchTerm)
+                    ? null
+                    : queryModel.SearchTerm.Trim();
+
+            queryModel.CurrentPage = Math.Max(queryModel.CurrentPage, 1);
+
+            queryModel.PageSize = queryModel.PageSize is 6 or 12 or 24
+                ? queryModel.PageSize
+                : 6;
+
+            int totalItems = await _projectRepository.GetFilteredCountAsync(userId, isAdmin, queryModel.SearchTerm, queryModel.FavoritesOnly);
+
+            int totalPages = Math.Max(1, (int)Math.Ceiling(totalItems / (double)queryModel.PageSize));
+
+            queryModel.CurrentPage = Math.Min(queryModel.CurrentPage,  totalPages);
+
+            IEnumerable<Project> projects =
+                await _projectRepository.GetFilteredAsync(
+                    userId,
+                    isAdmin,
+                    queryModel.SearchTerm,
+                    queryModel.FavoritesOnly,
+                    queryModel.CurrentPage,
+                    queryModel.PageSize);
+
+            queryModel.Result = new PagedResultVM<ProjectIndexVM>
+            {
+                Items = projects
+                    .Select(p => new ProjectIndexVM
+                    {
+                        Id = p.Id,
+                        ProjectName = p.ProjectName,
+                        Description = p.Description ?? string.Empty,
+
+                        IsFavorite = p.UsersProjects.Any(up =>
+                            up.UserId == userId &&
+                            up.IsFavorite)
+                    })
+                    .ToList(),
+
+                CurrentPage = queryModel.CurrentPage,
+                PageSize = queryModel.PageSize,
+                TotalItems = totalItems
+            };
+
+            return queryModel;
         }
     }
 }

@@ -3,6 +3,7 @@ using HelpDeskApp.Infrastructure.Data;
 using HelpDeskApp.Infrastructure.Data.Entities;
 using HelpDeskApp.Infrastructure.Repositories;
 using HelpDeskApp.Infrastructure.Repositories.Contracts;
+using HelpDeskApp.ViewModels.Models.Common;
 using HelpDeskApp.ViewModels.Models.Project;
 using HelpDeskApp.ViewModels.Models.Ticket;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -383,6 +384,106 @@ namespace HelpDeskApp.Core.Services
             ticket.StatusId = statusId;
 
             await _ticketRepository.SaveChangesAsync();
+        }
+        public async Task<TicketQueryVM> GetAllTicketsAsync(TicketQueryVM queryModel,  string? userId, bool isAdmin)
+        {
+            queryModel.SearchTerm =
+                string.IsNullOrWhiteSpace(queryModel.SearchTerm)
+                    ? null
+                    : queryModel.SearchTerm.Trim();
+
+            queryModel.CurrentPage = Math.Max(
+                queryModel.CurrentPage,
+                1);
+
+            queryModel.PageSize =
+                queryModel.PageSize is 6 or 12 or 24
+                    ? queryModel.PageSize
+                    : 6;
+
+            int totalItems =
+                await _ticketRepository.GetFilteredCountAsync(
+                    userId,
+                    isAdmin,
+                    queryModel.SearchTerm,
+                    queryModel.ProjectId,
+                    queryModel.StatusId);
+
+            int totalPages = Math.Max(
+                1,
+                (int)Math.Ceiling(
+                    totalItems / (double)queryModel.PageSize));
+
+            queryModel.CurrentPage = Math.Min(
+                queryModel.CurrentPage,
+                totalPages);
+
+            IEnumerable<Ticket> tickets =
+                await _ticketRepository.GetFilteredAsync(
+                    userId,
+                    isAdmin,
+                    queryModel.SearchTerm,
+                    queryModel.ProjectId,
+                    queryModel.StatusId,
+                    queryModel.CurrentPage,
+                    queryModel.PageSize);
+
+            ICollection<int> followedTicketIds =
+                string.IsNullOrWhiteSpace(userId)
+                    ? new List<int>()
+                    : await _ticketFollowerRepository
+                        .GetFollowedTicketIdsAsync(userId);
+
+            queryModel.Projects =
+                (await _ticketRepository.GetFilterProjectsAsync(
+                    userId,
+                    isAdmin))
+                .Select(p => new ProjectIndexVM
+                {
+                    Id = p.Id,
+                    ProjectName = p.ProjectName,
+                    Description = p.Description ?? string.Empty
+                })
+                .ToList();
+
+            queryModel.Statuses =
+                (await _ticketRepository.GetAllStatusesAsync())
+                .Select(s => new TicketStatusVM
+                {
+                    Id = s.Id,
+                    Name = s.TicketStatusName
+                })
+                .ToList();
+
+            queryModel.Result = new PagedResultVM<TicketListVM>
+            {
+                Items = tickets
+                    .Select(t => new TicketListVM
+                    {
+                        Id = t.Id,
+                        Title = t.Title,
+                        ProjectName = t.Project.ProjectName,
+                        StatusId = t.StatusId,
+                        Status = t.Status.TicketStatusName,
+                        CreatorId = t.CreatorId,
+
+                        CreatorName =
+                            $"{t.Creator.FirstName} {t.Creator.LastName}"
+                            .Trim(),
+
+                        IsCteator = t.CreatorId == userId,
+
+                        IsFollowing =
+                            followedTicketIds.Contains(t.Id)
+                    })
+                    .ToList(),
+
+                CurrentPage = queryModel.CurrentPage,
+                PageSize = queryModel.PageSize,
+                TotalItems = totalItems
+            };
+
+            return queryModel;
         }
     }
 }

@@ -119,5 +119,84 @@ namespace HelpDeskApp.Infrastructure.Repositories
         {
             await _context.SaveChangesAsync();
         }
+        public async Task<IEnumerable<Ticket>> GetFilteredAsync(string? userId, bool isAdmin, string? searchTerm,  int? projectId, int? statusId,  int currentPage, int pageSize)
+        {
+            IQueryable<Ticket> query = BuildFilteredQuery(
+                userId,
+                isAdmin,
+                searchTerm,
+                projectId,
+                statusId);
+
+            return await query
+                .AsNoTracking()
+                .Include(t => t.Project)
+                .Include(t => t.Creator)
+                .Include(t => t.Status)
+                .OrderByDescending(t => t.CreatedOn)
+                .Skip((currentPage - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+        }
+
+        public async Task<int> GetFilteredCountAsync(string? userId,bool isAdmin,string? searchTerm, int? projectId, int? statusId)
+        {
+            return await BuildFilteredQuery(userId,isAdmin,searchTerm,projectId,statusId)
+                .CountAsync();
+        }
+
+        public async Task<IEnumerable<Project>> GetFilterProjectsAsync(
+            string? userId,
+            bool isAdmin)
+        {
+            IQueryable<Project> query = _context.Projects.AsNoTracking();
+
+            if (!isAdmin)
+            {
+                query = query.Where(p =>
+                    p.UsersProjects.Any(up => up.UserId == userId));
+            }
+
+            return await query
+                .OrderBy(p => p.ProjectName)
+                .ToListAsync();
+        }
+        private IQueryable<Ticket> BuildFilteredQuery(
+            string? userId,
+            bool isAdmin,
+            string? searchTerm,
+            int? projectId,
+            int? statusId)
+        {
+            IQueryable<Ticket> query = _context.Tickets;
+
+            if (!isAdmin)
+            {
+                query = query.Where(t =>
+                    t.Project.UsersProjects.Any(up => up.UserId == userId));
+            }
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                string normalizedSearchTerm = searchTerm.Trim();
+
+                query = query.Where(t =>
+                    t.Title.Contains(normalizedSearchTerm) ||
+                    t.Description.Contains(normalizedSearchTerm));
+            }
+
+            if (projectId.HasValue)
+            {
+                query = query.Where(t => t.ProjectId == projectId.Value);
+            }
+
+            if (statusId.HasValue)
+            {
+                query = query.Where(t => t.StatusId == statusId.Value);
+            }
+
+            return query;
+        }
+
     }
 }

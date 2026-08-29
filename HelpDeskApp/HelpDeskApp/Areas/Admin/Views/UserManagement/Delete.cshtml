@@ -1,0 +1,56 @@
+﻿@using HelpDeskApp.ViewModels.Models.User
+@model UserDeleteVM
+
+@{
+    ViewData["Title"] = "Delete User";
+}
+
+<div class="container py-4">
+    <h1>Delete User</h1>
+
+    <h4 class="mt-4">@Model.FullName (@Model.UserName)</h4>
+    <p>@Model.Email</p>
+
+    <ul>
+        <li>@Model.ProjectsCount project assignments will be removed.</li>
+        <li>@Model.FollowedTicketsCount followed-ticket links will be removed.</li>
+        <li>@Model.AssignedTicketsCount assigned tickets will become unassigned.</li>
+        <li>@Model.CreatedTicketsCount created tickets must remain in the history.</li>
+    </ul>
+
+    @if (!Model.CanBeDeleted)
+    {
+        <div class="alert alert-warning">@Model.DeleteRestrictionMessage</div>
+
+        <a asp-action="Details"
+           asp-route-id="@Model.Id"
+           class="btn btn-outline-secondary">
+            Back
+        </a>
+    }
+    else
+    {
+        <div class="alert alert-danger">
+            This operation cannot be undone.
+        </div>
+
+        <form asp-action="Delete" method="post">
+            <input type="hidden" asp-for="Id" />
+
+            <button type="submit" class="btn btn-danger">
+                Delete User
+            </button>
+
+            <a asp-action="Details"
+               asp-route-id="@Model.Id"
+               class="btn btn-outline-secondary">
+                Cancel
+            </a>
+        </form>
+    }
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

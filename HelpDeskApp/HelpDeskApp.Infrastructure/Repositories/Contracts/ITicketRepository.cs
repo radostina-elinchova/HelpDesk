@@ -26,5 +26,10 @@ namespace HelpDeskApp.Infrastructure.Repositories.Contracts
         Task<bool> UserProjectExistsAsync(int projectId, string userId);
         Task<bool> TicketCreatorExistsAsync(int ticketId, string userId);
         Task SaveChangesAsync();
+        Task<IEnumerable<Ticket>> GetFilteredAsync(string? userId, bool isAdmin, string? searchTerm, int? projectId,  int? statusId,  int currentPage, int pageSize);
+
+        Task<int> GetFilteredCountAsync(string? userId, bool isAdmin,  string? searchTerm, int? projectId, int? statusId);
+
+        Task<IEnumerable<Project>> GetFilterProjectsAsync(string? userId, bool isAdmin);
     }
 }

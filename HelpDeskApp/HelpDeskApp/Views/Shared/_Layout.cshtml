@@ -33,7 +33,7 @@
                             Administration
                         </a>
 
-                        <ul class="dropdown-menu o-admin-dropdown">
+                        @* <ul class="dropdown-menu o-admin-dropdown">
 
                             <li>
                                 <a class="dropdown-item"
@@ -47,12 +47,19 @@
                             <li>
                                 <hr class="dropdown-divider" />
                             </li>
-
+                             <li>
+                                <a class="dropdown-item"
+                                   asp-area="Admin"
+                                   asp-controller="UserManagement"
+                                   asp-action="Index">
+                                    User Management
+                                </a>
+                            </li>
                             <li>
                                 <a class="dropdown-item"
                                    asp-area="Admin"
                                    asp-controller="ProjectManagement"
-                                   asp-action="Manage">
+                                   asp-action="Index">
                                     Project Management
                                 </a>
                             </li>
@@ -66,7 +73,7 @@
                                 </a>
                             </li>
 
-                        </ul>
+                        </ul> *@
 
                     </li>
                 }

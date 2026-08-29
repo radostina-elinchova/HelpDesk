@@ -28,6 +28,7 @@ namespace HelpDeskApp.Areas.Admin.Controllers
             return View(model);
         }
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangeStatus(int ticketId, int statusId)
         {
             try

@@ -93,6 +93,70 @@ namespace HelpDeskApp.Infrastructure.Repositories
         {
             await _context.SaveChangesAsync();
         }
+        public async Task<IEnumerable<Project>> GetFilteredAsync(string? userId, bool isAdmin, string? searchTerm, bool favoritesOnly, int currentPage, int pageSize)
+        {
+            IQueryable<Project> query = BuildFilteredQuery(
+                userId,
+                isAdmin,
+                searchTerm,
+                favoritesOnly);
+
+            return await query
+                .AsNoTracking()
+                .Include(p => p.UsersProjects.Where(up => up.UserId == userId))
+                .OrderBy(p => p.ProjectName)
+                .Skip((currentPage - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+        }
+
+        public async Task<int> GetFilteredCountAsync(
+            string? userId,
+            bool isAdmin,
+            string? searchTerm,
+            bool favoritesOnly)
+        {
+            return await BuildFilteredQuery(
+                    userId,
+                    isAdmin,
+                    searchTerm,
+                    favoritesOnly)
+                .CountAsync();
+        }
+        private IQueryable<Project> BuildFilteredQuery(
+        string? userId,
+        bool isAdmin,
+        string? searchTerm,
+        bool favoritesOnly)
+        {
+            IQueryable<Project> query = _context.Projects;
+
+            if (!isAdmin)
+            {
+                query = query.Where(p =>
+                    p.UsersProjects.Any(up => up.UserId == userId));
+            }
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                string normalizedSearchTerm = searchTerm.Trim();
+
+                query = query.Where(p =>
+                    p.ProjectName.Contains(normalizedSearchTerm) ||
+                    (p.Description != null &&
+                     p.Description.Contains(normalizedSearchTerm)));
+            }
+
+            if (favoritesOnly && !string.IsNullOrWhiteSpace(userId))
+            {
+                query = query.Where(p =>
+                    p.UsersProjects.Any(up =>
+                        up.UserId == userId &&
+                        up.IsFavorite));
+            }
+
+            return query;
+        }
     }
 }
 

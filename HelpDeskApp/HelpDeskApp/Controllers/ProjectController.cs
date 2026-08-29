@@ -17,14 +17,18 @@ namespace HelpDeskApp.Controllers
         {
             _projectService = projectService;
         }
-              
-        public async Task<IActionResult> Index()
+
+        public async Task<IActionResult> Index([FromQuery] ProjectQueryVM queryModel)
         {
             string? userId = GetUserId();
             bool isAdmin = User.IsInRole("Administrator");
-            var projects = await _projectService.GetAllProjectsAsync(userId, isAdmin);           
 
-            return View(projects);
+            ProjectQueryVM model = await _projectService.GetAllProjectsAsync(
+                    queryModel,
+                    userId,
+                    isAdmin);
+
+            return View(model);
         }
 
         public async Task<IActionResult> Details(int id)

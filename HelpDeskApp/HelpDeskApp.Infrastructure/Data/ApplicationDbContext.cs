@@ -35,6 +35,18 @@ namespace HelpDeskApp.Infrastructure.Data
                 .HasForeignKey(t => t.AssigneeId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            builder.Entity<UserProject>()
+                .HasOne(up => up.User)
+                .WithMany(u => u.UsersProjects)
+                .HasForeignKey(up => up.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<TicketFollower>()
+                .HasOne(tf => tf.User)
+                .WithMany(u => u.TicketFollowers)
+                .HasForeignKey(tf => tf.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
         }
     }
 }

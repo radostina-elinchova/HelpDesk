@@ -19,13 +19,14 @@ namespace HelpDeskApp.Controllers
             _ticketService = ticketService;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index([FromQuery] TicketQueryVM queryModel)
         {
             string? userId = GetUserId();
             bool isAdmin = User.IsInRole("Administrator");
-            var tickets = await _ticketService.GetAllTicketsAsync(userId, isAdmin);
 
-            return View(tickets);
+            TicketQueryVM model = await _ticketService.GetAllTicketsAsync(queryModel, userId, isAdmin);
+
+            return View(model);
         }
 
         [HttpGet]

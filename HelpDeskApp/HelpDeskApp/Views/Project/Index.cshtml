@@ -1,5 +1,7 @@
 ﻿@using HelpDeskApp.ViewModels.Models.Project
-@model IEnumerable<ProjectIndexVM>
+@using HelpDeskApp.ViewModels.Models.Common
+
+@model ProjectQueryVM
 
 @{
     ViewData["Title"] = "Projects";
@@ -7,66 +9,108 @@
 
 <div class="odoo-container">
     <div class="odoo-action-bar">
-        <h3>@ViewData["Title"]</h3>
+        <div>
+            <h3>@ViewData["Title"]</h3>
 
-        <a asp-controller="Project"
-           asp-action="Create"
-           class="btn odoo-btn-primary">
-            + Create
-        </a>
+            <span class="o-record-count">
+                @Model.Result.TotalItems projects
+            </span>
+        </div>
+
+        @if (User.IsInRole("Administrator"))
+        {
+            <a asp-controller="Project"
+               asp-action="Create"
+               class="btn odoo-btn-primary">
+                + Create
+            </a>
+        }
     </div>
 
-   
-        @if (Model != null && Model.Any())
+    <form asp-controller="Project"
+          asp-action="Index"
+          method="get"
+          class="o-search-panel mb-3">
+
+        <input asp-for="SearchTerm"
+               class="o-search-input"
+               placeholder="Search project name or description..." />
+
+        @if (!User.IsInRole("Administrator"))
         {
+            <label class="o-filter-check">
+                <input asp-for="FavoritesOnly" />
+                Favorites only
+            </label>
+        }
+
+        <select asp-for="PageSize"
+                class="o-search-select">
+            <option value="6">6 per page</option>
+            <option value="12">12 per page</option>
+            <option value="24">24 per page</option>
+        </select>
+
+        <button type="submit"
+                class="btn odoo-btn-primary">
+            Search
+        </button>
+
+        <a asp-controller="Project"
+           asp-action="Index"
+           class="btn odoo-btn-secondary">
+            Clear
+        </a>
+    </form>
+
+    @if (Model.Result.Items.Any())
+    {
         <div class="odoo-kanban">
-            @foreach (var project in Model)
+            @foreach (var project in Model.Result.Items)
             {
-             
                 <div class="odoo-kanban-card">
                     <div class="odoo-kanban-header">
                         <span class="odoo-kanban-title">
                             @project.ProjectName
                         </span>
-                    @if (!User.IsInRole("Administrator"))
-                    {
-                        @if (project.IsFavorite)
+
+                        @if (!User.IsInRole("Administrator"))
                         {
-                            <form asp-controller="ProjectFavorite"
-                            asp-action="Remove"
-                            method="post"
-                            class="d-inline">
+                            @if (project.IsFavorite)
+                            {
+                                <form asp-controller="ProjectFavorite"
+                                      asp-action="Remove"
+                                      method="post"
+                                      class="d-inline">
 
-                                <input type="hidden"
-                                name="projectId"
-                                value="@project.Id" />
+                                    <input type="hidden"
+                                           name="projectId"
+                                           value="@project.Id" />
 
-                                <button type="submit"
-                                class="btn btn-link text-decoration-none">
-                                    ★
-                                </button>
+                                    <button type="submit"
+                                            class="btn btn-link text-decoration-none">
+                                        ★
+                                    </button>
+                                </form>
+                            }
+                            else
+                            {
+                                <form asp-controller="ProjectFavorite"
+                                      asp-action="Add"
+                                      method="post"
+                                      class="d-inline">
 
-                            </form>
+                                    <input type="hidden"
+                                           name="projectId"
+                                           value="@project.Id" />
+
+                                    <button type="submit"
+                                            class="btn btn-link text-decoration-none">
+                                        ☆
+                                    </button>
+                                </form>
+                            }
                         }
-                        else
-                        {
-                            <form asp-controller="ProjectFavorite"
-                            asp-action="Add"
-                                method="post"
-                                class="d-inline">
-
-                            <input type="hidden"
-                                    name="projectId"
-                                    value="@project.Id" />
-
-                            <button type="submit"
-                                    class="btn btn-link text-decoration-none">
-                                ☆
-                            </button>
-
-                        </form>
-                        }
-                    }
                     </div>
 
                     <div class="odoo-kanban-body">
@@ -76,37 +120,63 @@
                     </div>
 
                     <div class="odoo-kanban-footer">
-                        <a asp-action="Details"
+                        <a asp-controller="Project"
+                           asp-action="Details"
                            asp-route-id="@project.Id"
                            class="odoo-link">
                             Open
                         </a>
 
-                        <a asp-action="Edit"
-                           asp-route-id="@project.Id"
-                           class="odoo-link">
-                            Edit
-                        </a>
+                        @if (User.IsInRole("Administrator"))
+                        {
+                            <a asp-controller="Project"
+                               asp-action="Edit"
+                               asp-route-id="@project.Id"
+                               class="odoo-link">
+                                Edit
+                            </a>
 
-                        <a asp-action="Delete"
-                           asp-route-id="@project.Id"
-                           class="odoo-link odoo-link-danger">
-                            Delete
-                        </a>
+                            <a asp-controller="Project"
+                               asp-action="Delete"
+                               asp-route-id="@project.Id"
+                               class="odoo-link odoo-link-danger">
+                                Delete
+                            </a>
+                        }
                     </div>
                 </div>
             }
-
         </div>
-        }
-        else
-        {
-            <div class="odoo-no-data text-center p-5">
-                <h4 class="text-muted">Още няма проекти</h4>
-                <p>Кликнете върху бутона "Create", за да добавите първия си проект.</p>
-            </div>
-        }
-    
+
+        <partial name="_QueryPagination"
+                 model="@(new QueryPaginationVM
+                 {
+                     Action = "Index",
+                     CurrentPage = Model.Result.CurrentPage,
+                     TotalPages = Model.Result.TotalPages,
+                     PageSize = Model.Result.PageSize,
+                     SearchTerm = Model.SearchTerm,
+                     FavoritesOnly = Model.FavoritesOnly
+                 })" />
+    }
+    else
+    {
+        <div class="odoo-no-data text-center p-5">
+            <h4 class="text-muted">
+                No projects found
+            </h4>
+
+            <p>
+                Try changing the search text or favorite filter.
+            </p>
+
+            <a asp-controller="Project"
+               asp-action="Index"
+               class="btn odoo-btn-secondary">
+                Clear filters
+            </a>
+        </div>
+    }
 </div>
 
 @section Scripts {
