@@ -1,0 +1,29 @@
+﻿@{
+    ViewData["Title"] = "404 Not Found";
+}
+
+<div class="odoo-container">
+    <div class="o-error-page">
+        <div class="o-error-icon o-error-warning">
+            404
+        </div>
+
+        <h1 class="o-error-title">
+            Page not found
+        </h1>
+
+        <p class="o-error-description">
+            Sorry, the page or record you are looking for
+            does not exist.
+            <br />
+            It may have been moved or deleted.
+        </p>
+
+        <a asp-area=""
+           asp-controller="Home"
+           asp-action="Index"
+           class="btn odoo-btn-primary">
+            Back to Home
+        </a>
+    </div>
+</div>

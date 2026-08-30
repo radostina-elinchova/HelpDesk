@@ -1,0 +1,39 @@
+﻿@{
+    ViewData["Title"] = "403 Forbidden";
+}
+
+<div class="odoo-container">
+    <div class="o-error-page">
+        <div class="o-error-icon o-error-danger">
+            403
+        </div>
+
+        <h1 class="o-error-title">
+            Access denied
+        </h1>
+
+        <p class="o-error-description">
+            You do not have permission to access
+            this page or perform this operation.
+        </p>
+
+        <div class="d-flex justify-content-center gap-2">
+            <a asp-area=""
+               asp-controller="Home"
+               asp-action="Index"
+               class="btn odoo-btn-primary">
+                Back to Home
+            </a>
+
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <a asp-area=""
+                   asp-controller="Ticket"
+                   asp-action="Index"
+                   class="btn odoo-btn-secondary">
+                    View tickets
+                </a>
+            }
+        </div>
+    </div>
+</div>

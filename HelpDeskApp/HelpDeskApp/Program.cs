@@ -35,7 +35,11 @@ namespace HelpDeskApp
 
             })
                 .AddRoles<IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>();           
+                .AddEntityFrameworkStores<ApplicationDbContext>();
+            builder.Services.ConfigureApplicationCookie(options =>
+            {
+                options.AccessDeniedPath = "/Home/Error/403";
+            });
             builder.Services.AddControllersWithViews();
             builder.Services.AddSignalR();
             builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
@@ -59,7 +63,7 @@ namespace HelpDeskApp
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Home/Error/500");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
@@ -71,8 +75,9 @@ namespace HelpDeskApp
             app.UseAuthentication();
             app.UseAuthorization();
 
+            app.UseStatusCodePagesWithRedirects("/Home/Error/{0}");
             app.MapControllerRoute(
-                name: "areas",
+               name: "areas",
                pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
             app.MapControllerRoute(
                 name: "default",

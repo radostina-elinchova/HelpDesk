@@ -1078,3 +1078,53 @@ button.odoo-link {
     font-size: 0.75rem;
     font-weight: 700;
 }
+.o-error-page {
+    max-width: 700px;
+    margin: 4rem auto;
+    padding: 3rem;
+    text-align: center;
+    background-color: #ffffff;
+    border: 1px solid #dee2e6;
+    border-radius: 12px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+}
+
+.o-error-icon {
+    margin-bottom: 1rem;
+    font-size: 5rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.o-error-warning {
+    color: #f0ad4e;
+}
+
+.o-error-danger {
+    color: #dc3545;
+}
+
+.o-error-title {
+    margin-bottom: 1rem;
+    color: #212529;
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+.o-error-description {
+    max-width: 520px;
+    margin: 0 auto 2rem;
+    color: #6c757d;
+    font-size: 1.05rem;
+}
+
+@media (max-width: 576px) {
+    .o-error-page {
+        margin: 2rem 1rem;
+        padding: 2rem 1.25rem;
+    }
+
+    .o-error-icon {
+        font-size: 4rem;
+    }
+}
