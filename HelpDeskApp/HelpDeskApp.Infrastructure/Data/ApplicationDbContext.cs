@@ -17,6 +17,7 @@ namespace HelpDeskApp.Infrastructure.Data
         public DbSet<Project> Projects { get; set;  } = null!;
         public DbSet<UserProject> UsersProjects { get; set; } = null!;
         public DbSet<TicketFollower> TicketFollowers { get; set; } = null!;
+        public DbSet<Notification> Notifications { get; set; } = null!;
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -35,18 +36,17 @@ namespace HelpDeskApp.Infrastructure.Data
                 .HasForeignKey(t => t.AssigneeId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.Entity<UserProject>()
-                .HasOne(up => up.User)
-                .WithMany(u => u.UsersProjects)
-                .HasForeignKey(up => up.UserId)
+            builder.Entity<Notification>()
+                .HasOne(n => n.User)
+                .WithMany()
+                .HasForeignKey(n => n.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.Entity<TicketFollower>()
-                .HasOne(tf => tf.User)
-                .WithMany(u => u.TicketFollowers)
-                .HasForeignKey(tf => tf.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
-
+            builder.Entity<Notification>()
+                .HasOne(n => n.Ticket)
+                .WithMany()
+                .HasForeignKey(n => n.TicketId)
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

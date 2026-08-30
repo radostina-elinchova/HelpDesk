@@ -9,6 +9,8 @@ connection.on(
     "ReceiveTicketNotification",
     function (ticketId, message) {
         showNotification(ticketId, message);
+        updateNotificationCount();
+
     });
 
 connection.start()
@@ -56,4 +58,22 @@ function showNotification(ticketId, message) {
     notification.appendChild(closeButton);
 
     container.prepend(notification);
+}
+function updateNotificationCount() {
+    const countElement =
+        document.getElementById("notification-count");
+
+    if (!countElement) {
+        return;
+    }
+
+    const currentCount =
+        Number.parseInt(
+            countElement.textContent,
+            10) || 0;
+
+    countElement.textContent =
+        currentCount + 1;
+
+    countElement.classList.remove("d-none");
 }

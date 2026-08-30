@@ -16,12 +16,14 @@
                 @Model.Result.TotalItems tickets
             </span>
         </div>
-
-        <a asp-controller="Ticket"
-           asp-action="Create"
-           class="btn odoo-btn-primary">
+        @if (User.IsInRole("Administrator"))
+        {
+            <a asp-controller="Ticket"
+            asp-action="Create" 
+            class="btn odoo-btn-primary">
             + Create
         </a>
+        }
     </div>
 
     <form asp-controller="Ticket"
@@ -164,8 +166,7 @@
                             </form>
                         }
 
-                        @if (User.IsInRole("Administrator") ||
-                             ticket.IsCteator)
+                        @if (User.IsInRole("Administrator") || ticket.IsCteator)
                         {
                             <a asp-controller="Ticket"
                                asp-action="Edit"

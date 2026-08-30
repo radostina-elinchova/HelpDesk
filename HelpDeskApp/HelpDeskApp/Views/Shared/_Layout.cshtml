@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@using System.Security.Claims
+@inject HelpDeskApp.Core.Contracts.INotificationService NotificationService
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -77,6 +80,24 @@
 
                     </li>
                 }
+                @{
+                    int unreadNotificationsCount = 0;
+
+                    if (User.Identity?.IsAuthenticated == true)
+                    {
+                        string? currentUserId = User
+                            .FindFirst(ClaimTypes.NameIdentifier)?
+                            .Value;
+
+                        if (!string.IsNullOrWhiteSpace(currentUserId))
+                        {
+                            unreadNotificationsCount =
+                                await NotificationService
+                                    .GetUnreadNotificationsCountAsync(
+                                        currentUserId);
+                        }
+                    }
+                }
                @if (User.Identity?.IsAuthenticated == true)
                 {
                     <a asp-area=""
@@ -111,6 +132,21 @@
                        class="odoo-menu-item">
                         Following
                     </a>
+
+                   <a asp-area=""
+                   asp-controller="Notification"
+                   asp-action="Index"
+                   class="odoo-menu-item o-notification-menu">
+                    Notifications
+
+                    <span id="notification-count"
+                          class="o-notification-count
+                                 @(unreadNotificationsCount == 0
+                                     ? "d-none"
+                                     : string.Empty)">
+                        @unreadNotificationsCount
+                    </span>
+                </a>
                 }
 
             </nav>

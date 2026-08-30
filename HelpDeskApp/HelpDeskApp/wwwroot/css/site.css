@@ -976,3 +976,105 @@ button.odoo-link {
         color: #5f3f57;
         text-decoration: underline;
     }
+.o-notification-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.o-notification-item {
+    padding: 1.25rem;
+    background-color: #ffffff;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    transition: box-shadow 0.2s ease, opacity 0.2s ease;
+}
+
+    .o-notification-item:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+.o-notification-unread {
+    background-color: #f8f3f7;
+    border-left: 4px solid #714b67;
+}
+
+.o-notification-read {
+    opacity: 0.75;
+}
+
+.o-notification-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.o-notification-badge {
+    display: inline-block;
+    padding: 0.25rem 0.6rem;
+    color: #ffffff;
+    background-color: #714b67;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.o-notification-read-label {
+    color: #6c757d;
+    font-size: 0.85rem;
+}
+
+.o-notification-date {
+    margin-left: auto;
+    color: #6c757d;
+    font-size: 0.85rem;
+}
+
+.o-notification-message {
+    margin-bottom: 0.75rem;
+    color: #212529;
+}
+
+.o-notification-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.o-notification-button {
+    padding: 0;
+    background: none;
+    border: none;
+}
+
+@media (max-width: 576px) {
+    .o-notification-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .o-notification-date {
+        margin-left: 0;
+    }
+}
+.o-notification-menu {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.o-notification-count {
+    display: inline-flex;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    background-color: #dc3545;
+    border-radius: 10px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}

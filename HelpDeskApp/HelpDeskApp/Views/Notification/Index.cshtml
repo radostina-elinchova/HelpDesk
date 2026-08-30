@@ -1,0 +1,107 @@
+﻿@using HelpDeskApp.ViewModels.Models.Notification
+@model IEnumerable<NotificationListVM>
+
+@{
+    ViewData["Title"] = "Notifications";
+}
+
+<div class="odoo-container">
+    <div class="odoo-action-bar">
+        <div>
+            <h3>@ViewData["Title"]</h3>
+
+            <span class="o-record-count">
+                @Model.Count() notifications
+            </span>
+        </div>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="odoo-no-data text-center p-5">
+            <h4 class="text-muted">
+                No notifications
+            </h4>
+
+            <p>
+                You do not have any notifications yet.
+            </p>
+
+            <a asp-controller="Ticket"
+               asp-action="Index"
+               class="btn odoo-btn-primary">
+                View tickets
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="o-notification-list">
+            @foreach (var notification in Model)
+            {
+                <div class="o-notification-item
+                             @(notification.IsRead
+                                              ? "o-notification-read"
+                                              : "o-notification-unread")">
+
+            <div class="o-notification-header">
+                <div>
+                    @if (!notification.IsRead)
+                            {
+                                <span class="o-notification-badge">
+                                    New
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="o-notification-read-label">
+                                    Read
+                                </span>
+                            }
+                        </div>
+
+                        <span class="o-notification-date">
+                            @notification.CreatedOn
+                            .ToLocalTime()
+                            .ToString("dd.MM.yyyy HH:mm")
+                        </span>
+                    </div>
+
+                    <p class="o-notification-message">
+                        @notification.Message
+                    </p>
+
+                    <div class="o-notification-actions">
+                        @if (notification.TicketId.HasValue)
+                        {
+                            <a asp-controller="Ticket"
+                               asp-action="Details"
+                               asp-route-id="@notification.TicketId.Value"
+                               class="odoo-link">
+                                Open ticket
+                            </a>
+                        }
+
+                        @if (!notification.IsRead)
+                        {
+                            <form asp-controller="Notification"
+                                  asp-action="MarkAsRead"
+                                  method="post"
+                                  class="d-inline">
+
+                                <input type="hidden"
+                                       name="id"
+                                       value="@notification.Id" />
+
+                                <button type="submit"
+                                        class="odoo-link o-notification-button">
+                                    Mark as read
+                                </button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

@@ -48,6 +48,7 @@ namespace HelpDeskApp
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<INotificationService, NotificationService>();
+            builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
             var app = builder.Build();
             await app.PrepareDatabase(); 
 
