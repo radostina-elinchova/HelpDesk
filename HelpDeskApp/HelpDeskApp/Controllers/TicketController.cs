@@ -203,8 +203,9 @@ namespace HelpDeskApp.Controllers
         public async Task<IActionResult> Edit(TicketEditVM model)
         {
             string userId = GetUserId()!;
+            bool isAdmin = User.IsInRole("Administrator");
 
-            if (!User.IsInRole("Administrator"))
+            if (!isAdmin)
             {
                 bool isCreator = await _ticketService.IsTicketCreatorAsync(model.Id, userId);
 
@@ -236,12 +237,23 @@ namespace HelpDeskApp.Controllers
 
             try
             {
-                await _ticketService.EditTicketAsync(model);
+                await _ticketService.EditTicketAsync(model, isAdmin);
                 return RedirectToAction("Index", "Ticket");
             }
-            catch (Exception ex)
+            catch (KeyNotFoundException ex)
             {
-                ModelState.AddModelError("", "Възникна грешка при записването на промените.");
+                ModelState.AddModelError(string.Empty, ex.Message);
+
+                await LoadTicketEditCollectionsAsync(model, isAdmin);
+
+                return View(model);
+            }
+            catch (InvalidOperationException ex)
+            {
+                ModelState.AddModelError(string.Empty,  ex.Message);
+
+                await LoadTicketEditCollectionsAsync(model, isAdmin);
+
                 return View(model);
             }
         }
@@ -351,5 +363,24 @@ namespace HelpDeskApp.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+        private async Task LoadTicketEditCollectionsAsync( TicketEditVM model,bool isAdmin)
+        {
+            model.Categories =   await _ticketService.GetTicketCategoriesAsync();
+
+            model.Projects = await _ticketService.GetTicketProjectsAsync();
+
+            model.Statuses = await _ticketService.GetStatusesAsync();
+
+            if (model.CategoryId > 0)
+            {
+                model.SubCategories = await _ticketService.GetTicketSubCategoriesAsync(model.CategoryId);
+            }
+
+            if (isAdmin && model.ProjectId > 0)
+            {
+                model.AvailableUsers =  await _ticketService.GetProjectUsersAsync( model.ProjectId);
+            }
+        }
     }
+
 }

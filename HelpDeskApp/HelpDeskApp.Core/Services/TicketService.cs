@@ -245,25 +245,34 @@ namespace HelpDeskApp.Core.Services
                 }).ToList();
         }
 
-        public async Task EditTicketAsync(TicketEditVM model)
+        public async Task EditTicketAsync(TicketEditVM model, bool isAdmin)
         {
-            var ticket = await _ticketRepository.GetByIdAsync(model.Id);
+            Ticket? ticket = await _ticketRepository.GetByIdAsync(model.Id);
 
             if (ticket == null)
             {
-                throw new KeyNotFoundException("Ticket not found.");
+                throw new KeyNotFoundException( "Ticket not found.");
             }
-            string? previousAssigneeId = ticket.AssigneeId;
-            var projects = await _ticketRepository.GetAllProjectsAsync();
-            bool projectExists = projects.Any(p => p.Id == model.ProjectId);
+
+            if (!isAdmin)
+            {
+                model.ProjectId = ticket.ProjectId;
+                model.StatusId = ticket.StatusId;
+                model.AssigneeId = ticket.AssigneeId;
+            }
+
+            var projects =  await _ticketRepository.GetAllProjectsAsync();
+
+            bool projectExists =  projects.Any(p => p.Id == model.ProjectId);
 
             if (!projectExists)
             {
                 throw new KeyNotFoundException("The selected project does not exist.");
             }
 
-            var subCategories = await _ticketRepository.GetAllSubCategoriesAsync();
-            var subCategory = subCategories.FirstOrDefault(sc => sc.Id == model.SubCategoryId);
+            var subCategories =  await _ticketRepository.GetAllSubCategoriesAsync();
+
+            SubCategory? subCategory = subCategories.FirstOrDefault(sc =>  sc.Id == model.SubCategoryId);
 
             if (subCategory == null)
             {
@@ -276,17 +285,19 @@ namespace HelpDeskApp.Core.Services
             }
 
             var statuses = await _ticketRepository.GetAllStatusesAsync();
-            bool statusExists = statuses.Any(s => s.Id == model.StatusId);
+
+            bool statusExists =  statuses.Any(s => s.Id == model.StatusId);
 
             if (!statusExists)
             {
                 throw new KeyNotFoundException("The selected status does not exist.");
             }
-
-            if (!string.IsNullOrWhiteSpace(model.AssigneeId))
+                    
+            if (isAdmin && !string.IsNullOrWhiteSpace(model.AssigneeId))
             {
                 var users = await _ticketRepository.GetAllUsersAsync();
-                bool assigneeExists = users.Any(u => u.Id == model.AssigneeId);
+
+                bool assigneeExists =  users.Any(u => u.Id == model.AssigneeId);
 
                 if (!assigneeExists)
                 {
@@ -294,22 +305,14 @@ namespace HelpDeskApp.Core.Services
                 }
 
                 var userProjects = await _ticketRepository.GetAllUserProjectsAsync();
-                bool assigneeInProject = userProjects.Any(up => up.UserId == model.AssigneeId && up.ProjectId == model.ProjectId);
+
+                bool assigneeInProject = userProjects.Any(up =>
+                        up.UserId == model.AssigneeId &&
+                        up.ProjectId == model.ProjectId);
 
                 if (!assigneeInProject)
                 {
-                    throw new InvalidOperationException("The assignee must belong to the selected project.");
-                }
-            }
-            bool userWasRemovedOrChanged = !string.IsNullOrWhiteSpace(previousAssigneeId) && previousAssigneeId != model.AssigneeId;
-
-            if (userWasRemovedOrChanged)
-            {
-                TicketFollower? follower = await _ticketFollowerRepository.GetAsync(ticket.Id, previousAssigneeId);
-
-                if (follower != null)
-                {
-                    _ticketFollowerRepository.Remove(follower);
+                    throw new InvalidOperationException("The assignee must belong the selected project.");
                 }
             }
 
@@ -317,11 +320,14 @@ namespace HelpDeskApp.Core.Services
             ticket.Description = model.Description.Trim();
             ticket.ProjectId = model.ProjectId;
             ticket.SubCategoryId = model.SubCategoryId;
-            ticket.StatusId = model.StatusId;           
+            ticket.StatusId = model.StatusId;
             ticket.AssigneeId = model.AssigneeId;
 
             await _ticketRepository.SaveChangesAsync();
-            await _notificationService.NotifyTicketFollowersAsync(ticket.Id, $"Ticket \"{ticket.Title}\" was updated.");
+
+            await _notificationService.NotifyTicketFollowersAsync(
+                ticket.Id,
+                $"Ticket {ticket.Title} was updated.");
         }
 
         public async Task DeleteTicketAsync(int id)
@@ -408,8 +414,7 @@ namespace HelpDeskApp.Core.Services
         }
         public async Task<TicketQueryVM> GetAllTicketsAsync(TicketQueryVM queryModel,  string? userId, bool isAdmin)
         {
-            queryModel.SearchTerm =
-                string.IsNullOrWhiteSpace(queryModel.SearchTerm)
+            queryModel.SearchTerm = string.IsNullOrWhiteSpace(queryModel.SearchTerm)
                     ? null
                     : queryModel.SearchTerm.Trim();
 
@@ -417,8 +422,7 @@ namespace HelpDeskApp.Core.Services
                 queryModel.CurrentPage,
                 1);
 
-            queryModel.PageSize =
-                queryModel.PageSize is 6 or 12 or 24
+            queryModel.PageSize =  queryModel.PageSize is 6 or 12 or 24
                     ? queryModel.PageSize
                     : 6;
 

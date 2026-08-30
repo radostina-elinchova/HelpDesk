@@ -11,10 +11,11 @@ namespace HelpDeskApp.Core.Services
     public class ProjectService : IProjectService
     {
         private readonly IProjectRepository _projectRepository;
-
-        public ProjectService(IProjectRepository projectRepository)
+        private readonly ITicketFollowerRepository  _ticketFollowerRepository;
+        public ProjectService(IProjectRepository projectRepository, ITicketFollowerRepository ticketFollowerRepository)
         {
             _projectRepository = projectRepository;
+            _ticketFollowerRepository = ticketFollowerRepository;
         }
 
         public async Task<IEnumerable<ProjectIndexVM>> GetAllProjectsAsync(string? userId, bool isAdmin)
@@ -174,11 +175,29 @@ namespace HelpDeskApp.Core.Services
         {
             var userProject = await _projectRepository.GetUserProjectAsync(projectId, userId);
 
-            if (userProject != null)
+
+            if (userProject == null)
             {
-                _projectRepository.RemoveUserProject(userProject);
-                await _projectRepository.SaveChangesAsync();
+                return;
             }
+
+            IEnumerable<Ticket> followedTickets =  await _ticketFollowerRepository.GetFollowedTicketsAsync(userId);
+
+            IEnumerable<Ticket> followedTicketsFromProject = followedTickets.Where(t =>t.ProjectId == projectId);
+
+            foreach (Ticket ticket in followedTicketsFromProject)
+            {
+                TicketFollower? follower = await _ticketFollowerRepository.GetAsync(ticket.Id, userId);
+
+                if (follower != null)
+                {
+                    _ticketFollowerRepository.Remove(follower);
+                }
+            }
+
+            _projectRepository.RemoveUserProject(userProject);
+
+            await _projectRepository.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<ProjectUserSelectVM>> GetAvailableUsersAsync()
