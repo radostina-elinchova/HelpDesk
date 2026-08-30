@@ -18,15 +18,17 @@ namespace HelpDeskApp.Services
         private readonly ITicketFollowerRepository _ticketFollowerRepository;
         private readonly INotificationRepository _notificationRepository;
         private readonly IHubContext<NotificationHub> _hubContext;
-
+        private readonly ILogger<NotificationService> _logger;
         public NotificationService(
             ITicketFollowerRepository ticketFollowerRepository,
             INotificationRepository notificationRepository,
-            IHubContext<NotificationHub> hubContext)
+            IHubContext<NotificationHub> hubContext,
+            ILogger<NotificationService> logger)
         {
             _ticketFollowerRepository = ticketFollowerRepository;
             _notificationRepository = notificationRepository;
             _hubContext = hubContext;
+            _logger = logger;
         }
 
         public async Task NotifyTicketFollowersAsync(int ticketId, string message)
@@ -54,10 +56,18 @@ namespace HelpDeskApp.Services
             _notificationRepository.AddRange(notifications);
 
             await _notificationRepository.SaveChangesAsync();
-
-            await _hubContext.Clients
-                .Users(followerIds)
-                .SendAsync("ReceiveTicketNotification", ticketId, message);
+            try
+            {
+                await _hubContext.Clients
+                 .Users(followerIds)
+                 .SendAsync("ReceiveTicketNotification", ticketId, message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex,
+                    "Real-time notification for ticket {TicketId} could not be sent. Notifications remain stored.", ticketId);
+            }
+            
         }
 
         public async Task<IEnumerable<NotificationListVM>> GetUserNotificationsAsync(string userId)
