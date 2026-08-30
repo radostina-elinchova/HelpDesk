@@ -28,10 +28,10 @@ namespace HelpDeskApp.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task<Notification?> GetByIdAsync(int id)
+        public async Task<Notification?> GetByIdAndUserIdAsync(int notificationId, string userId)
         {
             return await _context.Notifications
-                .FirstOrDefaultAsync(n => n.Id == id);
+                .FirstOrDefaultAsync(n => n.Id == notificationId && n.UserId == userId);
         }
 
         public async Task<int> GetUnreadCountAsync(string userId)
