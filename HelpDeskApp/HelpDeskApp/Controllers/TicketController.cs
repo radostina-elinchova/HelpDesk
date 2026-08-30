@@ -218,20 +218,7 @@ namespace HelpDeskApp.Controllers
 
             if (!ModelState.IsValid)
             {
-                model.Categories = await _ticketService.GetTicketCategoriesAsync();
-
-                model.Projects = await _ticketService.GetTicketProjectsAsync();
-
-                if (model.CategoryId > 0)
-                {
-                    model.SubCategories = await _ticketService.GetTicketSubCategoriesAsync(model.CategoryId);
-                }
-
-                if (model.ProjectId > 0)
-                {
-                    model.AvailableUsers = await _ticketService.GetProjectUsersAsync(model.ProjectId);
-                }
-
+                await LoadTicketEditCollectionsAsync(model, isAdmin);
                 return View(model);
             }
 
@@ -240,15 +227,7 @@ namespace HelpDeskApp.Controllers
                 await _ticketService.EditTicketAsync(model, isAdmin);
                 return RedirectToAction("Index", "Ticket");
             }
-            catch (KeyNotFoundException ex)
-            {
-                ModelState.AddModelError(string.Empty, ex.Message);
-
-                await LoadTicketEditCollectionsAsync(model, isAdmin);
-
-                return View(model);
-            }
-            catch (InvalidOperationException ex)
+            catch (Exception ex)
             {
                 ModelState.AddModelError(string.Empty,  ex.Message);
 
