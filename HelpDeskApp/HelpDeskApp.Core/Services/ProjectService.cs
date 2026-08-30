@@ -122,6 +122,11 @@ namespace HelpDeskApp.Core.Services
             {
                 return false;
             }
+            bool hasTickets = await _projectRepository.HasTicketsAsync(id);
+            if (hasTickets)
+            {
+                throw new InvalidOperationException( "The project cannot be deleted because it contains tickets.");
+            }
 
             _projectRepository.Remove(project);
             await _projectRepository.SaveChangesAsync();
@@ -239,6 +244,22 @@ namespace HelpDeskApp.Core.Services
             };
 
             return queryModel;
+        }
+        public async Task<ProjectDeleteVM?> GetProjectForDeleteAsync(int id)
+        {
+            Project? project = await _projectRepository.GetByIdAsync(id);
+
+            if (project == null)
+            {
+                return null;
+            }
+
+            return new ProjectDeleteVM
+            {
+                Id = project.Id,
+                ProjectName = project.ProjectName,
+                Description = project.Description ?? string.Empty
+            };
         }
     }
 }

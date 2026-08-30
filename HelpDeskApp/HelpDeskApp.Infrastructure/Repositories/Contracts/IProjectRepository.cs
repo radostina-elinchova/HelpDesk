@@ -23,6 +23,7 @@ namespace HelpDeskApp.Infrastructure.Repositories.Contracts
         Task SaveChangesAsync();
         Task<IEnumerable<Project>> GetFilteredAsync(string? userId, bool isAdmin, string? searchTerm,  bool favoritesOnly, int currentPage, int pageSize);
         Task<int> GetFilteredCountAsync(string? userId, bool isAdmin,  string? searchTerm, bool favoritesOnly);
+        Task<bool> HasTicketsAsync(int projectId);
     }
     }
 

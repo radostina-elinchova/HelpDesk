@@ -23,32 +23,55 @@
                     <div class="odoo-form odoo-form-readonly">
 
                         <div class="odoo-field">
-                            <label class="odoo-label">Project Name</label>
+                            <label class="odoo-label">
+                                Project Name
+                            </label>
+
                             <div class="odoo-value">
                                 @Model.ProjectName
                             </div>
                         </div>
 
                         <div class="odoo-field">
-                            <label class="odoo-label">Description</label>
-                            <div class="odoo-value">
-                                @Model.Description
+                            <label class="odoo-label">
+                                Description
+                            </label>
+
+                            <div class="odoo-value">                               
+                                    @Model.Description                             
                             </div>
                         </div>
 
                     </div>
 
+                    @if (ViewData["DeleteError"] is string errorMessage)
+                    {
+                        <div class="alert alert-danger mt-3"
+                             role="alert">
+                            <strong>Unable to delete project.</strong>
+
+                            <div>
+                                @errorMessage
+                            </div>
+                        </div>
+                    }
+
                     <div class="odoo-warning-box mt-3">
                         <strong>Warning</strong><br />
+
                         Are you sure you want to permanently delete
                         <strong>@Model.ProjectName</strong>?
                     </div>
 
                 </div>
+
                 <div class="odoo-card-footer d-flex justify-content-between">
 
                     <form asp-action="Delete" method="post">
-                        <input type="hidden" asp-for="Id" />
+                        <input type="hidden"
+                               name="id"
+                               value="@Model.Id" />
+
                         <button type="submit"
                                 class="btn odoo-btn-danger">
                             Confirm Delete
@@ -62,12 +85,12 @@
                     </a>
 
                 </div>
-
             </div>
 
         </div>
     </div>
 </div>
+
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }

@@ -75,7 +75,7 @@ namespace HelpDeskApp
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseStatusCodePagesWithRedirects("/Home/Error/{0}");
+            app.UseStatusCodePagesWithReExecute("/Home/Error/{0}");
             app.MapControllerRoute(
                name: "areas",
                pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");

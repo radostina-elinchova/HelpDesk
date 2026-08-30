@@ -157,6 +157,12 @@ namespace HelpDeskApp.Infrastructure.Repositories
 
             return query;
         }
+        public async Task<bool> HasTicketsAsync(int projectId)
+        {
+            return await _context.Tickets
+                .AsNoTracking()
+                .AnyAsync(t => t.ProjectId == projectId);
+        }
     }
 }
 

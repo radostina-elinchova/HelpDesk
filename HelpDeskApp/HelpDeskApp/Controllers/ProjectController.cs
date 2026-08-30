@@ -1,5 +1,6 @@
 ﻿using HelpDeskApp.Core.Contracts;
 using HelpDeskApp.Core.Services;
+using HelpDeskApp.Infrastructure.Data.Entities;
 using HelpDeskApp.ViewModels.Models.Project;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,7 +24,7 @@ namespace HelpDeskApp.Controllers
             string? userId = GetUserId();
             bool isAdmin = User.IsInRole("Administrator");
 
-            ProjectQueryVM model = await _projectService.GetAllProjectsAsync(
+            ProjectQueryVM model =  await _projectService.GetAllProjectsAsync(
                     queryModel,
                     userId,
                     isAdmin);
@@ -144,41 +145,50 @@ namespace HelpDeskApp.Controllers
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Delete(int id)
         {
-            var item = await _projectService.GetProjectByIdAsync(id);
-            if (item == null)
+            if (id <= 0)
+            {
+                return BadRequest();
+            }
+            ProjectDeleteVM? project = await _projectService.GetProjectForDeleteAsync(id);
+
+            if (project == null)
             {
                 return NotFound();
             }
-            ProjectDeleteVM product = new ProjectDeleteVM()
-            {
-                Id = item.Id,
-                ProjectName = item.ProjectName,
-                Description = item.Description,
-                
-            };
-            return View(product);
+
+            return View(project);
         }
-       
+
         [HttpPost]
+        [ActionName("Delete")]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Administrator")]
-        public async Task<IActionResult> Delete(int id, IFormCollection collection)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var deleted = await _projectService.DeleteProjectAsync(id);
-
-            if (deleted)
+            try
             {
-                return this.RedirectToAction("Success");
-            }
-            else
-            {
-                return View();
-            }
-        }
-        public IActionResult Success()
-        {
+                bool deleted = await _projectService.DeleteProjectAsync(id);
 
-            return View();
+                if (!deleted)
+                {
+                    return NotFound();
+                }
+
+                return RedirectToAction(nameof(Index));
+            }
+            catch (InvalidOperationException ex)
+            {
+                ProjectDeleteVM? model = await _projectService.GetProjectForDeleteAsync(id);
+
+                if (model == null)
+                {
+                    return NotFound();
+                }
+
+                ViewData["DeleteError"] = ex.Message;
+
+                return View("Delete", model);
+            }
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
