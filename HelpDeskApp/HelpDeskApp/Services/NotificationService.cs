@@ -93,9 +93,9 @@ namespace HelpDeskApp.Services
 
         public async Task<bool> MarkNotificationAsReadAsync(int notificationId, string userId)
         {
-            Notification? notification = await _notificationRepository.GetByIdAsync(notificationId);
+            Notification? notification = await _notificationRepository.GetByIdAndUserIdAsync(notificationId, userId);
 
-            if (notification == null || notification.UserId != userId)
+            if (notification == null)
             {
                 return false;
             }

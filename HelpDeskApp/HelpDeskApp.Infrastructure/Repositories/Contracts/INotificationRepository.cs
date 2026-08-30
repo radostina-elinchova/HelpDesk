@@ -11,7 +11,7 @@ namespace HelpDeskApp.Infrastructure.Repositories.Contracts
     {
         Task<IEnumerable<Notification>> GetAllByUserIdAsync(string userId);
 
-        Task<Notification?> GetByIdAsync(int id);
+        Task<Notification?> GetByIdAndUserIdAsync(int notificationId, string userId);
 
         Task<int> GetUnreadCountAsync(string userId);
 

@@ -253,7 +253,7 @@ namespace HelpDeskApp.Core.Services
             {
                 throw new KeyNotFoundException("Ticket not found.");
             }
-
+            string? previousAssigneeId = ticket.AssigneeId;
             var projects = await _ticketRepository.GetAllProjectsAsync();
             bool projectExists = projects.Any(p => p.Id == model.ProjectId);
 
@@ -294,12 +294,22 @@ namespace HelpDeskApp.Core.Services
                 }
 
                 var userProjects = await _ticketRepository.GetAllUserProjectsAsync();
-                bool assigneeInProject = userProjects.Any(up =>
-                    up.UserId == model.AssigneeId && up.ProjectId == model.ProjectId);
+                bool assigneeInProject = userProjects.Any(up => up.UserId == model.AssigneeId && up.ProjectId == model.ProjectId);
 
                 if (!assigneeInProject)
                 {
                     throw new InvalidOperationException("The assignee must belong to the selected project.");
+                }
+            }
+            bool userWasRemovedOrChanged = !string.IsNullOrWhiteSpace(previousAssigneeId) && previousAssigneeId != model.AssigneeId;
+
+            if (userWasRemovedOrChanged)
+            {
+                TicketFollower? follower = await _ticketFollowerRepository.GetAsync(ticket.Id, previousAssigneeId);
+
+                if (follower != null)
+                {
+                    _ticketFollowerRepository.Remove(follower);
                 }
             }
 
@@ -307,7 +317,7 @@ namespace HelpDeskApp.Core.Services
             ticket.Description = model.Description.Trim();
             ticket.ProjectId = model.ProjectId;
             ticket.SubCategoryId = model.SubCategoryId;
-            ticket.StatusId = model.StatusId;
+            ticket.StatusId = model.StatusId;           
             ticket.AssigneeId = model.AssigneeId;
 
             await _ticketRepository.SaveChangesAsync();
@@ -379,16 +389,22 @@ namespace HelpDeskApp.Core.Services
 
             var statuses = await _ticketRepository.GetAllStatusesAsync();
 
-            bool statusExists = statuses.Any(s => s.Id == statusId);
+            TicketStatus? status =  statuses.FirstOrDefault(s => s.Id == statusId);
 
-            if (!statusExists)
+            if (status == null)
             {
                 throw new KeyNotFoundException("The selected status does not exist.");
             }
 
+            if (ticket.StatusId == statusId)
+            {
+                return;
+            }
             ticket.StatusId = statusId;
 
             await _ticketRepository.SaveChangesAsync();
+            await _notificationService.NotifyTicketFollowersAsync(ticketId,
+                $"Ticket status was changed to {status.TicketStatusName}.");
         }
         public async Task<TicketQueryVM> GetAllTicketsAsync(TicketQueryVM queryModel,  string? userId, bool isAdmin)
         {
