@@ -15,15 +15,13 @@
             <span class="o-record-count">
                 @Model.Result.TotalItems tickets
             </span>
-        </div>
-        @if (User.IsInRole("Administrator"))
-        {
+        </div>       
             <a asp-controller="Ticket"
             asp-action="Create" 
             class="btn odoo-btn-primary">
             + Create
         </a>
-        }
+      
     </div>
 
     <form asp-controller="Ticket"

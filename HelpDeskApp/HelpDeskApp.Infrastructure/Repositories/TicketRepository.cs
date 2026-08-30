@@ -153,8 +153,7 @@ namespace HelpDeskApp.Infrastructure.Repositories
 
             if (!isAdmin)
             {
-                query = query.Where(p =>
-                    p.UsersProjects.Any(up => up.UserId == userId));
+                query = query.Where(p => p.UsersProjects.Any(up => up.UserId == userId));
             }
 
             return await query

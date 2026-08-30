@@ -28,6 +28,7 @@ namespace HelpDeskApp.Core.Contracts
         Task<IEnumerable<TicketStatusVM>> GetStatusesAsync();
         Task ChangeStatusAsync(int ticketId, int statusId);
         Task<TicketQueryVM> GetAllTicketsAsync(TicketQueryVM queryModel, string? userId,  bool isAdmin);
+        Task<IEnumerable<ProjectIndexVM>> GetAvailableTicketProjectsAsync(string? userId, bool isAdmin);
 
     }
 }

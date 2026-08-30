@@ -30,13 +30,26 @@ namespace HelpDeskApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Create(int projectId)
+        public async Task<IActionResult> Create(int projectId = 0)
         {
+            string? userId = GetUserId();
+
+            if (string.IsNullOrWhiteSpace(userId))
+            {
+                return Unauthorized();
+            }
+
+            bool isAdmin = User.IsInRole("Administrator");
+
+            var projects = await _ticketService.GetAvailableTicketProjectsAsync(userId, isAdmin);
+
+            if (projectId > 0 && !projects.Any(p => p.Id == projectId))
+            {
+                return isAdmin ? NotFound() : Forbid();
+            }
             var status = await _ticketService.GetTicketOpenStatusAsync();
 
-            var categories = await _ticketService.GetTicketCategoriesAsync();
-
-            var projects = await _ticketService.GetTicketProjectsAsync();
+            var categories = await _ticketService.GetTicketCategoriesAsync();            
 
             var model = new TicketFormVM
             {
@@ -76,7 +89,7 @@ namespace HelpDeskApp.Controllers
             {
                 model.Categories = await _ticketService.GetTicketCategoriesAsync();
 
-                model.Projects = await _ticketService.GetTicketProjectsAsync();
+                model.Projects = await _ticketService.GetAvailableTicketProjectsAsync(userId, isAdmin);
 
                 if (model.CategoryId > 0)
                 {
@@ -107,7 +120,7 @@ namespace HelpDeskApp.Controllers
 
                 model.Categories = await _ticketService.GetTicketCategoriesAsync();
 
-                model.Projects = await _ticketService.GetTicketProjectsAsync();
+                model.Projects = await _ticketService.GetAvailableTicketProjectsAsync(userId, isAdmin);
 
                 if (model.CategoryId > 0)
                 {
@@ -129,7 +142,7 @@ namespace HelpDeskApp.Controllers
 
                 model.Categories = await _ticketService.GetTicketCategoriesAsync();
 
-                model.Projects = await _ticketService.GetTicketProjectsAsync();
+                model.Projects = await _ticketService.GetAvailableTicketProjectsAsync(userId, isAdmin);
 
                 if (model.CategoryId > 0)
                 {

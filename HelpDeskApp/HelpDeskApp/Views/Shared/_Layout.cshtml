@@ -92,10 +92,7 @@
                         if (!string.IsNullOrWhiteSpace(currentUserId))
                         {
                             unreadNotificationsCount =
-                                await NotificationService
-                                    .GetUnreadNotificationsCountAsync(
-                                        currentUserId);
-                        }
+                                await NotificationService.GetUnreadNotificationsCountAsync(currentUserId);                        }
                     }
                 }
                @if (User.Identity?.IsAuthenticated == true)

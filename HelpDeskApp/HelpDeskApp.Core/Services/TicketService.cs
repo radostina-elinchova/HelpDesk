@@ -490,6 +490,18 @@ namespace HelpDeskApp.Core.Services
 
             return queryModel;
         }
+        public async Task<IEnumerable<ProjectIndexVM>> GetAvailableTicketProjectsAsync(string? userId, bool isAdmin)
+        {
+            IEnumerable<Project> projects = await _ticketRepository.GetFilterProjectsAsync(userId, isAdmin);
+
+            return projects.Select(p => new ProjectIndexVM
+                {
+                    Id = p.Id,
+                    ProjectName = p.ProjectName,
+                    Description = p.Description ?? string.Empty
+                })
+                .ToList();
+        }
     }
 }
 
