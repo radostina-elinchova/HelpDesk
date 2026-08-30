@@ -12,10 +12,12 @@ namespace HelpDeskApp.Core.Services
     {
         private readonly IProjectRepository _projectRepository;
         private readonly ITicketFollowerRepository  _ticketFollowerRepository;
-        public ProjectService(IProjectRepository projectRepository, ITicketFollowerRepository ticketFollowerRepository)
+        private readonly ITicketRepository  _ticketRepository;
+        public ProjectService(IProjectRepository projectRepository, ITicketFollowerRepository ticketFollowerRepository, ITicketRepository ticketRepository)
         {
             _projectRepository = projectRepository;
             _ticketFollowerRepository = ticketFollowerRepository;
+            _ticketRepository = ticketRepository;
         }
 
         public async Task<IEnumerable<ProjectIndexVM>> GetAllProjectsAsync(string? userId, bool isAdmin)
@@ -180,6 +182,25 @@ namespace HelpDeskApp.Core.Services
             {
                 return;
             }
+            IEnumerable<Ticket> allTickets = await _ticketRepository.GetAllAsync();
+
+            IEnumerable<int> assignedTicketIds = allTickets
+                    .Where(t =>
+                        t.ProjectId == projectId &&
+                        t.AssigneeId == userId)
+                    .Select(t => t.Id)
+                    .ToList();
+
+            foreach (int ticketId in assignedTicketIds)
+            {
+                Ticket? assignedTicket = await _ticketRepository.GetByIdAsync(ticketId);
+
+                if (assignedTicket != null)
+                {
+                    assignedTicket.AssigneeId = null;
+                }
+            }
+
 
             IEnumerable<Ticket> followedTickets =  await _ticketFollowerRepository.GetFollowedTicketsAsync(userId);
 
