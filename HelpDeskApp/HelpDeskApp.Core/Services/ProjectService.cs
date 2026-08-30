@@ -136,7 +136,7 @@ namespace HelpDeskApp.Core.Services
             return true;
         }
 
-        public async Task<Project> GetProjectByIdAsync(int id)
+        public async Task<Project?> GetProjectByIdAsync(int id)
         {
             var project = await _projectRepository.GetByIdAsync(id);
 
