@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelpDeskApp.Core", "HelpDes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelpDeskApp.ViewModels", "HelpDeskApp.ViewModels\HelpDeskApp.ViewModels.csproj", "{96E7F1EA-A74E-4A0F-B842-2C69B1709FBC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelpDeskApp.Services.Tests", "..\..\..\CinemaApp\CSharp-Web-Feb2026\src\CinemaApp.Services.Tests\HelpDeskApp.Services.Tests.csproj", "{1B7BAA52-CE2E-2877-0688-39C57E179437}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{96E7F1EA-A74E-4A0F-B842-2C69B1709FBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{96E7F1EA-A74E-4A0F-B842-2C69B1709FBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{96E7F1EA-A74E-4A0F-B842-2C69B1709FBC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B7BAA52-CE2E-2877-0688-39C57E179437}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B7BAA52-CE2E-2877-0688-39C57E179437}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B7BAA52-CE2E-2877-0688-39C57E179437}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B7BAA52-CE2E-2877-0688-39C57E179437}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
