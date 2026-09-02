@@ -41,8 +41,7 @@ namespace HelpDeskApp.Core.Services
 
             if (userProject == null)
             {
-                throw new UnauthorizedAccessException(
-                    "You do not have access to this project.");
+                throw new UnauthorizedAccessException("You do not have access to this project.");
             }
 
             userProject.IsFavorite = false;

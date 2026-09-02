@@ -20,8 +20,7 @@ namespace HelpDeskApp.Controllers
         {
             string? userId = GetUserId();
 
-            var model = await _ticketFollowerService
-                .GetFollowedTicketsAsync(userId);
+            var model = await _ticketFollowerService.GetFollowedTicketsAsync(userId);
 
             return View(model);
         }
@@ -38,8 +37,7 @@ namespace HelpDeskApp.Controllers
             string? userId = GetUserId();
             bool isAdmin = User.IsInRole("Administrator");
 
-            bool result = await _ticketFollowerService
-                .FollowAsync(ticketId, userId, isAdmin);
+            bool result = await _ticketFollowerService.FollowAsync(ticketId, userId, isAdmin);
 
             if (!result)
             {
@@ -60,8 +58,7 @@ namespace HelpDeskApp.Controllers
 
             string? userId = GetUserId();
 
-            bool result = await _ticketFollowerService
-                .UnfollowAsync(ticketId, userId);
+            bool result = await _ticketFollowerService.UnfollowAsync(ticketId, userId);
 
             if (!result)
             {

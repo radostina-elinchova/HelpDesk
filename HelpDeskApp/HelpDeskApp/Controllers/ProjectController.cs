@@ -136,12 +136,6 @@ namespace HelpDeskApp.Controllers
             return RedirectToAction("Details", new { id = model.Id });
         }
 
-        //to do: implement soft delete
-        //to do: implement soft delete
-        //to do: add on delete restrict for projects. Projects with tickets should not be deletable.
-        //To do: add it to project service and project controller.
-        //To do: add it to project details view - show message if project has tickets.
-        //To do: add it to project index view - show message if project has tickets.
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Delete(int id)
         {

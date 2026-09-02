@@ -46,8 +46,7 @@ namespace HelpDeskApp.Controllers
                 return Unauthorized();
             }
 
-            bool marked =
-                await _notificationService.MarkNotificationAsReadAsync(id, userId);
+            bool marked = await _notificationService.MarkNotificationAsReadAsync(id, userId);
 
             if (!marked)
             {

@@ -98,9 +98,7 @@ namespace HelpDeskApp.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        private IQueryable<ApplicationUser> BuildQuery(
-            string? searchTerm,
-            string? role)
+        private IQueryable<ApplicationUser> BuildQuery(string? searchTerm, string? role)
         {
             IQueryable<ApplicationUser> query = _context.Users;
 
@@ -109,7 +107,7 @@ namespace HelpDeskApp.Infrastructure.Repositories
                 string normalizedSearchTerm = searchTerm.Trim();
 
                 query = query.Where(u =>
-                    (u.UserName != null && u.UserName.Contains(normalizedSearchTerm)) ||
+                (u.UserName != null && u.UserName.Contains(normalizedSearchTerm)) ||
                     (u.Email != null && u.Email.Contains(normalizedSearchTerm)) ||
                     u.FirstName.Contains(normalizedSearchTerm) ||
                     u.LastName.Contains(normalizedSearchTerm));
@@ -117,14 +115,11 @@ namespace HelpDeskApp.Infrastructure.Repositories
 
             if (!string.IsNullOrWhiteSpace(role))
             {
-                query =
-                    from user in query
-                    join userRole in _context.UserRoles
-                        on user.Id equals userRole.UserId
-                    join identityRole in _context.Roles
-                        on userRole.RoleId equals identityRole.Id
-                    where identityRole.Name == role
-                    select user;
+                string normalizedRole = role.Trim();
+                query = query.Where(user => 
+                    _context.UserRoles.Any(userRole => userRole.UserId == user.Id &&
+                    _context.Roles.Any(identityRole => identityRole.Id == userRole.RoleId &&
+                    identityRole.Name == normalizedRole)));
             }
 
             return query;
