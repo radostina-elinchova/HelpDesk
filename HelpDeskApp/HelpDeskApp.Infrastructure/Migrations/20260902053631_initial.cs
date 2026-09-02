@@ -279,7 +279,7 @@ namespace HelpDeskApp.Infrastructure.Migrations
                         column: x => x.ProjectId,
                         principalTable: "Projects",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Tickets_SubCategories_SubCategoryId",
                         column: x => x.SubCategoryId,

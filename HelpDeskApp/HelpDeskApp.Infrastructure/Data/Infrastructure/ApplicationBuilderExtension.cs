@@ -68,14 +68,29 @@ namespace HelpDeskApp.Infrastructure.Data.Infrastructure
 
         private static async Task SeedStatusAsync(ApplicationDbContext context)
         {
-            if (await context.TicketStatus.AnyAsync()) return;
+            if (await context.TicketStatus.AnyAsync())
+            {
+                return;
+            }
 
             await context.TicketStatus.AddRangeAsync(new[]
             {
-                new TicketStatus { TicketStatusName = "Open" },
-                new TicketStatus { TicketStatusName = "In Progress" },
-                new TicketStatus { TicketStatusName = "Resolved" },
-                new TicketStatus { TicketStatusName = "Closed" }
+                new TicketStatus
+                { 
+                    TicketStatusName = "Open"
+                },
+                new TicketStatus
+                { 
+                    TicketStatusName = "In Progress"
+                },
+                new TicketStatus
+                { 
+                    TicketStatusName = "Resolved"
+                },
+                new TicketStatus
+                { 
+                    TicketStatusName = "Closed"
+                }
             });
 
             await context.SaveChangesAsync();
@@ -83,17 +98,54 @@ namespace HelpDeskApp.Infrastructure.Data.Infrastructure
 
         private static async Task SeedProjectsAsync(ApplicationDbContext context)
         {
-            if (await context.Projects.AnyAsync()) return;
-
-            await context.Projects.AddRangeAsync(new[]
+            if (await context.Projects.AnyAsync())
             {
-                new Project { ProjectName = "Internal Infrastructure", Description = "Maintenance" },
-                new Project { ProjectName = "External Support", Description = "Client relations" }
-            });
+                return;
+            }
+
+            var projects = new[]
+            {
+                new Project
+                {
+                    ProjectName = "Internal IT Support",
+                    Description = "Technical support for company employees, workstations, software and user accounts."
+                },
+                new Project
+                {
+                    ProjectName = "Network Infrastructure",
+                    Description = "Maintenance and support of the company network, Wi-Fi, VPN and internet connectivity."
+                },
+                new Project
+                {
+                    ProjectName = "Hardware Maintenance",
+                    Description = "Support, repair and replacement of computers, monitors, printers and other equipment."
+                },
+                new Project
+                {
+                    ProjectName = "Software Support",
+                    Description = "Installation, configuration, updates, licensing and troubleshooting of business software."
+                },
+                new Project
+                {
+                    ProjectName = "Accounts and Access",
+                    Description = "Management of user accounts, passwords, permissions and authentication problems."
+                },
+                new Project
+                {
+                    ProjectName = "Email and Collaboration",
+                    Description = "Support for email, shared mailboxes, calendars, Microsoft Teams and online meetings."
+                },
+                new Project
+                {
+                    ProjectName = "Remote Work Support",
+                    Description = "Technical support for remote employees, VPN connections and remote access."
+                }
+            };
+
+            await context.Projects.AddRangeAsync(projects);
 
             await context.SaveChangesAsync();
         }
-
         private static async Task SeedCategoriesAsync(ApplicationDbContext context)
         {
             if (await context.Categories.AnyAsync())
@@ -101,21 +153,155 @@ namespace HelpDeskApp.Infrastructure.Data.Infrastructure
                 return;
             }
 
-            var hardware = new Category { CategoryName = "Hardware" };
-            var software = new Category { CategoryName = "Software" };
+            var hardware = new Category
+            {
+                CategoryName = "Hardware"
+            };
 
-            await context.Categories.AddRangeAsync(hardware, software);
+            var software = new Category
+            {
+                CategoryName = "Software"
+            };
+
+            var network = new Category
+            {
+                CategoryName = "Network and Connectivity"
+            };
+
+            var account = new Category
+            {
+                CategoryName = "Accounts and Access"
+            };
+
+            var communication = new Category
+            {
+                CategoryName = "Email and Communication"
+            };
+
+            await context.Categories.AddRangeAsync(
+                hardware,
+                software,
+                network,
+                account,
+                communication);
+
             await context.SaveChangesAsync();
 
-            await context.SubCategories.AddRangeAsync(new[]
+            var subCategories = new[]
             {
-                new SubCategory { SubCategoryName = "PC/Laptop", CategoryId = hardware.Id },
-                new SubCategory { SubCategoryName = "Network", CategoryId = hardware.Id },
-                new SubCategory { SubCategoryName = "OS Install", CategoryId = software.Id }
-            });
+                new SubCategory
+                {
+                    SubCategoryName = "PC or Laptop",
+                    CategoryId = hardware.Id
+                },
+                new SubCategory
+                {
+                    SubCategoryName = "Monitor or Peripherals",
+                    CategoryId = hardware.Id
+                },
+                new SubCategory
+                {
+                    SubCategoryName = "Printer or Scanner",
+                    CategoryId = hardware.Id
+                },
+                new SubCategory
+                {
+                    SubCategoryName = "Hardware Failure",
+                    CategoryId = hardware.Id
+                },
+                new SubCategory
+                {
+                    SubCategoryName = "Software Installation",
+                    CategoryId = software.Id
+                },
+                new SubCategory
+                {
+                    SubCategoryName = "Software Update",
+                    CategoryId = software.Id
+                },
+                new SubCategory
+                {
+                    SubCategoryName = "Application Error",
+                    CategoryId = software.Id
+                },
+                new SubCategory
+                {
+                    SubCategoryName = "Operating System",
+                    CategoryId = software.Id
+                },
+                new SubCategory
+                {
+                    SubCategoryName = "Software License",
+                    CategoryId = software.Id
+                },
+
+                new SubCategory
+                {
+                    SubCategoryName = "Internet Connection",
+                    CategoryId = network.Id
+                },
+                new SubCategory
+                {
+                    SubCategoryName = "Wi-Fi Connection",
+                    CategoryId = network.Id
+                },
+                new SubCategory
+                {
+                    SubCategoryName = "VPN Access",
+                    CategoryId = network.Id
+                },
+                new SubCategory
+                {
+                    SubCategoryName = "Local Network",
+                    CategoryId = network.Id
+                },
+
+                new SubCategory
+                {
+                    SubCategoryName = "Login Problem",
+                    CategoryId = account.Id
+                },
+                new SubCategory
+                {
+                    SubCategoryName = "Password Reset",
+                    CategoryId = account.Id
+                },
+                new SubCategory
+                {
+                    SubCategoryName = "Access Permissions",
+                    CategoryId = account.Id
+                },
+                new SubCategory
+                {
+                    SubCategoryName = "Multi-Factor Authentication",
+                    CategoryId = account.Id
+                },
+                new SubCategory
+                {
+                    SubCategoryName = "Email Problem",
+                    CategoryId = communication.Id
+                },
+                new SubCategory
+                {
+                    SubCategoryName = "Shared Mailbox",
+                    CategoryId = communication.Id
+                },
+                new SubCategory
+                {
+                    SubCategoryName = "Teams or Video Meetings",
+                    CategoryId = communication.Id
+                },
+                new SubCategory
+                {
+                    SubCategoryName = "Calendar Problem",
+                    CategoryId = communication.Id
+                }
+            };
+
+            await context.SubCategories.AddRangeAsync(subCategories);
 
             await context.SaveChangesAsync();
         }
-    }
+    }   
 }
 
