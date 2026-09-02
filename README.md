@@ -125,6 +125,13 @@ HelpDeskApp.sln
 ├── HelpDeskApp.ViewModels
 │   └── Models
 └── HelpDeskApp.Common
+└── HelpDeskApp.Tests
+    ├── Services
+    │   ├── ProjectServiceTests.cs
+    │   ├── ProjectFavoriteServiceTests.cs
+    │   ├── TicketServiceTests.cs
+    │   └── TicketFollowerServiceTests.cs
+    └── HelpDeskApp.Services.Tests.csproj
 ```
 
 ### Layer responsibilities
@@ -134,6 +141,7 @@ HelpDeskApp.sln
 - **HelpDeskApp.Infrastructure** — EF Core entities, database context, migrations, repositories, and data seeding.
 - **HelpDeskApp.ViewModels** — models used by views and form binding without exposing database entities directly to the UI.
 - **HelpDeskApp.Common** — shared validation constants.
+- **HelpDeskApp.Tests** — Unit tests.
 
 Controllers depend on service interfaces, services depend on repository interfaces, and concrete implementations are registered through the built-in ASP.NET Core dependency-injection container.
 
@@ -286,59 +294,20 @@ https://localhost:7155
 
 ## Testing and code coverage
 
-Unit tests are the next planned development step. The test suite will focus on the service layer and use:
+The project contains 80 NUnit test cases covering:
 
-- xUnit;
-- Moq;
-- Coverlet;
-- ReportGenerator.
+- ProjectService
+- TicketService
+- ProjectFavoriteService
+- TicketFollowerService
 
-The target is at least **65% coverage of the business logic implemented in services**, as required by the course assignment.
+Testing technologies:
 
-Once the test project is added, tests and coverage will be run with:
+- NUnit
+- Moq
+- Coverlet
+- Microsoft.NET.Test.Sdk
 
-```bash
-dotnet test
-dotnet test --collect:"XPlat Code Coverage"
-```
-
-An HTML coverage report can be generated with:
-
-```bash
-reportgenerator \
-  -reports:"**/coverage.cobertura.xml" \
-  -targetdir:"CoverageReport" \
-  -reporttypes:Html
-```
-
-Current coverage: **pending test implementation**.
-
-## Deployment
-
-Public deployment is pending. After deployment, add the production URL here:
-
-```text
-Production URL: pending
-```
-
-Before deploying:
-
-1. move credentials and the production connection string to secure configuration;
-2. replace the development administrator seeding strategy;
-3. apply production migrations;
-4. configure forwarded headers and HTTPS;
-5. verify custom error pages outside Development;
-6. verify SignalR connectivity in the hosting environment;
-7. run the complete automated test suite.
-
-## Future improvements
-
-- Add unit tests and reach at least 65% service-layer coverage.
-- Deploy the application and document the public URL.
-- Add screenshots and a short demonstration video.
-- Add pagination to the notification history.
-- Improve notification time-zone presentation for hosted environments.
-- Optimize several multi-query repository workflows after functional verification.
 
 ## Author
 
