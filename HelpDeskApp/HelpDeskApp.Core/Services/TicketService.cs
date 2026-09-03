@@ -282,16 +282,7 @@ namespace HelpDeskApp.Core.Services
             if (subCategory.CategoryId != model.CategoryId)
             {
                 throw new InvalidOperationException("The selected subcategory does not belong to the selected category.");
-            }
-
-            var statuses = await _ticketRepository.GetAllStatusesAsync();
-
-            bool statusExists =  statuses.Any(s => s.Id == model.StatusId);
-
-            if (!statusExists)
-            {
-                throw new KeyNotFoundException("The selected status does not exist.");
-            }
+            }            
                     
             if (isAdmin && !string.IsNullOrWhiteSpace(model.AssigneeId))
             {
@@ -319,8 +310,7 @@ namespace HelpDeskApp.Core.Services
             ticket.Title = model.Title.Trim();
             ticket.Description = model.Description.Trim();
             ticket.ProjectId = model.ProjectId;
-            ticket.SubCategoryId = model.SubCategoryId;
-            ticket.StatusId = model.StatusId;
+            ticket.SubCategoryId = model.SubCategoryId;            
             ticket.AssigneeId = model.AssigneeId;
 
             await _ticketRepository.SaveChangesAsync();

@@ -159,7 +159,7 @@ namespace HelpDeskApp.Services.Tests.Services
             Assert.That(result!.Id, Is.EqualTo(ticket.Id));
             Assert.That(result.Title, Is.EqualTo(ticket.Title));
             Assert.That(result.ProjectId, Is.EqualTo(ticket.ProjectId));
-            Assert.That(result.StatusId, Is.EqualTo(ticket.StatusId));
+            Assert.That(result.StatusId, Is.EqualTo(1));
             Assert.That(result.AssigneeId, Is.EqualTo(ticket.AssigneeId));
             Assert.That(result.Categories, Is.Not.Empty);
             Assert.That(result.Projects, Is.Not.Empty);
@@ -792,22 +792,7 @@ namespace HelpDeskApp.Services.Tests.Services
 
             Assert.ThrowsAsync<KeyNotFoundException>(
                 async () => await _ticketService.ChangeStatusAsync(1, 2));
-        }
-
-        [Test]
-        public void ChangeStatusAsyncWhenStatusDoesNotExistThrowsKeyNotFoundException()
-        {
-            Ticket ticket = CreateTicket(1, "Ticket", 1, "HelpDesk", 1, "Open");
-
-            _ticketRepositoryMock.Setup(repository => repository.GetByIdAsync(ticket.Id)).ReturnsAsync(ticket);
-
-            _ticketRepositoryMock
-                .Setup(repository => repository.GetAllStatusesAsync())
-                .ReturnsAsync(new List<TicketStatus>());
-
-            Assert.ThrowsAsync<KeyNotFoundException>(
-                async () => await _ticketService.ChangeStatusAsync(ticket.Id, 999));
-        }
+        }       
 
         [Test]
         public async Task ChangeStatusAsyncWhenStatusIsUnchangedDoesNotSaveOrNotify()

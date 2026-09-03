@@ -18,7 +18,7 @@ namespace HelpDeskApp.ViewModels.Models.Project
         public string Description { get; set; } = null!;
 
         [Display(Name = "Select Users")]
-        public List<string> SelectedUserIds { get; set; } = new List<string>();
+        public List<string>? SelectedUserIds { get; set; } = new List<string>();
 
         public IEnumerable<ProjectUserSelectVM> AvailableUsers { get; set; } = new HashSet<ProjectUserSelectVM>();
 
